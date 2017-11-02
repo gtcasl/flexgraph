@@ -1,0 +1,130 @@
+TODO:
+
+- Optimize SPMV by send mem requests for all xindces/ystarts blocks in the partition until fifos are full
+- Implement vertexcaches inside the LSU to keep data for reuse until replacement
+-
+-
+
+
+
+
+
+Paper
+
+
+
+
+
+
+TIMING INFORMATION:
+- floating point Multiply = 11 cycles
+- CCI-E Cache 
+- QPI Speed 7GB/s at 200 Mhz
+-
+
+ENGINE EXECUTION FLOW:
+
+- fetch partition blocks (64B each) covers 32 consecutives matrix y-lines (32 for the write mask)
+- partition blocks are encoded as 8 (idx, starty) elements
+- the first block in the partition starts with (N, A.ys[0]) with N = partition size
+- the last block in partition end with (A.x[N-1], A.ys[N])
+- after a partition block arrives, it is decoded to extract size, A.x, A.ys
+- each A.x is used to fetch vertex data (v.value[A.x], v.mask[A.x])
+- each A.ys is used to fetch M = (A.ys[i+1]-A.ys[i]) matrix data (A.value, A.y), with M <= 32
+- each PE operates on 32 y-lanes at the time, each computing y += A.value * v.value 
+- each PE update a single 32-bit mask for all valid y-lanes
+- the PE iterates through all all A.x entries until all blocks in a partition are processed  
+- basic implementation can use a single PE (no arbiter or crossbar needed)
+
+
+SPEUDO CODE:
+
+u32 g_ax_buf<8>;
+u32 g_an_buf<8>;
+u32 g_vv_cache<8, 512, 32, 8>; // cache<sets, linesize, addr, assoc> direct-mapped cache (4KB)
+u32 g_vm_cache<8, 512, 32, 8>;
+u32 g_mask;
+u32 g_y[32];
+u32 g_y0;
+
+void spmv(
+  u32 p,          // number of partitions
+  u64x8 *ax_buf,  // (a.x, a.n) matrix buffer
+  u64x8 *ay_buf,  // (a.y, a.v) matrix buffer
+  u32x16 *vv_buf, // v.v input vertex buffer
+  u32x16 *vm_buf  // v.m input vertex buffer 
+  u32x16 *ov_buf, // out.v output vertex buffer
+  u32x16 *om_buf  // out.m output vertex buffer 
+) { 
+  sr<u64> axb(ax_buf, #size);  // sr<T> is a shift register that fetches consecutive 64B blocks from given pointer (supports pre-fetching)
+  sr<u64> ayb(ay_buf, #size);
+  
+  while (p--) {    
+    // clear per partition states
+	g_mask = 0; 
+    g_y = {0};  
+    
+    u64 n = axb.pop();
+	u32 k = min(n, 7);
+	
+    do { 
+	  // load all data for the current block
+	  for (u32 i = 0; i < k; ++i) {
+	    u32 ax, an;
+	    (ax, an) = axb.pop();
+		
+        g_ax_buf[i] = ax;
+	    g_an_buf[i] = an;
+	    g_vv_cache[ax] = vv_buf[ax];
+	    g_vm_cache[ax] = vm_buf[ax];	        	
+      }
+	  // process current block 
+	  spmv_run(k);	  
+	  n -= k;
+	  k = min(n, 8);	
+    } while (n > 0);
+	
+	// write results
+	for (u32 i = 0; i < 32; ++i) {
+	  if (g_mask & (1 << i)) 
+	    ov_buf[g_y0 + i] = g_y[i];
+	}
+	om_buf[g_y0] = g_mask;
+  }  
+}
+
+void spmv_run(
+  u32 k // number of vertices
+  u32 y[],
+  u32 mask
+) { 
+  for (u32 i = 0; i < k; ++i) {
+	u32 ax = g_ax_buf[i];
+	u32 an = g_an_buf[i];	
+	
+    u32 vm = g_vm_cache[ax];
+	
+	if ((vm & (1 << (ax & 0x1f))) == 0)
+	  continue; // skip non-dirty vertices
+	
+    u32 vv = g_vv_cache[ax];	
+	
+	for (u32 j = 0; j < an; ++j) {
+	  u32 ay, av;
+	  (ay, av) = ayb.pop();
+	  
+      u32 yi = ay & 0x1f;
+      g_y[yi] += av * vv;	  
+      g_mask |= (1 << yi);
+	  g_y0 = ay >> 5;
+	}
+  }
+}
+
+RESOURCES:
+
+Altera FP Core
+https://www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/ug/ug_altfp_mfug.pdf
+http://application-notes.digchip.com/038/38-21545.pdf
+http://www.pldworld.com/_altera/html/_sw/q2help/source/mega/mega_file_altfp_mult.htm
+
