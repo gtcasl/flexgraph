@@ -27,7 +27,10 @@ spmv_pe::spmv_pe(uint32_t id)
   : id_(id)
   , xmblock_addr_(PTR_MAX_VALUE) // default initialize to max
   , xvblock_addr_(PTR_MAX_VALUE) // default initialize to max
-{}
+{
+  // io binding
+  io.ctrl.hwcntrs = hwcntrs_;
+}
 
 spmv_pe::~spmv_pe() {
   //--
@@ -52,22 +55,40 @@ void spmv_pe::describe() {
   for (int i = 0; i < 16; ++i) {
     y_value1.slice<32>(i*32) = y_values[i+16];
   }
+
+  auto ctrl_start_req_ack = io.ctrl.start.ack.asSeq();
   
+  auto lsu_rd_req_syn  = io.lsu.rd_req.syn.asSeq();
+  auto lsu_rd_req_type = io.lsu.rd_req.type.asSeq();
+  auto lsu_rd_req_addr = io.lsu.rd_req.addr.asSeq();
+
+  auto lsu_wr_req_syn  = io.lsu.wr_req.syn.asSeq();
+  auto lsu_wr_req_type = io.lsu.wr_req.type.asSeq();
+  auto lsu_wr_req_addr = io.lsu.wr_req.addr.asSeq();
+  auto lsu_wr_req_data = io.lsu.wr_req.data.asSeq();
+
+  auto& lsu_axbuf_dequeue = io.lsu.axbuf.ready;
+  auto& lsu_asbuf_dequeue = io.lsu.asbuf.ready;
+  auto& lsu_aybuf_dequeue = io.lsu.aybuf.ready;
+  auto& lsu_avbuf_dequeue = io.lsu.avbuf.ready;
+  auto& lsu_xvbuf_dequeue = io.lsu.xvbuf.ready;
+  auto& lsu_xmbuf_dequeue = io.lsu.xmbuf.ready;
+
   //--
   /*if (id_ == 0) {
     ch_print(fstring("{0}: PE[%d]: state={1}, rq_ack={2}, rq_typ={3}, rq_adr={4}, col={5}, coln={6}, ax={7}, xv={8}, row={9}, rown={10}, ya={11}, yv={12}, ym={13}, wq_ack={14}, wq_typ={15}, wq_adr={16}", id_).c_str(),
-           ch_getTick(), state, lsu_.rd_req_syn, lsu_.rd_req_type, lsu_.rd_req_addr,
+           ch_getTick(), state, lsu_rd_req_syn, lsu_rd_req_type, lsu_rd_req_addr,
            col_curr_, col_end_, a_xindex_, x_value_, row_curr_, row_end_, y_addr_, y_value_, y_mask_,
-           lsu_.wr_req_syn, lsu_.wr_req_type, lsu_.wr_req_addr);
+           lsu_wr_req_syn, lsu_wr_req_type, lsu_wr_req_addr);
   }*/
 
   // ch_exec_state FSM
   __switch (state) (
   __case (ch_exec_state::get_partition) (
     // wait for partition data
-    __if (io.ctrl.start_req.syn == ctrl_.start_req_ack) (
+    __if (io.ctrl.start.syn == ctrl_start_req_ack) (
       // get partition columns data
-      auto& part = io.ctrl.start_req.part;
+      auto& part = io.ctrl.start.part;
       col_curr_.next = part.start.slice<ch_bitwidth_v<ch_ptr>>();
       col_end_.next = part.end.slice<ch_bitwidth_v<ch_ptr>>();
       __if (col_curr_.next != col_end_.next) (
@@ -98,19 +119,19 @@ void spmv_pe::describe() {
     )
     __else (       
       // request a_xindex
-      lsu_.rd_req_type.next = ch_rd_request::a_xindices;
-      lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next);
-      lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+      lsu_rd_req_type.next = ch_rd_request::a_xindices;
+      lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next);
+      lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
       state.next = ch_exec_state::get_a_xindex;
     );
   )
   __case (ch_exec_state::get_a_xindex) (            
     // just wait for the request ack
-    __if (io.lsu.rd_req.ack == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_req.ack == lsu_rd_req_syn) (
       // request a_ystart  
-      lsu_.rd_req_type.next = ch_rd_request::a_ystarts;
-      lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_);
-      lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+      lsu_rd_req_type.next = ch_rd_request::a_ystarts;
+      lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_);
+      lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
       state.next = ch_exec_state::get_a_ystart;
     );
   )
@@ -121,8 +142,8 @@ void spmv_pe::describe() {
       // get the returned block      
       axblock_.next = io.lsu.axbuf.data;
       asblock_.next = io.lsu.asbuf.data;
-      lsu_.axbuf_dequeue = true;
-      lsu_.asbuf_dequeue = true;
+      lsu_axbuf_dequeue = true;
+      lsu_asbuf_dequeue = true;
       // get first a_xindex and row_start values
       a_xindex_.next = (axblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
       row_curr_.next = (asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
@@ -134,30 +155,30 @@ void spmv_pe::describe() {
       )
       __else (
         // need to get row_end from next block
-        lsu_.rd_req_type.next = ch_rd_request::a_ystarts;
-        lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_ + 1);
-        lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+        lsu_rd_req_type.next = ch_rd_request::a_ystarts;
+        lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_ + 1);
+        lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
         state.next = ch_exec_state::get_a_yend;
       );
     )
     __else (
       // profiling
-      hwcntr_.next.a_xindices_stalls = hwcntr_.a_xindices_stalls + 1;
+      hwcntrs_.next.a_xindices_stalls = hwcntrs_.a_xindices_stalls + 1;
     );
   )
   __case (ch_exec_state::get_a_yend) (
     // wait for the a_yend block to arrive
-    __if (io.lsu.rd_rsp.syn == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_rsp.syn == lsu_rd_req_syn) (
       // get the returned block      
       ch_block_t asblock = io.lsu.asbuf.data;
-      lsu_.asbuf_dequeue = true;
+      lsu_asbuf_dequeue = true;
       row_end_.next = asblock.slice<ch_bitwidth_v<ch_ptr>>(); // no offset needed because the value will be at the begining of block
       // check the vertex mask
       state.next = ch_exec_state::check_x_mask;
     )
     __else (
       // profiling
-      hwcntr_.next.a_ystarts_stalls = hwcntr_.a_ystarts_stalls + 1;
+      hwcntrs_.next.a_ystarts_stalls = hwcntrs_.a_ystarts_stalls + 1;
     );
   )
   __case (ch_exec_state::check_x_mask) (
@@ -176,18 +197,18 @@ void spmv_pe::describe() {
           row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
           row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
           // request a_yindex
-          lsu_.rd_req_type.next = ch_rd_request::a_yindices;
-          lsu_.rd_req_addr.next = row_blk_curr_.next;
-          lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+          lsu_rd_req_type.next = ch_rd_request::a_yindices;
+          lsu_rd_req_addr.next = row_blk_curr_.next;
+          lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
           state.next = ch_exec_state::get_a_yindex;          
         )
         __else (
           // save block addr
           xvblock_addr_.next = x_value_addr;
           // request x_value  
-          lsu_.rd_req_type.next = ch_rd_request::x_values;
-          lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(a_xindex_);
-          lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+          lsu_rd_req_type.next = ch_rd_request::x_values;
+          lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(a_xindex_);
+          lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
           state.next = ch_exec_state::get_x_value;        
         );        
       )
@@ -200,18 +221,18 @@ void spmv_pe::describe() {
       // save block addr
       xmblock_addr_.next = x_mask_addr;
       // request x_mask value
-      lsu_.rd_req_type.next = ch_rd_request::x_masks;
-      lsu_.rd_req_addr.next = x_mask_addr;
-      lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+      lsu_rd_req_type.next = ch_rd_request::x_masks;
+      lsu_rd_req_addr.next = x_mask_addr;
+      lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
       state.next = ch_exec_state::get_x_mask; 
     );
   )
   __case (ch_exec_state::get_x_mask) (
     // wait for the x_mask block to arrive
-    __if (io.lsu.rd_rsp.syn == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_rsp.syn == lsu_rd_req_syn) (
       // get the returned block      
       xmblock_.next = io.lsu.xmbuf.data;
-      lsu_.xmbuf_dequeue = true;
+      lsu_xmbuf_dequeue = true;
       // check if the index is valid
       ch_ptr x_mask_index = a_xindex_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = (xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
@@ -224,18 +245,18 @@ void spmv_pe::describe() {
           row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
           row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
           // request a_yindex
-          lsu_.rd_req_type.next = ch_rd_request::a_yindices;
-          lsu_.rd_req_addr.next = row_blk_curr_.next;
-          lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+          lsu_rd_req_type.next = ch_rd_request::a_yindices;
+          lsu_rd_req_addr.next = row_blk_curr_.next;
+          lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
           state.next = ch_exec_state::get_a_yindex;          
         )
         __else (
           // save block addr
           xvblock_addr_.next = x_value_addr;
           // request x_value  
-          lsu_.rd_req_type.next = ch_rd_request::x_values;
-          lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(a_xindex_);
-          lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+          lsu_rd_req_type.next = ch_rd_request::x_values;
+          lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(a_xindex_);
+          lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
           state.next = ch_exec_state::get_x_value;        
         );        
       )
@@ -246,42 +267,42 @@ void spmv_pe::describe() {
     )
     __else (
       // profiling
-      hwcntr_.next.x_masks_stalls = hwcntr_.x_masks_stalls + 1;
+      hwcntrs_.next.x_masks_stalls = hwcntrs_.x_masks_stalls + 1;
     );
   )
   __case (ch_exec_state::get_x_value) (
     // just wait for the request ack
-    __if (io.lsu.rd_req.ack == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_req.ack == lsu_rd_req_syn) (
       // calculate yindices prefetch iterators
       row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
       row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
       row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
       // request a_yindex
-      lsu_.rd_req_type.next = ch_rd_request::a_yindices;
-      lsu_.rd_req_addr.next = row_blk_curr_.next;
-      lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+      lsu_rd_req_type.next = ch_rd_request::a_yindices;
+      lsu_rd_req_addr.next = row_blk_curr_.next;
+      lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
       state.next = ch_exec_state::get_a_yindex;
     );
   )
   __case (ch_exec_state::get_a_yindex) (
     // just wait for the request ack
-    __if (io.lsu.rd_req.ack == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_req.ack == lsu_rd_req_syn) (
       // request a_value
-      lsu_.rd_req_type.next = ch_rd_request::a_values;
-      lsu_.rd_req_addr.next = row_blk_curr_;
-      lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+      lsu_rd_req_type.next = ch_rd_request::a_values;
+      lsu_rd_req_addr.next = row_blk_curr_;
+      lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
       state.next = ch_exec_state::get_a_value;
     );
   )
   __case (ch_exec_state::get_a_value) (
     // just wait for the request ack
-    __if (io.lsu.rd_req.ack == lsu_.rd_req_syn) (
+    __if (io.lsu.rd_req.ack == lsu_rd_req_syn) (
       row_blk_curr_.next = row_blk_curr_ + 1;
       __if (row_blk_curr_.next != row_blk_end_) (
         // request next a_yindex
-        lsu_.rd_req_type.next = ch_rd_request::a_yindices;
-        lsu_.rd_req_addr.next = row_blk_curr_.next;
-        lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+        lsu_rd_req_type.next = ch_rd_request::a_yindices;
+        lsu_rd_req_addr.next = row_blk_curr_.next;
+        lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
         state.next = ch_exec_state::get_a_yindex;
       )
       __else (
@@ -298,7 +319,7 @@ void spmv_pe::describe() {
       __if (io.lsu.xvbuf.valid) (
         // fetch x_value block     
         xvblock_.next = io.lsu.xvbuf.data;
-        lsu_.xvbuf_dequeue = true;
+        lsu_xvbuf_dequeue = true;
         x_value_.next = (xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_xindex_)).slice<32>().as<ch_float32>();
       )
       __else (
@@ -308,14 +329,14 @@ void spmv_pe::describe() {
       // fetch first (a_yindex, a_value) blocks
       ayblock_.next = io.lsu.aybuf.data;
       avblock_.next = io.lsu.avbuf.data;
-      lsu_.aybuf_dequeue = true;
-      lsu_.avbuf_dequeue = true;
+      lsu_aybuf_dequeue = true;
+      lsu_avbuf_dequeue = true;
       // proceed to execution
       state.next = ch_exec_state::execute;        
     )
     __else (
       // profiling
-      hwcntr_.next.a_values_stalls = hwcntr_.a_values_stalls + 1;
+      hwcntrs_.next.a_values_stalls = hwcntrs_.a_values_stalls + 1;
     );    
   )
   __case (ch_exec_state::execute) (
@@ -346,8 +367,8 @@ void spmv_pe::describe() {
         // fetch the next (a_yindex, a_value) blocks    
         ayblock_.next = io.lsu.aybuf.data;
         avblock_.next = io.lsu.avbuf.data;
-        lsu_.aybuf_dequeue = true;
-        lsu_.avbuf_dequeue = true;
+        lsu_aybuf_dequeue = true;
+        lsu_avbuf_dequeue = true;
       );
     )
     __else (
@@ -356,7 +377,7 @@ void spmv_pe::describe() {
     );   
     
     // profiling
-    hwcntr_.next.execute_latency = hwcntr_.execute_latency + 1;
+    hwcntrs_.next.execute_latency = hwcntrs_.execute_latency + 1;
   )
   __case (ch_exec_state::next_column) (
     // advance to next column
@@ -377,97 +398,76 @@ void spmv_pe::describe() {
         )
         __else (
           // need to get row_end from next block
-          lsu_.rd_req_type.next = ch_rd_request::a_ystarts;
-          lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next + 1);
-          lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+          lsu_rd_req_type.next = ch_rd_request::a_ystarts;
+          lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next + 1);
+          lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
           state.next = ch_exec_state::get_a_yend;
         );        
       )
       __else (
         // get the next axblock            
-        lsu_.rd_req_type.next = ch_rd_request::a_xindices;
-        lsu_.rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next);
-        lsu_.rd_req_syn.next  = ~lsu_.rd_req_syn;
+        lsu_rd_req_type.next = ch_rd_request::a_xindices;
+        lsu_rd_req_addr.next = INT32_TO_BLOCK_ADDR(col_curr_.next);
+        lsu_rd_req_syn.next  = ~lsu_rd_req_syn;
         state.next = ch_exec_state::get_a_xindex;    
       );  
     )
     __else (
       // write first y_value block
-      lsu_.wr_req_type.next = ch_wr_request::y_values;
-      lsu_.wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_);
-      lsu_.wr_req_data.next = y_value0;
-      lsu_.wr_req_syn.next = ~lsu_.wr_req_syn;
+      lsu_wr_req_type.next = ch_wr_request::y_values;
+      lsu_wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_);
+      lsu_wr_req_data.next = y_value0;
+      lsu_wr_req_syn.next = ~lsu_wr_req_syn;
       state.next = ch_exec_state::write_y_value0;
     );
   )
   __case (ch_exec_state::write_y_value0) (
     // just wait for the request ack
-    __if (io.lsu.wr_req.ack == lsu_.wr_req_syn) (
+    __if (io.lsu.wr_req.ack == lsu_wr_req_syn) (
       // write second y_value block
-      lsu_.wr_req_type.next = ch_wr_request::y_values;
-      lsu_.wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_) + 1;
-      lsu_.wr_req_data.next = y_value1;
-      lsu_.wr_req_syn.next = ~lsu_.wr_req_syn;
+      lsu_wr_req_type.next = ch_wr_request::y_values;
+      lsu_wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_) + 1;
+      lsu_wr_req_data.next = y_value1;
+      lsu_wr_req_syn.next = ~lsu_wr_req_syn;
       state.next = ch_exec_state::write_y_value1;
     );
   )
   __case (ch_exec_state::write_y_value1) (
     // just wait for the request ack
-    __if (io.lsu.wr_req.ack == lsu_.wr_req_syn) (
+    __if (io.lsu.wr_req.ack == lsu_wr_req_syn) (
       // write second y_value block
-      lsu_.wr_req_type.next = ch_wr_request::y_masks;
-      lsu_.wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_ >> 5); // divide by 32
-      lsu_.wr_req_data.next = ch_zext<512>(y_mask_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
-      lsu_.wr_req_syn.next  = ~lsu_.wr_req_syn;
+      lsu_wr_req_type.next = ch_wr_request::y_masks;
+      lsu_wr_req_addr.next = INT32_TO_BLOCK_ADDR(y0_ >> 5); // divide by 32
+      lsu_wr_req_data.next = ch_zext<512>(y_mask_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
+      lsu_wr_req_syn.next  = ~lsu_wr_req_syn;
       state.next = ch_exec_state::write_y_mask;
     );
   )
   __case (ch_exec_state::write_y_mask) (      
     // just wait for the request ack
-    __if (io.lsu.wr_req.ack == lsu_.wr_req_syn) (
+    __if (io.lsu.wr_req.ack == lsu_wr_req_syn) (
       // profiling
       ch_bit32 runtime = (io.ctrl.timer - prof_start_).slice<32>();
-      hwcntr_.next.min_latency = ch_select(hwcntr_.min_latency == 0, runtime, ch_min(hwcntr_.min_latency, runtime));
-      hwcntr_.next.max_latency = ch_max(hwcntr_.min_latency, runtime);
-      hwcntr_.next.total_latency = hwcntr_.total_latency + runtime;
-      hwcntr_.next.num_partitions = hwcntr_.num_partitions + 1;
+      hwcntrs_.next.min_latency = ch_select(hwcntrs_.min_latency == 0, runtime, ch_min(hwcntrs_.min_latency, runtime));
+      hwcntrs_.next.max_latency = ch_max(hwcntrs_.min_latency, runtime);
+      hwcntrs_.next.total_latency = hwcntrs_.total_latency + runtime;
+      hwcntrs_.next.num_partitions = hwcntrs_.num_partitions + 1;
       // advance to the next partition
-      ctrl_.start_req_ack.next = ~ctrl_.start_req_ack;
+      ctrl_start_req_ack.next = ~ctrl_start_req_ack;
       state.next = ch_exec_state::get_partition;      
     );
   )
   __default (
-    lsu_.axbuf_dequeue = false;
-    lsu_.asbuf_dequeue = false;
-    lsu_.aybuf_dequeue = false;
-    lsu_.avbuf_dequeue = false;
-    lsu_.xvbuf_dequeue = false;
-    lsu_.xmbuf_dequeue = false;
+    //--
+    lsu_axbuf_dequeue = false;
+    lsu_asbuf_dequeue = false;
+    lsu_aybuf_dequeue = false;
+    lsu_avbuf_dequeue = false;
+    lsu_xvbuf_dequeue = false;
+    lsu_xmbuf_dequeue = false;
 
     y_value_ = 0;
     y_addr_ = 0;
     y_wenable_ = 0;
   ));
-
-  //
-  // return outputs
-  //
-
-  io.ctrl.start_req.ack = ctrl_.start_req_ack;
-
-  io.lsu.rd_req.syn  = lsu_.rd_req_syn;
-  io.lsu.rd_req.type = lsu_.rd_req_type;
-  io.lsu.rd_req.addr = lsu_.rd_req_addr;
-
-  io.lsu.wr_req.syn  = lsu_.wr_req_syn;
-  io.lsu.wr_req.type = lsu_.wr_req_type;
-  io.lsu.wr_req.addr = lsu_.wr_req_addr;
-  io.lsu.wr_req.data = lsu_.wr_req_data;
-
-  io.lsu.axbuf.ready = lsu_.axbuf_dequeue;
-  io.lsu.asbuf.ready = lsu_.asbuf_dequeue;
-  io.lsu.aybuf.ready = lsu_.aybuf_dequeue;
-  io.lsu.avbuf.ready = lsu_.avbuf_dequeue;
-  io.lsu.xvbuf.ready = lsu_.xvbuf_dequeue;
-  io.lsu.xmbuf.ready = lsu_.xmbuf_dequeue;
 }

@@ -77,7 +77,7 @@ void cpu_device::init(const char* mtx_file) {
   offset = m_matrix->copy(m_shared_mem, offset, SHARE_MEM_SIZE, m_accelerator.io.ctx.a);
   offset = m_vertex->copy(m_shared_mem, offset, SHARE_MEM_SIZE, m_accelerator.io.ctx.x);
   offset = m_vertex->copy(nullptr, offset, SHARE_MEM_SIZE, m_accelerator.io.ctx.y);
-  ch_poke(m_accelerator.io.ctx.hwcntrs, (offset / BLOCK_SIZE));
+  m_accelerator.io.ctx.hwcntrs = (offset / BLOCK_SIZE);
   assert(__align(offset + __div_ceil(ch_bitwidth_v<ch_hwcntrs_t>, 8), BLOCK_SIZE) <= SHARE_MEM_SIZE);
   
   /*printf("*** partitions=0x%x, a_xindices=0x%x, a_ystarts=0x%x, a_yindices=0x%x, a_values=0x%x, x_values=x0%x, x_masks=0x%x\n",
@@ -172,8 +172,8 @@ void cpu_device::check_output(const float* values, const uint32_t* masks, bool d
 
 bool cpu_device::tick(ch_tick t) {
   // check done signal
-  if (ch_peek<bool>(m_accelerator.io.done)) {
-    ch_poke(m_accelerator.io.start, false); // stop execution
+  if (m_accelerator.io.done) {
+    m_accelerator.io.start = false; // stop execution
     this->check_result(t);
     return false;
   }  
@@ -190,49 +190,49 @@ bool cpu_device::tick(ch_tick t) {
     this->process_wr_rsp(t);
   
   // process read requests
-  if (ch_peek<bool>(m_accelerator.io.qpi.rd_req.valid))
+  if (m_accelerator.io.qpi.rd_req.valid)
     this->process_rd_req(t);
   
   // process write requests
-  if (ch_peek<bool>(m_accelerator.io.qpi.wr_req.valid))
+  if (m_accelerator.io.qpi.wr_req.valid)
     this->process_wr_req(t);
   
   // start execution
   if (4 == t) {
-    ch_poke(m_accelerator.io.start, true);
+    m_accelerator.io.start = true;
   }
   
   return true;
 }
 
 void cpu_device::clear_pulse_signals(ch_tick t) {
-  if (ch_peek<bool>(m_accelerator.io.qpi.rd_rsp.valid)) {
-    ch_poke(m_accelerator.io.qpi.rd_rsp.valid, false);
-    ch_poke(m_accelerator.io.qpi.rd_rsp.data, 0);
-    ch_poke(m_accelerator.io.qpi.rd_rsp.mdata, 0);
+  if (m_accelerator.io.qpi.rd_rsp.valid) {
+    m_accelerator.io.qpi.rd_rsp.valid = false;
+    m_accelerator.io.qpi.rd_rsp.data = 0;
+    m_accelerator.io.qpi.rd_rsp.mdata = 0;
   }
     
-  if (ch_peek<bool>(m_accelerator.io.qpi.wr_rsp0.valid)) {
-    ch_poke(m_accelerator.io.qpi.wr_rsp0.valid, false);
-    ch_poke(m_accelerator.io.qpi.wr_rsp0.mdata, 0);
+  if (m_accelerator.io.qpi.wr_rsp0.valid) {
+    m_accelerator.io.qpi.wr_rsp0.valid = false;
+    m_accelerator.io.qpi.wr_rsp0.mdata = 0;
   }
   
-  if (ch_peek<bool>(m_accelerator.io.qpi.wr_rsp1.valid)) {
-    ch_poke(m_accelerator.io.qpi.wr_rsp1.valid, false);
-    ch_poke(m_accelerator.io.qpi.wr_rsp1.mdata, 0);
+  if (m_accelerator.io.qpi.wr_rsp1.valid) {
+    m_accelerator.io.qpi.wr_rsp1.valid = false;
+    m_accelerator.io.qpi.wr_rsp1.mdata = 0;
   }
 }
 
 void cpu_device::process_rd_req(ch_tick t) {
   assert(m_qpi_read_requests.size() < RQS_BUF_SIZE);
   // enqueue new request
-  uint32_t addr = ch_peek<uint32_t>(m_accelerator.io.qpi.rd_req.addr) * BLOCK_SIZE;
+  auto addr = (uint32_t)m_accelerator.io.qpi.rd_req.addr * BLOCK_SIZE;
   assert((addr + BLOCK_SIZE) <= SHARE_MEM_SIZE);
   request_t* rq = new request_t(addr, t, t + 2 * random_select(MIN_RX_RD_CYCLES, MAX_RX_RD_CYCLES, 1.0));
-  ch_peek(m_accelerator.io.qpi.rd_req.mdata, 0, &rq->mdata, sizeof(rq_mdata_t));
+  m_accelerator.io.qpi.rd_req.mdata.read(0, &rq->mdata, sizeof(rq_mdata_t));
   m_qpi_read_requests.push_back(rq);
   if (m_qpi_read_requests.size()+RQS_BUF_FULL_DIST == RQS_BUF_SIZE) {
-    ch_poke(m_accelerator.io.qpi.rd_req.almostfull, true);
+    m_accelerator.io.qpi.rd_req.almostfull = true;
   }
 }
 
@@ -260,10 +260,10 @@ void cpu_device::process_rd_rsp(ch_tick t) {
      && rq->tx_time != 0
      && rq->tx_time <= t) {
       // commit the response
-      ch_poke(m_accelerator.io.qpi.rd_rsp.data, 0, &rq->data, sizeof(rq_data_t));
-      ch_poke(m_accelerator.io.qpi.rd_rsp.mdata, 0, &rq->mdata, sizeof(rq_mdata_t));
-      ch_poke(m_accelerator.io.qpi.rd_rsp.valid, true);
-      ch_poke(m_accelerator.io.qpi.rd_req.almostfull, false);
+      m_accelerator.io.qpi.rd_rsp.data.write(0, &rq->data, sizeof(rq_data_t));
+      m_accelerator.io.qpi.rd_rsp.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+      m_accelerator.io.qpi.rd_rsp.valid = true;
+      m_accelerator.io.qpi.rd_req.almostfull = false;
       // remove entry
       iter = m_qpi_read_requests.erase(iter);   
       delete rq;
@@ -277,14 +277,14 @@ void cpu_device::process_rd_rsp(ch_tick t) {
 void cpu_device::process_wr_req(ch_tick t) {
   assert(m_qpi_write_requests.size() < RQS_BUF_SIZE);
   // enqueue new request
-  uint32_t addr = ch_peek<uint32_t>(m_accelerator.io.qpi.wr_req.addr) * BLOCK_SIZE;
+  auto addr = (uint32_t)m_accelerator.io.qpi.wr_req.addr * BLOCK_SIZE;
   assert((addr + BLOCK_SIZE) <= SHARE_MEM_SIZE);
   request_t* rq = new request_t(addr, t, t + 2 * random_select(MIN_TX_RW_CYCLES, MAX_TX_RW_CYCLES, 1.0));
-  ch_peek(m_accelerator.io.qpi.wr_req.mdata, 0, &rq->mdata, sizeof(rq_mdata_t));
-  ch_peek(m_accelerator.io.qpi.wr_req.data, 0, &rq->data, sizeof(rq_data_t));
+  m_accelerator.io.qpi.wr_req.mdata.read(0, &rq->mdata, sizeof(rq_mdata_t));
+  m_accelerator.io.qpi.wr_req.data.read(0, &rq->data, sizeof(rq_data_t));
   m_qpi_write_requests.push_back(rq);
   if (m_qpi_write_requests.size() + RQS_BUF_FULL_DIST == RQS_BUF_SIZE) {
-    ch_poke(m_accelerator.io.qpi.wr_req.almostfull, true);
+    m_accelerator.io.qpi.wr_req.almostfull = true;
   }
 }
 
@@ -303,13 +303,13 @@ void cpu_device::process_wr_rsp(ch_tick t) {
     if (free_tx_channels && rq->tx_time != 0 && rq->tx_time <= t) {
       // commit the response
       if (free_tx_channels == 2) {
-        ch_poke(m_accelerator.io.qpi.wr_rsp0.mdata, 0, &rq->mdata, sizeof(rq_mdata_t));
-        ch_poke(m_accelerator.io.qpi.wr_rsp0.valid, true);
+        m_accelerator.io.qpi.wr_rsp0.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+        m_accelerator.io.qpi.wr_rsp0.valid = true;
       } else {
-        ch_poke(m_accelerator.io.qpi.wr_rsp1.mdata, 0, &rq->mdata, sizeof(rq_mdata_t));
-        ch_poke(m_accelerator.io.qpi.wr_rsp1.valid, true);
+        m_accelerator.io.qpi.wr_rsp1.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+        m_accelerator.io.qpi.wr_rsp1.valid = true;
       }
-      ch_poke(m_accelerator.io.qpi.wr_req.almostfull, false);
+      m_accelerator.io.qpi.wr_req.almostfull = false;
       // remove entry
       iter = m_qpi_write_requests.erase(iter);
       delete rq;
@@ -322,8 +322,8 @@ void cpu_device::process_wr_rsp(ch_tick t) {
 
 void cpu_device::check_result(ch_tick t) {
   //--
-  uint32_t y_values_base = ch_peek<uint32_t>(m_accelerator.io.ctx.y.values);
-  uint32_t y_masks_base = ch_peek<uint32_t>(m_accelerator.io.ctx.y.masks);
+  auto y_values_base = (uint32_t)m_accelerator.io.ctx.y.values;
+  auto y_masks_base = (uint32_t)m_accelerator.io.ctx.y.masks;
   const float* values = reinterpret_cast<const float*>(m_shared_mem + y_values_base * BLOCK_SIZE);
   const uint32_t* masks = reinterpret_cast<const uint32_t*>(m_shared_mem + y_masks_base * BLOCK_SIZE);
   check_output(values, masks, false);
@@ -333,8 +333,8 @@ void cpu_device::dump_stats(ch_tick t) {
   ch_scalar_t<ch_hwcntrs_t> hwcntrs;
 
   // fetch hwcntrs from memory
-  uint32_t hwcntrs_base = ch_peek<uint32_t>(m_accelerator.io.ctx.hwcntrs);
-  hwcntrs.write(0, m_shared_mem + hwcntrs_base * BLOCK_SIZE, sizeof(rq_data_t));
+  auto hwcntrs_base = (uint32_t)m_accelerator.io.ctx.hwcntrs;
+  hwcntrs.asScalar().write(0, m_shared_mem + hwcntrs_base * BLOCK_SIZE, sizeof(rq_data_t));
     
   DbgPrint(0, "Simulation Summary Report:\n");
   DbgPrint(0, "total rum time = %ld ticks\n", t);

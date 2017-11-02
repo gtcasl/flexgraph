@@ -431,14 +431,14 @@ void mdcsc_t::init(
   values     = new byte_t[nnz_ * element_size_];  
 }
 
-size_t mdcsc_t::copy(byte_t* dest, size_t offset, size_t size, ch_port_t<ch_matrix_dcsc_t>& desc) {
-  ch_poke(desc.numparts, numparts);
+size_t mdcsc_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_matrix_dcsc_t>& desc) {
+  desc.numparts = numparts;
   
 #define  __copy_data(s, S) \
   assert((offset & BLOCK_SIZE_MASK) == 0); \
   assert(offset + __align(S, BLOCK_SIZE) <= size); \
   assert((offset >> LOG2_BLOCK_SIZE) < 0x100000); \
-  ch_poke(desc.s, (offset >> LOG2_BLOCK_SIZE)); \
+  desc.s = (offset >> LOG2_BLOCK_SIZE); \
   if (dest) memcpy(dest + offset, s, S); \
   offset += __align(S, BLOCK_SIZE);  
   
@@ -474,13 +474,13 @@ vertex_t::~vertex_t() {
   delete[] masks;
 }
 
-size_t vertex_t::copy(byte_t* dest, size_t offset, size_t size, ch_port_t<ch_vertex_t>& desc) {
+size_t vertex_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_vertex_t>& desc) {
 
 #define  __copy_data(s, S) \
   assert((offset & BLOCK_SIZE_MASK) == 0); \
   assert(offset + __align(S, BLOCK_SIZE) <= size); \
   assert((offset >> LOG2_BLOCK_SIZE) < 0x100000); \
-  ch_poke(desc.s, (offset >> LOG2_BLOCK_SIZE)); \
+  desc.s = (offset >> LOG2_BLOCK_SIZE); \
   if (dest) memcpy(dest + offset, s, S); \
   offset += __align(S, BLOCK_SIZE);  
   

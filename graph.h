@@ -43,7 +43,7 @@ public:
   
   void allocate();
   
-  size_t copy(byte_t* dest, size_t offset, size_t size, ch_port_t<ch_matrix_dcsc_t>& desc);
+  size_t copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_matrix_dcsc_t>& desc);
 };
 
 struct vertex_t {
@@ -56,7 +56,7 @@ struct vertex_t {
   vertex_t(uint32_t size, uint32_t element_size);
   ~vertex_t();
   
-  size_t copy(byte_t* dest, size_t offset, size_t size, ch_port_t<ch_vertex_t>& desc);
+  size_t copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_vertex_t>& desc);
   
   void dump();
 };

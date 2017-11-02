@@ -36,6 +36,16 @@ __enum (ch_rq_owner, 2, (
   ctrl
 ));
 
+__struct(ch_rd_mdata_t, (
+  (ch_rd_request) type,
+  (ch_rq_owner) owner
+));
+
+__struct(ch_wr_mdata_t, (
+  (ch_wr_request) type,
+  (ch_rq_owner) owner
+));
+
 enum {
   LOG2_PBUF_SIZE = 2,
   PBUF_SIZE = 1 << LOG2_PBUF_SIZE,
@@ -60,44 +70,6 @@ enum {
 
   LOG2_ABUF_SIZE = 3,
   ABUF_SIZE = 1 << LOG2_ABUF_SIZE,
-};
-
-struct ch_rd_mdata_t {
-  using value_type = ch_bit<aal::aal_qpi0::mdata_width>;
-  ch_rd_request type;
-  ch_rq_owner owner;
-
-  ch_rd_mdata_t(const ch_rd_request& _type, const ch_rq_owner& _owner)
-    : type(_type)
-    , owner(_owner)
-  {}
-
-  ch_rd_mdata_t(const value_type& rhs) {
-    ch_tie(type, owner) = rhs.slice<ch_bitwidth_v<ch_rd_request> + ch_bitwidth_v<ch_rq_owner>>();
-  }
-
-  operator value_type() const {
-    return ch_zext<aal::aal_qpi0::mdata_width>(ch_cat(type, owner));
-  }
-};
-
-struct ch_wr_mdata_t {
-  using value_type = ch_bit<aal::aal_qpi0::mdata_width>;
-  ch_wr_request type;
-  ch_rq_owner owner;
-
-  ch_wr_mdata_t(const ch_wr_request& _type, const ch_rq_owner& _owner)
-    : type(_type)
-    , owner(_owner)
-  {}
-
-  ch_wr_mdata_t(const value_type& rhs) {
-    ch_tie(type, owner) = rhs.slice<ch_bitwidth_v<ch_wr_request> + ch_bitwidth_v<ch_rq_owner>>();
-  }           
-
-  operator value_type() const {
-    return ch_zext<aal::aal_qpi0::mdata_width>(ch_cat(type, owner));
-  }
 };
 
 using ch_blk_addr = ch_bit<aal::aal_qpi0::addr_wdith>;
@@ -203,14 +175,8 @@ private:
     done
   ));
 
-  struct qpi_t {
-
-  };
-
   struct ctrl_t {
-    ch_module<ch_pbuf_t> pbuf_module;
-
-    ch_flip_t<ch_io_t<ch_module<ch_pbuf_t>>> pbuf_io;
+    ch_module<ch_pbuf_t> pbuf;
 
     ch_seq<ch_bit1> rd_req_ack;
     ch_seq<ch_bit1> rd_rsp_valid;
@@ -226,19 +192,12 @@ private:
   };
 
   struct pe_t {
-    ch_module<ch_axbuf_t> axbuf_module;
-    ch_module<ch_asbuf_t> asbuf_module;
-    ch_module<ch_aybuf_t> aybuf_module;
-    ch_module<ch_avbuf_t> avbuf_module;
-    ch_module<ch_xvbuf_t> xvbuf_module;
-    ch_module<ch_xmbuf_t> xmbuf_module;
-
-    ch_flip_t<ch_io_t<ch_module<ch_axbuf_t>>> axbuf_io;
-    ch_flip_t<ch_io_t<ch_module<ch_asbuf_t>>> asbuf_io;
-    ch_flip_t<ch_io_t<ch_module<ch_aybuf_t>>> aybuf_io;
-    ch_flip_t<ch_io_t<ch_module<ch_avbuf_t>>> avbuf_io;
-    ch_flip_t<ch_io_t<ch_module<ch_xvbuf_t>>> xvbuf_io;
-    ch_flip_t<ch_io_t<ch_module<ch_xmbuf_t>>> xmbuf_io;
+    ch_module<ch_axbuf_t> axbuf;
+    ch_module<ch_asbuf_t> asbuf;
+    ch_module<ch_aybuf_t> aybuf;
+    ch_module<ch_avbuf_t> avbuf;
+    ch_module<ch_xvbuf_t> xvbuf;
+    ch_module<ch_xmbuf_t> xmbuf;
 
     ch_seq<ch_bit32> axbuf_pending_size;
     ch_seq<ch_bit32> asbuf_pending_size;
@@ -257,7 +216,7 @@ private:
     ch_seq<ch_wr_request> wr_rsp0_type;
     ch_seq<ch_wr_request> wr_rsp1_type;
   };
-  
+
   void read_req_thread();
   void write_req_thread();
   
@@ -272,8 +231,6 @@ private:
   
   ch_bit1 check_pe_buf_ready(uint32_t pe_id, const ch_rd_request& rq_type);  
   void update_pe_buf_pending_size(uint32_t pe_id, const ch_rd_request& rq_type);
-
-  qpi_t qpi_;
 
   ctrl_t ctrl_;
 
@@ -293,10 +250,10 @@ private:
   ch_seq<ch_bit1>     m_pe0_writemask;
   ch_seq<ch_bit1>     m_pe1_writemask;
   
-  ch_seq<ch_bit32> m_outstanding_writes;
+  ch_seq<ch_bit32>    outstanding_writes_;
   
-  ch_wr_req_state m_wr_req_state;
-  ch_writemask_state m_writemask_state;
+  ch_wr_req_state     m_wr_req_state;
+  ch_writemask_state  m_writemask_state;
 };
 
 }

@@ -7,34 +7,50 @@ using namespace spmv::accelerator;
 spmv_lsu::spmv_lsu()
   : m_writemask0_addr(PTR_MAX_VALUE)
   , m_writemask1_addr(PTR_MAX_VALUE) {
-  // bind nested modules
-  ctrl_.pbuf_module.io(ctrl_.pbuf_io);
-  for (int i = 0; i < PE_COUNT; ++i) {
-    pe_[i].axbuf_module.io(pe_[i].axbuf_io);
-    pe_[i].asbuf_module.io(pe_[i].asbuf_io);
-    pe_[i].aybuf_module.io(pe_[i].aybuf_io);
-    pe_[i].avbuf_module.io(pe_[i].avbuf_io);
-    pe_[i].xvbuf_module.io(pe_[i].xvbuf_io);
-    pe_[i].xmbuf_module.io(pe_[i].xmbuf_io);
+  //
+  // io binding
+  //
+  io.ctrl.rd_req.ack = ctrl_.rd_req_ack;
+  io.ctrl.wr_req.ack = ctrl_.wr_req_ack;
+  io.ctrl.pbuf(ctrl_.pbuf.io.deq);
+  ctrl_.pbuf.io.enq.data = io.qpi.rd_rsp.data;
+  io.ctrl.outstanding_writes = outstanding_writes_;
+
+  for (int i =0; i < PE_COUNT; ++i) {
+    io.pe[i].rd_req.ack  = pe_[i].rd_req_ack;
+    io.pe[i].rd_rsp.syn  = pe_[i].rd_rsp_valid;
+    io.pe[i].rd_rsp.type = pe_[i].rd_rsp_type;
+
+    io.pe[i].wr_req.ack  = pe_[i].wr_req_ack;
+
+    io.pe[i].axbuf(pe_[i].axbuf.io.deq);    
+    io.pe[i].asbuf(pe_[i].asbuf.io.deq);
+    io.pe[i].aybuf(pe_[i].aybuf.io.deq);
+    io.pe[i].avbuf(pe_[i].avbuf.io.deq);    
+    io.pe[i].xvbuf(pe_[i].xvbuf.io.deq);
+    io.pe[i].xmbuf(pe_[i].xmbuf.io.deq);
+
+    io.pe[i].avbuf_size(pe_[i].avbuf.io.size);
+
+    pe_[i].axbuf.io.enq.data = io.qpi.rd_rsp.data;
+    pe_[i].asbuf.io.enq.data = io.qpi.rd_rsp.data;
+    pe_[i].aybuf.io.enq.data = io.qpi.rd_rsp.data;
+    pe_[i].avbuf.io.enq.data = io.qpi.rd_rsp.data;
+    pe_[i].xvbuf.io.enq.data = io.qpi.rd_rsp.data;
+    pe_[i].xmbuf.io.enq.data = io.qpi.rd_rsp.data;
   }
 }
 
-spmv_lsu::~spmv_lsu() {
-  //--
-}
+spmv_lsu::~spmv_lsu() {}
 
 void spmv_lsu::describe() {
+  // emit threads
   this->read_req_thread();
   this->write_req_thread();
   this->read_rsp_thread();
   this->write_rsp0_thread();
   this->write_rsp1_thread();
   this->writemask_thread();
-
-  //
-  // return outputs
-  //
-
 }
 
 ch_bit1 spmv_lsu::check_pe_buf_ready(uint32_t pe_id, const ch_rd_request& rq_type) {
@@ -91,6 +107,12 @@ void spmv_lsu::read_req_thread() {
   
   ch_bit1 pe0_buf_ready = this->check_pe_buf_ready(0, io.pe[0].rd_req.type);
   ch_bit1 pe1_buf_ready = this->check_pe_buf_ready(1, io.pe[1].rd_req.type);
+
+  ch_seq<ch_rd_mdata_t> qpi_rd_req_mdata;
+  io.qpi.rd_req.mdata = ch_zext<aal::aal_qpi0::mdata_width>(qpi_rd_req_mdata.asBits());
+
+  auto qpi_rd_req_addr  = io.qpi.rd_req.addr.asSeq();
+  auto qpi_rd_req_valid = io.qpi.rd_req.valid.asSeq();
   
   __switch (state) (
   __case (ch_rd_req_state::ping_PE0) (
@@ -99,8 +121,8 @@ void spmv_lsu::read_req_thread() {
       // TODO: check if we have space in destination buffer
       pe_[0].rd_req_ack.next = io.pe[0].rd_req.ack;
       const auto& rq_type = io.pe[0].rd_req.type;
-      m_qpi_out.next.rd_req.mdata = ch_rd_mdata_t(rq_type, ch_rq_owner::PE0);
-      m_qpi_out.next.rd_req.addr = get_baseaddr(rq_type) + io.pe[0].rd_req.addr;
+      qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::PE0, rq_type);
+      qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.pe[0].rd_req.addr;
       this->update_pe_buf_pending_size(0, rq_type);      
       //__if (rq_type == ch_rd_request::x_masks) (
       //  state.next = ch_rd_req_state::get_x_mask;
@@ -125,8 +147,8 @@ void spmv_lsu::read_req_thread() {
       // TODO: check if we have space in destination buffer
       pe_[1].rd_req_ack.next = io.pe[1].rd_req.ack;
       const auto& rq_type = io.pe[1].rd_req.type;
-      m_qpi_out.next.rd_req.mdata = ch_rd_mdata_t(rq_type, ch_rq_owner::PE1);
-      m_qpi_out.next.rd_req.addr = get_baseaddr(rq_type) + io.pe[1].rd_req.addr;
+      qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::PE1, rq_type);
+      qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.pe[1].rd_req.addr;
       this->update_pe_buf_pending_size(1, rq_type);
       //__if (rq_type == ch_rd_request::x_masks) (
       //  state.next = ch_rd_req_state::get_x_mask;
@@ -144,13 +166,13 @@ void spmv_lsu::read_req_thread() {
   )
   __case (ch_rd_req_state::ping_ctrl) (
     // check if a resuest is pending and we have space in destination buffer
-    __if ((m_ctrl.get_lsu_rd_req_ack() != ctrl_.rd_req_ack)
-       && (m_pbuf_pending_size != PBUF_SIZE)) (
-      ctrl_.rd_req_ack.next = m_ctrl.get_lsu_rd_req_ack();
-      const auto& rq_type = m_ctrl.get_lsu_rd_req_type();
-      m_qpi_out.next.rd_req.mdata = ch_rd_mdata_t(rq_type, ch_rq_owner::ctrl);
-      m_qpi_out.next.rd_req.addr = get_baseaddr(rq_type) + m_ctrl.get_lsu_rd_req_addr();
-      m_pbuf_pending_size.next = m_pbuf_pending_size + 1 - ch_zext<32>(m_ctrl.get_pbuf_dequeue());
+    __if ((io.ctrl.rd_req.ack != ctrl_.rd_req_ack)
+       && (ctrl_.pbuf_pending_size != PBUF_SIZE)) (
+      ctrl_.rd_req_ack.next = io.ctrl.rd_req.ack;
+      const auto& rq_type = io.ctrl.rd_req.type;
+      qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::ctrl, rq_type);
+      qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.ctrl.rd_req.addr;
+      ctrl_.pbuf_pending_size.next = ctrl_.pbuf_pending_size + 1 - ch_zext<32>(io.ctrl.pbuf.ready);
       state.next = ch_rd_req_state::submit;
     )
     __else (
@@ -159,11 +181,10 @@ void spmv_lsu::read_req_thread() {
   )
   __case (ch_rd_req_state::submit) (
     // wait for QPI request ready
-    __if (!m_qpi_in.rd_req_almostfull) (
-      m_qpi_out.next.rd_req.valid = true;
-      ch_rd_mdata_t mdata(m_qpi_out.rd_req.mdata);
+    __if (!io.qpi.rd_req.almostfull) (
+      qpi_rd_req_valid.next = true;
       // move next
-      __switch (mdata.owner) (
+      __switch (qpi_rd_req_mdata.owner) (
       __case (ch_rq_owner::PE0) (
         state.next = ch_rd_req_state::ping_PE1;    
       )
@@ -182,23 +203,17 @@ void spmv_lsu::read_req_thread() {
   //  //--
   //)
   __default (
-    state.next = state;
-    m_pbuf_pending_size.next = m_pbuf_pending_size - ch_zext<32>(m_ctrl.get_pbuf_dequeue());
-    ctrl_.rd_req_ack.next = ctrl_.rd_req_ack;
+    ctrl_.pbuf_pending_size.next = ctrl_.pbuf_pending_size - ch_zext<32>(io.ctrl.pbuf.ready);
     for (int i = 0; i < PE_COUNT; ++i) {
-      m_pe_rd_req_ack[i].next = m_pe_rd_req_ack[i];
-      
-      m_axbuf_pending_size[i].next = m_axbuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_axbuf_dequeue());
-      m_asbuf_pending_size[i].next = m_asbuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_asbuf_dequeue());
-      m_aybuf_pending_size[i].next = m_aybuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_aybuf_dequeue());
-      m_avbuf_pending_size[i].next = m_avbuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_avbuf_dequeue());
-      m_xvbuf_pending_size[i].next = m_xvbuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_xvbuf_dequeue());
-      m_xmbuf_pending_size[i].next = m_xmbuf_pending_size[i] - ch_zext<32>(m_PEs[i]->get_xmbuf_dequeue());
-    }    
-    m_qpi_out.next.rd_req.addr  = m_qpi_out.rd_req.addr;
-    m_qpi_out.next.rd_req.mdata = m_qpi_out.rd_req.mdata;    
-    m_qpi_out.next.rd_req.valid = false; // off by default
-  ));  
+      pe_[i].axbuf_pending_size.next = pe_[i].axbuf_pending_size - ch_zext<32>(io.pe[i].axbuf.ready);
+      pe_[i].asbuf_pending_size.next = pe_[i].asbuf_pending_size - ch_zext<32>(io.pe[i].asbuf.ready);
+      pe_[i].aybuf_pending_size.next = pe_[i].aybuf_pending_size - ch_zext<32>(io.pe[i].aybuf.ready);
+      pe_[i].avbuf_pending_size.next = pe_[i].avbuf_pending_size - ch_zext<32>(io.pe[i].avbuf.ready);
+      pe_[i].xvbuf_pending_size.next = pe_[i].xvbuf_pending_size - ch_zext<32>(io.pe[i].xvbuf.ready);
+      pe_[i].xmbuf_pending_size.next = pe_[i].xmbuf_pending_size - ch_zext<32>(io.pe[i].xmbuf.ready);
+    }
+    qpi_rd_req_valid.next = false; // off by default
+  ));
     
   /*//--
   ch_print("{0}: lsu_rd_req: state={1}, ctrl_req={2}, pe0_req={3}, pe1_req={4}, ctrl_ack={5}, pe0_ack={6}, pe1_ack={7}, submit={8}, addr={9}, mdata={10}",
@@ -207,29 +222,36 @@ void spmv_lsu::read_req_thread() {
            io.pe[0].rd_req.ack != pe_[0].rd_req_ack,
            io.pe[1].rd_req.ack != pe_[1].rd_req_ack,
            ctrl_.rd_req_ack, pe_[0].rd_req_ack, pe_[1].rd_req_ack,
-           m_qpi_out.rd_req.valid, m_qpi_out.rd_req.addr, m_qpi_out.rd_req.mdata);*/
+           io.qpi.rd_req.valid, io.qpi.rd_req.addr, io.qpi.rd_req.mdata);*/
 } 
 
 void spmv_lsu::write_req_thread() {
   ch_seq<ch_wr_req_state> state;
+
+  ch_seq<ch_wr_mdata_t> qpi_wr_req_mdata;
+  io.qpi.wr_req.mdata = ch_zext<aal::aal_qpi0::mdata_width>(qpi_wr_req_mdata.asBits());
+
+  auto qpi_wr_req_addr  = io.qpi.wr_req.addr.asSeq();
+  auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
+  auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
   
-  auto wr_rsp_cnt = ch_select(m_qpi_in.wr_rsp0.valid & m_qpi_in.wr_rsp1.valid, 0x2_h32)
-                                  (m_qpi_in.wr_rsp0.valid | m_qpi_in.wr_rsp1.valid, 0x1_h32)(0);
+  auto wr_rsp_cnt = ch_select(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
+                                  (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
   
   __switch (state) (
   __case (ch_wr_req_state::ping_PE0) (
     __if (io.pe[0].wr_req.ack != pe_[0].wr_req_ack) (
       pe_[0].wr_req_ack.next = io.pe[0].wr_req.ack;
       const auto& rq_type = io.pe[0].wr_req.type;
-      m_qpi_out.next.wr_req.data = io.pe[0].wr_req.data;
-      m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(rq_type, ch_rq_owner::PE0);
-      m_qpi_out.next.wr_req.addr = get_baseaddr(rq_type) + io.pe[0].wr_req.addr;
+      qpi_wr_req_data.next = io.pe[0].wr_req.data;
+      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE0, rq_type);
+      qpi_wr_req_addr.next = get_baseaddr(rq_type) + io.pe[0].wr_req.addr;
       __if (rq_type == ch_wr_request::y_masks) (
         m_pe_writemask_in.next = m_pe0_writemask;
         state.next = ch_wr_req_state::writemask;
       )
       __else (
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         state.next = ch_wr_req_state::submit;
       );
     )
@@ -244,15 +266,15 @@ void spmv_lsu::write_req_thread() {
     __if (io.pe[1].wr_req.ack != pe_[1].wr_req_ack) (
       pe_[1].wr_req_ack.next = io.pe[1].wr_req.ack;
       const auto& rq_type = io.pe[1].wr_req.type;
-      m_qpi_out.next.wr_req.data = io.pe[1].wr_req.data;
-      m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(rq_type, ch_rq_owner::PE1);
-      m_qpi_out.next.wr_req.addr = get_baseaddr(rq_type) + io.pe[1].wr_req.addr;
+      qpi_wr_req_data.next = io.pe[1].wr_req.data;
+      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE1, rq_type);
+      qpi_wr_req_addr.next = get_baseaddr(rq_type) + io.pe[1].wr_req.addr;
       __if (rq_type == ch_wr_request::y_masks) (
         m_pe_writemask_in.next = m_pe1_writemask;
         state.next = ch_wr_req_state::writemask;
       )
       __else (
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         state.next = ch_wr_req_state::submit;
       );
     )
@@ -261,17 +283,17 @@ void spmv_lsu::write_req_thread() {
     );
   )
   __case (ch_wr_req_state::ping_ctrl) (
-    __if (m_ctrl.get_lsu_wr_req_ack() != ctrl_.wr_req_ack) (
-      ctrl_.wr_req_ack.next = m_ctrl.get_lsu_wr_req_ack();
-      const auto& rq_type = m_ctrl.get_lsu_wr_req_type();
-      m_qpi_out.next.wr_req.data = m_ctrl.get_lsu_wr_req_data();
-      m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(rq_type, ch_rq_owner::ctrl);
-      m_qpi_out.next.wr_req.addr = get_baseaddr(rq_type) + m_ctrl.get_lsu_wr_req_addr();
+    __if (io.ctrl.wr_req.ack != ctrl_.wr_req_ack) (
+      ctrl_.wr_req_ack.next = io.ctrl.wr_req.ack;
+      const auto& rq_type = io.ctrl.wr_req.type;
+      qpi_wr_req_data.next = io.ctrl.wr_req.data;
+      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, rq_type);
+      qpi_wr_req_addr.next = get_baseaddr(rq_type) + io.ctrl.wr_req.addr;
       __if (rq_type == ch_wr_request::y_masks) (
         state.next = ch_wr_req_state::flush_writemask1;
       )
       __else (
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         state.next = ch_wr_req_state::submit;
       );
     )
@@ -281,9 +303,9 @@ void spmv_lsu::write_req_thread() {
   )
   __case (ch_wr_req_state::submit) (
     // wait for QPI request ready
-    __if (!m_qpi_in.wr_req_almostfull) (
-      m_qpi_out.next.wr_req.valid = true;      
-      ch_wr_mdata_t mdata(m_qpi_out.wr_req.mdata);
+    __if (!io.qpi.wr_req.almostfull) (
+      qpi_wr_req_valid.next = true;
+      ch_wr_mdata_t mdata(qpi_wr_req_mdata);
       // move next
       __switch (mdata.owner) (
       __case (ch_rq_owner::PE0) (
@@ -300,15 +322,15 @@ void spmv_lsu::write_req_thread() {
   __case (ch_wr_req_state::writemask) (
     // wait for the writemask controller to complete
     __if (m_writemask_state == ch_writemask_state::done) (
-      ch_wr_mdata_t mdata(m_qpi_out.wr_req.mdata);
+      ch_wr_mdata_t mdata(qpi_wr_req_mdata);
       __switch (mdata.owner) (
       __case (ch_rq_owner::PE0) (
         m_pe0_writemask.next = m_pe_writemask_out; // update mask assignment
         __if (m_writemask_flush_enable) (
-          m_qpi_out.next.wr_req.data = m_writemask_flush;
-          m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::PE0);
-          m_qpi_out.next.wr_req.addr = m_writemask_flush_addr;
-          m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+          qpi_wr_req_data.next = m_writemask_flush;
+          qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE0, ch_wr_request::y_masks);
+          qpi_wr_req_addr.next = m_writemask_flush_addr;
+          outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
           state.next = ch_wr_req_state::submit;    
         )
         __else (
@@ -319,10 +341,10 @@ void spmv_lsu::write_req_thread() {
       __case (ch_rq_owner::PE1) (
         m_pe1_writemask.next = m_pe_writemask_out; // update mask assignment
         __if (m_writemask_flush_enable) (
-          m_qpi_out.next.wr_req.data = m_writemask_flush;
-          m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::PE1);
-          m_qpi_out.next.wr_req.addr = m_writemask_flush_addr;
-          m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+          qpi_wr_req_data.next = m_writemask_flush;
+          qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE1, ch_wr_request::y_masks);
+          qpi_wr_req_addr.next = m_writemask_flush_addr;
+          outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
           state.next = ch_wr_req_state::submit;    
         )
         __else (
@@ -336,36 +358,36 @@ void spmv_lsu::write_req_thread() {
     // check if both writemasks are dirty
     __if ((m_writemask0_owners & m_writemask1_owners) != 0) (
       // wait for QPI request ready
-      __if (!m_qpi_in.wr_req_almostfull) (
-        m_qpi_out.next.wr_req.data = m_writemask0;
-        m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::ctrl);
-        m_qpi_out.next.wr_req.addr = m_writemask0_addr;
-        m_qpi_out.next.wr_req.valid = true;
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+      __if (!io.qpi.wr_req.almostfull) (
+        qpi_wr_req_data.next = m_writemask0;
+        qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, ch_wr_request::y_masks);
+        qpi_wr_req_addr.next = m_writemask0_addr;
+        qpi_wr_req_valid.next = true;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         // flush the other mask
         state.next = ch_wr_req_state::flush_writemask2;
       );
     )
     __elif (m_writemask0_owners != 0) (
       // wait for QPI request ready
-      __if (!m_qpi_in.wr_req_almostfull) (
-        m_qpi_out.next.wr_req.data = m_writemask0;
-        m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::ctrl);
-        m_qpi_out.next.wr_req.addr = m_writemask0_addr;
-        m_qpi_out.next.wr_req.valid = true;
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+      __if (!io.qpi.wr_req.almostfull) (
+        qpi_wr_req_data.next = m_writemask0;
+        qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, ch_wr_request::y_masks);
+        qpi_wr_req_addr.next = m_writemask0_addr;
+        qpi_wr_req_valid.next = true;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         // move next
         state.next = ch_wr_req_state::ping_PE0;
       );
     )
     __elif (m_writemask1_owners != 0) (
       // wait for QPI request ready
-      __if (!m_qpi_in.wr_req_almostfull) (
-        m_qpi_out.next.wr_req.data = m_writemask1;
-        m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::ctrl);
-        m_qpi_out.next.wr_req.addr = m_writemask1_addr;
-        m_qpi_out.next.wr_req.valid = true;
-        m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+      __if (!io.qpi.wr_req.almostfull) (
+        qpi_wr_req_data.next = m_writemask1;
+        qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, ch_wr_request::y_masks);
+        qpi_wr_req_addr.next = m_writemask1_addr;
+        qpi_wr_req_valid.next = true;
+        outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
         // move next
         state.next = ch_wr_req_state::ping_PE0;
       );
@@ -377,45 +399,32 @@ void spmv_lsu::write_req_thread() {
   )
   __case (ch_wr_req_state::flush_writemask2) (
     // wait for QPI request ready
-    __if (!m_qpi_in.wr_req_almostfull) (
-      m_qpi_out.next.wr_req.data = m_writemask1;
-      m_qpi_out.next.wr_req.mdata = ch_wr_mdata_t(ch_wr_request::y_masks, ch_rq_owner::ctrl);
-      m_qpi_out.next.wr_req.addr = m_writemask1_addr;
-      m_qpi_out.next.wr_req.valid = true;
-      m_outstanding_writes.next = m_outstanding_writes + 1 - wr_rsp_cnt;
+    __if (!io.qpi.wr_req.almostfull) (
+      qpi_wr_req_data.next = m_writemask1;
+      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, ch_wr_request::y_masks);
+      qpi_wr_req_addr.next = m_writemask1_addr;
+      qpi_wr_req_valid.next = true;
+      outstanding_writes_.next = outstanding_writes_ + 1 - wr_rsp_cnt;
       state.next = ch_wr_req_state::ping_PE0;
     );     
   )
   __default (
-    state.next = state;
-    ctrl_.wr_req_ack.next = ctrl_.wr_req_ack;
-    for (int i = 0; i < PE_COUNT; ++i) {
-      m_pe_wr_req_ack[i].next = m_pe_wr_req_ack[i];
-    }    
-    m_qpi_out.next.wr_req.addr  = m_qpi_out.wr_req.addr;
-    m_qpi_out.next.wr_req.mdata = m_qpi_out.wr_req.mdata;
-    m_qpi_out.next.wr_req.data  = m_qpi_out.wr_req.data;
-    m_qpi_out.next.wr_req.valid = false; // off by default
-    
-    m_pe0_writemask.next = m_pe0_writemask;
-    m_pe1_writemask.next = m_pe1_writemask;
-    m_pe_writemask_in.next = m_pe_writemask_in;
-    
-    m_outstanding_writes.next = m_outstanding_writes - wr_rsp_cnt;
-  ));
-    
+    qpi_wr_req_valid.next = false; // off by default
+    outstanding_writes_.next = outstanding_writes_ - wr_rsp_cnt;
+  ));    
+
   m_wr_req_state = state;
     
   /*//--
   ch_print("{0}: lsu_wr_req: state={1}, ctrl_ack={2}, pe0_ack={3}, pe1_ack={4}, submit={5}, addr={6}, mdata={7}, data={8}",
            ch_getTick(), state, ctrl_.wr_req_ack, pe_[0].wr_req_ack, pe_[1].wr_req_ack,
-           m_qpi_out.wr_req.valid, m_qpi_out.wr_req.addr, m_qpi_out.wr_req.mdata, m_qpi_out.wr_req.data);*/
+           io.qpi.wr_req.valid, io.qpi.wr_req.addr, io.qpi.wr_req.mdata, io.qpi.wr_req.data);*/
 }
 
 void spmv_lsu::writemask_thread() {
   ch_seq<ch_writemask_state> state;
   
-  ch_wr_mdata_t mdata(m_qpi_out.wr_req.mdata);
+  auto mdata = io.qpi.wr_req.mdata.slice<ch_bitwidth_v<ch_wr_mdata_t>>().as<ch_wr_mdata_t>();
   ch_bit<2> owner_mask = ch_select(mdata.owner == ch_rq_owner::PE0, 01_b2, 10_b2);
   
   __switch (state) (
@@ -431,9 +440,9 @@ void spmv_lsu::writemask_thread() {
   )
   __case (ch_writemask_state::check_mask0) (
     // check if address matches    
-    __if (m_writemask0_addr == m_qpi_out.wr_req.addr) (
+    __if (m_writemask0_addr == io.qpi.wr_req.addr) (
       // update the block and we are done
-      m_writemask0.next = m_writemask0 | m_qpi_out.wr_req.data;       
+      m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
       m_writemask0_owners.next = m_writemask0_owners | owner_mask;
       m_pe_writemask_out.next = 0;
       state.next = ch_writemask_state::done;
@@ -448,19 +457,19 @@ void spmv_lsu::writemask_thread() {
           m_writemask_flush_addr.next = m_writemask0_addr;
           m_writemask_flush_enable.next = true;
           // check if the other block address matches
-          __if (m_writemask1_addr == m_qpi_out.wr_req.addr) (
+          __if (m_writemask1_addr == io.qpi.wr_req.addr) (
             // clear current block ownership
             m_writemask0_owners.next = 0;          
             // update the other block and we are done
-            m_writemask1.next = m_writemask1 | m_qpi_out.wr_req.data;
+            m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
             m_writemask1_owners.next = m_writemask1_owners | owner_mask;
             m_pe_writemask_out.next = 1;
             state.next = ch_writemask_state::done;
           )
           __else (
             // overwrite current block and we are done
-            m_writemask0_addr.next = m_qpi_out.wr_req.addr;          
-            m_writemask0.next = m_qpi_out.wr_req.data;
+            m_writemask0_addr.next = io.qpi.wr_req.addr;
+            m_writemask0.next = io.qpi.wr_req.data;
             //m_writemask0_owners.next = owner_mask; - keep the ownerhip
             m_pe_writemask_out.next = 0;
             state.next = ch_writemask_state::done;     
@@ -471,8 +480,8 @@ void spmv_lsu::writemask_thread() {
           m_writemask0_owners.next = m_writemask0_owners & ~owner_mask;
           // if current block still in use, the other block should be free
           // overwrite the other block and we are done
-          m_writemask1_addr.next = m_qpi_out.wr_req.addr;
-          m_writemask1.next = m_qpi_out.wr_req.data;
+          m_writemask1_addr.next = io.qpi.wr_req.addr;
+          m_writemask1.next = io.qpi.wr_req.data;
           m_writemask1_owners.next = owner_mask;
           m_pe_writemask_out.next = 1;
           state.next = ch_writemask_state::done;     
@@ -481,9 +490,9 @@ void spmv_lsu::writemask_thread() {
       __else (
         // we don't own the assigned block (happens at start up)
         // check if the other block address matches
-        __if (m_writemask1_addr == m_qpi_out.wr_req.addr) (
+        __if (m_writemask1_addr == io.qpi.wr_req.addr) (
           // update the other block and we are done
-          m_writemask1.next = m_writemask1 | m_qpi_out.wr_req.data;
+          m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
           m_writemask1_owners.next = m_writemask1_owners | owner_mask;
           m_pe_writemask_out.next = 1;
           state.next = ch_writemask_state::done;
@@ -492,8 +501,8 @@ void spmv_lsu::writemask_thread() {
           // check if current block is free
           __if (m_writemask0_owners == 0) (
             // overwrite current block and we are done
-            m_writemask0_addr.next = m_qpi_out.wr_req.addr;
-            m_writemask0.next = m_qpi_out.wr_req.data;
+            m_writemask0_addr.next = io.qpi.wr_req.addr;
+            m_writemask0.next = io.qpi.wr_req.data;
             m_writemask0_owners.next = owner_mask;
             m_pe_writemask_out.next = 0;
             state.next = ch_writemask_state::done;                     
@@ -501,8 +510,8 @@ void spmv_lsu::writemask_thread() {
           __else (
             // if current block still in use, the other block should be free
             // overwrite the other block and we are done
-            m_writemask1_addr.next = m_qpi_out.wr_req.addr;
-            m_writemask1.next = m_qpi_out.wr_req.data;
+            m_writemask1_addr.next = io.qpi.wr_req.addr;
+            m_writemask1.next = io.qpi.wr_req.data;
             m_writemask1_owners.next = owner_mask;
             m_pe_writemask_out.next = 1;
             state.next = ch_writemask_state::done;          
@@ -513,9 +522,9 @@ void spmv_lsu::writemask_thread() {
   )
   __case (ch_writemask_state::check_mask1) (
     // check if address matches    
-    __if (m_writemask1_addr == m_qpi_out.wr_req.addr) (
+    __if (m_writemask1_addr == io.qpi.wr_req.addr) (
       // update the block and we are done
-      m_writemask1.next = m_writemask1 | m_qpi_out.wr_req.data;
+      m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
       m_writemask1_owners.next = m_writemask1_owners | owner_mask;
       m_pe_writemask_out.next = 1;
       state.next = ch_writemask_state::done;
@@ -530,19 +539,19 @@ void spmv_lsu::writemask_thread() {
           m_writemask_flush_addr.next = m_writemask1_addr;
           m_writemask_flush_enable.next = true;
           // check if the other block address matches
-          __if (m_writemask0_addr == m_qpi_out.wr_req.addr) (
+          __if (m_writemask0_addr == io.qpi.wr_req.addr) (
             // clear current block ownership
             m_writemask1_owners.next = 0;          
             // update the other block and we are done
-            m_writemask0.next = m_writemask0 | m_qpi_out.wr_req.data;
+            m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
             m_writemask0_owners.next = m_writemask0_owners | owner_mask;
             m_pe_writemask_out.next = 0;
             state.next = ch_writemask_state::done;
           )
           __else (
             // overwrite current block and we are done
-            m_writemask1_addr.next = m_qpi_out.wr_req.addr;          
-            m_writemask1.next = m_qpi_out.wr_req.data;
+            m_writemask1_addr.next = io.qpi.wr_req.addr;
+            m_writemask1.next = io.qpi.wr_req.data;
             //m_writemask1_owners.next = owner_mask; - keep the ownerhip
             m_pe_writemask_out.next = 1;
             state.next = ch_writemask_state::done;     
@@ -553,8 +562,8 @@ void spmv_lsu::writemask_thread() {
           m_writemask1_owners.next = m_writemask1_owners & ~owner_mask;
           // if current block still in use, the other block should be free
           // overwrite the other block and we are done
-          m_writemask0_addr.next = m_qpi_out.wr_req.addr;
-          m_writemask0.next = m_qpi_out.wr_req.data;
+          m_writemask0_addr.next = io.qpi.wr_req.addr;
+          m_writemask0.next = io.qpi.wr_req.data;
           m_writemask0_owners.next = owner_mask;
           m_pe_writemask_out.next = 0;
           state.next = ch_writemask_state::done;     
@@ -563,9 +572,9 @@ void spmv_lsu::writemask_thread() {
       __else (
         // we don't own the assigned block (happens at start up)
         // check if the other block address matches
-        __if (m_writemask0_addr == m_qpi_out.wr_req.addr) (
+        __if (m_writemask0_addr == io.qpi.wr_req.addr) (
           // update the other block and we are done
-          m_writemask0.next = m_writemask0 | m_qpi_out.wr_req.data;
+          m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
           m_writemask0_owners.next = m_writemask1_owners | owner_mask;
           m_pe_writemask_out.next = 0;
           state.next = ch_writemask_state::done;
@@ -574,8 +583,8 @@ void spmv_lsu::writemask_thread() {
           // check if current block is free
           __if (m_writemask1_owners == 0) (
             // overwrite current block and we are done
-            m_writemask1_addr.next = m_qpi_out.wr_req.addr;
-            m_writemask1.next = m_qpi_out.wr_req.data;
+            m_writemask1_addr.next = io.qpi.wr_req.addr;
+            m_writemask1.next = io.qpi.wr_req.data;
             m_writemask1_owners.next = owner_mask;
             m_pe_writemask_out.next = 1;
             state.next = ch_writemask_state::done;                     
@@ -583,8 +592,8 @@ void spmv_lsu::writemask_thread() {
           __else (
             // if current block still in use, the other block should be free
             // overwrite the other block and we are done
-            m_writemask0_addr.next = m_qpi_out.wr_req.addr;
-            m_writemask0.next = m_qpi_out.wr_req.data;
+            m_writemask0_addr.next = io.qpi.wr_req.addr;
+            m_writemask0.next = io.qpi.wr_req.data;
             m_writemask0_owners.next = owner_mask;
             m_pe_writemask_out.next = 0;
             state.next = ch_writemask_state::done;          
@@ -617,72 +626,67 @@ void spmv_lsu::writemask_thread() {
   /*ch_print("{0}: writemask: state={1}, m_i={2}, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
              ch_getTick(), state, 
              m_pe_writemask_in, m_pe_writemask_out, m_writemask0_addr, m_writemask0_owners, m_writemask1_addr, m_writemask1_owners, m_writemask0, m_writemask1,
-             m_qpi_out.wr_req.mdata.slice<2>(), m_qpi_out.wr_req.addr,
+             io.qpi.wr_req.mdata.slice<2>(), io.qpi.wr_req.addr,
              m_writemask_flush_enable, m_writemask_flush_addr, m_writemask_flush);*/
 }
 
 void spmv_lsu::read_rsp_thread() {
-  __if (m_qpi_in.rd_rsp.valid) (
-    ch_rd_mdata_t mdata = m_qpi_in.rd_rsp.mdata;
+  auto mdata = io.qpi.rd_rsp.mdata.slice<ch_bitwidth_v<ch_rd_mdata_t>>().as<ch_rd_mdata_t>();
+  __if (io.qpi.rd_rsp.valid) (    
     __switch (mdata.owner) (
     __case (ch_rq_owner::PE0) (
       __switch (mdata.type) (
-      __case (ch_rd_request::a_xindices) (pe_[0].axbuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_ystarts) (pe_[0].asbuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_yindices) (pe_[0].aybuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_values) (pe_[0].avbuf.enq_valid(1_b);)
-      __case (ch_rd_request::x_values) (pe_[0].xvbuf.enq_valid(1_b);)
-      __case (ch_rd_request::x_masks) (pe_[0].xmbuf.enq_valid(1_b);)
+      __case (ch_rd_request::a_xindices) (pe_[0].axbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_ystarts) (pe_[0].asbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_yindices) (pe_[0].aybuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_values) (pe_[0].avbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_values) (pe_[0].xvbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_masks) (pe_[0].xmbuf.io.enq.valid = true;)
       );
       pe_[0].rd_rsp_type.next = mdata.type;
       pe_[0].rd_rsp_valid.next = pe_[0].rd_req_ack;
     )
     __case (ch_rq_owner::PE1) (
       __switch (mdata.type) (
-      __case (ch_rd_request::a_xindices) (pe_[1].axbuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_ystarts) (pe_[1].asbuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_yindices) (pe_[1].aybuf.enq_valid(1_b);)
-      __case (ch_rd_request::a_values) (pe_[1].avbuf.enq_valid(1_b);)
-      __case (ch_rd_request::x_values) (pe_[1].xvbuf.enq_valid(1_b);)
-      __case (ch_rd_request::x_masks) (pe_[1].xmbuf.enq_valid(1_b);)
+      __case (ch_rd_request::a_xindices) (pe_[1].axbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_ystarts) (pe_[1].asbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_yindices) (pe_[1].aybuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_values) (pe_[1].avbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_values) (pe_[1].xvbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_masks) (pe_[1].xmbuf.io.enq.valid = true;)
       );
       pe_[1].rd_rsp_type.next = mdata.type;
       pe_[1].rd_rsp_valid.next = pe_[1].rd_req_ack;
     )
     __default (
-      m_pbuf.enq_valid(1_b);
+      ctrl_.pbuf.io.enq.valid = true;
       ctrl_.rd_rsp_type.next = mdata.type;
       ctrl_.rd_rsp_valid.next = ctrl_.rd_req_ack;
     ));    
   )
   __else (
-    m_pbuf.enq_valid(0_b);
-    ctrl_.rd_rsp_valid.next = ctrl_.rd_rsp_valid;
-    ctrl_.rd_rsp_type.next = ctrl_.rd_rsp_type;
+    ctrl_.pbuf.io.enq.valid = false;
     for (int i = 0; i < PE_COUNT; ++i) {
-      m_pe_rd_rsp_valid[i].next = m_pe_rd_rsp_valid[i];
-      m_pe_rd_rsp_type[i].next = m_pe_rd_rsp_type[i];
-      m_pe_axbuf[i].enq_valid(0_b);
-      m_pe_asbuf[i].enq_valid(0_b);
-      m_pe_aybuf[i].enq_valid(0_b);
-      m_pe_avbuf[i].enq_valid(0_b);
-      m_pe_xvbuf[i].enq_valid(0_b);
-      m_pe_xmbuf[i].enq_valid(0_b);
+      pe_[i].axbuf.io.enq.valid = false;
+      pe_[i].asbuf.io.enq.valid = false;
+      pe_[i].aybuf.io.enq.valid = false;
+      pe_[i].avbuf.io.enq.valid = false;
+      pe_[i].xvbuf.io.enq.valid = false;
+      pe_[i].xmbuf.io.enq.valid = false;
     }
-  ); 
+  );
     
   /*//--
   ch_print("{0}: lsu_rd_rsp: ctrl_ack={1}, pe0_ack={2}, pe1_ack={3}, pbuf_enq={4}, rsp_mdat={5}, rsp_dat={6}",
            ch_getTick(), ctrl_.rd_rsp_valid, pe_[0].rd_rsp_valid, pe_[1].rd_rsp_valid,
-           m_pbuf.enq_valid(), m_qpi_in.rd_rsp.mdata, m_qpi_in.rd_rsp.data);*/
+           m_pbuf.enq_valid(), io.qpi.rd_rsp.mdata, io.qpi.rd_rsp.data);*/
 }
 
 void spmv_lsu::write_rsp0_thread() {
   // QPI write responses can come from either channel0 or channel 1
   // we need to check both channels for a specific owner
-  
-  __if (m_qpi_in.wr_rsp0.valid) (
-    ch_wr_mdata_t mdata = m_qpi_in.wr_rsp0.mdata;
+  auto mdata = io.qpi.wr_rsp0.mdata.slice<ch_bitwidth_v<ch_wr_mdata_t>>().as<ch_wr_mdata_t>();
+  __if (io.qpi.wr_rsp0.valid) (
     __switch (mdata.owner) (
     __case (ch_rq_owner::PE0) (
       pe_[0].wr_rsp0_type.next = mdata.type;
@@ -698,12 +702,7 @@ void spmv_lsu::write_rsp0_thread() {
     ));        
   )
   __else (
-    ctrl_.wr_rsp0_ack.next = ctrl_.wr_rsp0_ack;
-    ctrl_.wr_rsp0_type.next = ctrl_.wr_rsp0_type;
-    for (int i = 0; i < PE_COUNT; ++i) {
-      m_pe_wr_rsp0_ack[i].next = m_pe_wr_rsp0_ack[i];
-      m_pe_wr_rsp0_type[i].next = m_pe_wr_rsp0_type[i];
-    }
+    //--
   );
 
   /*
@@ -711,12 +710,12 @@ void spmv_lsu::write_rsp0_thread() {
            ch_getTick(), ctrl_.wr_rsp0_ack, ctrl_.wr_rsp1_ack,
            pe_[0].wr_rsp0_ack, pe_[0].wr_rsp1_ack,
            pe_[1].wr_rsp0_ack, pe_[1].wr_rsp1_ack,
-           (m_qpi_in.wr_rsp0.valid, m_qpi_in.wr_rsp1.valid), m_qpi_in.wr_rsp0.mdata, m_qpi_in.wr_rsp1.mdata);*/
+           (io.qpi.wr_rsp0.valid, io.qpi.wr_rsp1.valid), io.qpi.wr_rsp0.mdata, io.qpi.wr_rsp1.mdata);*/
 }
 
 void spmv_lsu::write_rsp1_thread() {
-  __if (m_qpi_in.wr_rsp1.valid) (
-    ch_wr_mdata_t mdata = m_qpi_in.wr_rsp1.mdata;
+  auto mdata = io.qpi.wr_rsp1.mdata.slice<ch_bitwidth_v<ch_wr_mdata_t>>().as<ch_wr_mdata_t>();
+  __if (io.qpi.wr_rsp1.valid) (
     __switch (mdata.owner) (
     __case (ch_rq_owner::PE0) (
       pe_[0].wr_rsp1_type.next = mdata.type;
@@ -732,12 +731,7 @@ void spmv_lsu::write_rsp1_thread() {
     ));
   )
   __else (
-    ctrl_.wr_rsp1_ack.next = ctrl_.wr_rsp1_ack;
-    ctrl_.wr_rsp1_type.next = ctrl_.wr_rsp1_type;
-    for (int i = 0; i < PE_COUNT; ++i) {
-      m_pe_wr_rsp1_ack[i].next = m_pe_wr_rsp1_ack[i];
-      m_pe_wr_rsp1_type[i].next = m_pe_wr_rsp1_type[i];
-    }
+    //--
   );
 
   /*
@@ -745,19 +739,19 @@ void spmv_lsu::write_rsp1_thread() {
            ch_getTick(), ctrl_.wr_rsp0_ack, ctrl_.wr_rsp1_ack,
            pe_[0].wr_rsp0_ack, pe_[0].wr_rsp1_ack,
            pe_[1].wr_rsp0_ack, pe_[1].wr_rsp1_ack,
-           (m_qpi_in.wr_rsp0.valid, m_qpi_in.wr_rsp1.valid), m_qpi_in.wr_rsp0.mdata, m_qpi_in.wr_rsp1.mdata);*/
+           (io.qpi.wr_rsp0.valid, io.qpi.wr_rsp1.valid), io.qpi.wr_rsp0.mdata, io.qpi.wr_rsp1.mdata);*/
 }
 
 ch_blk_addr spmv_lsu::get_baseaddr(const ch_rd_request& rq_type) {
   ch_blk_addr addr;
   __switch (rq_type) (
-  __case (ch_rd_request::a_partition) (addr = m_ctx.a.partitions;)
-  __case (ch_rd_request::a_xindices)  (addr = m_ctx.a.xindices;)
-  __case (ch_rd_request::a_ystarts)   (addr = m_ctx.a.ystarts;)
-  __case (ch_rd_request::a_yindices)  (addr = m_ctx.a.yindices;)
-  __case (ch_rd_request::a_values)    (addr = m_ctx.a.values;)
-  __case (ch_rd_request::x_values)    (addr = m_ctx.x.values;)
-  __default (addr = m_ctx.x.masks;)
+  __case (ch_rd_request::a_partition) (addr = io.ctx.a.partitions;)
+  __case (ch_rd_request::a_xindices)  (addr = io.ctx.a.xindices;)
+  __case (ch_rd_request::a_ystarts)   (addr = io.ctx.a.ystarts;)
+  __case (ch_rd_request::a_yindices)  (addr = io.ctx.a.yindices;)
+  __case (ch_rd_request::a_values)    (addr = io.ctx.a.values;)
+  __case (ch_rd_request::x_values)    (addr = io.ctx.x.values;)
+  __default                           (addr = io.ctx.x.masks;)
   );
   return addr;
 }
@@ -765,9 +759,9 @@ ch_blk_addr spmv_lsu::get_baseaddr(const ch_rd_request& rq_type) {
 ch_blk_addr spmv_lsu::get_baseaddr(const ch_wr_request& rq_type) {
   ch_blk_addr addr;
   __switch (rq_type) (
-  __case (ch_wr_request::y_values)   (addr = m_ctx.y.values;)
-  __case (ch_wr_request::y_masks)    (addr = m_ctx.y.masks;)
-  __default (addr = m_ctx.hwcntrs;)
+  __case (ch_wr_request::y_values)   (addr = io.ctx.y.values;)
+  __case (ch_wr_request::y_masks)    (addr = io.ctx.y.masks;)
+  __default                          (addr = io.ctx.hwcntrs;)
   );
   return addr;
 }

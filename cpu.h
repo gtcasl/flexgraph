@@ -90,7 +90,7 @@ private:
   
   void check_output(const float* values, const uint32_t* masks, bool debug);
   
-  ch_module<accelerator::spmv_device> m_accelerator;
+  ch_device<accelerator::spmv_device> m_accelerator;
 
   std::list<request_t*> m_qpi_read_requests;
   std::list<request_t*> m_qpi_write_requests;
