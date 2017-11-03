@@ -360,8 +360,5 @@ void cpu_device::dump_stats(ch_tick t) {
   DbgPrint(0,"PE1 matrix values stalls = %d\n", (uint32_t)hwcntrs.PE1.a_values_stalls);
   DbgPrint(0,"PE1 vertex masks stalls = %d\n", (uint32_t)hwcntrs.PE1.x_masks_stalls);
 
-  CHECK(712 == t);
-  CHECK(580 == hwcntrs.PE0.min_latency);
-  CHECK(580 == hwcntrs.PE0.max_latency);
-  CHECK(36  == hwcntrs.PE0.execute_latency);
+  CHECK(19658 == t);
 }

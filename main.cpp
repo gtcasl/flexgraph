@@ -9,7 +9,7 @@ using namespace spmv;
 #define CPU_FREQ (2.3e9)
 
 int verbose = 0;
-int run_ticks = 10000000;
+int run_ticks = 1000000;
 const char* mtx_file = "sample.mtx";
 
 namespace spmv {

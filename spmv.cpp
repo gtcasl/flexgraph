@@ -39,10 +39,6 @@ spmv_device::~spmv_device() {
 }
 
 void spmv_device::describe() {
-  // print the context block
-  ch_print("{0}: ctx.a.numparts={1}, ctx.a.partitions={2}",
-              ch_getTick(), io.ctx.a.numparts, io.ctx.a.partitions);
-
   // timer
   ch_seq<ch_bit64> timer;
   timer.next = timer + 1;
@@ -75,9 +71,9 @@ void spmv_device::main_thread() {
   lsu_->io.ctrl.wr_req.data = ch_zext<ch_bitwidth_v<ch_block_t>>(hwcntrs_.asBits());
 
   //--
-  ch_bool all_PEs_ready = (pe_[0]->io.ctrl.start.ack != pe_[0]->io.ctrl.start.syn);
+  ch_bool all_PEs_ready = (pe_[0]->io.ctrl.start.syn == pe_[0]->io.ctrl.start.ack);
   for (int i = 1; i < PE_COUNT; ++i) {
-    all_PEs_ready = ch_clone(all_PEs_ready) & (pe_[i]->io.ctrl.start.ack != pe_[i]->io.ctrl.start.syn);
+    all_PEs_ready = ch_clone(all_PEs_ready) & (pe_[i]->io.ctrl.start.syn == pe_[i]->io.ctrl.start.ack);
   }
       
   // ch_ctrl_state FSM
@@ -94,7 +90,7 @@ void spmv_device::main_thread() {
         state.next = ch_ctrl_state::get_partition;        
       )
       __else (
-       // no work to do!         
+        // no work to do!
         done.next = true; // set done signal
         state.next = ch_ctrl_state::ready;
       );
@@ -152,10 +148,10 @@ void spmv_device::main_thread() {
   //--
   numparts_ = io.ctx.a.numparts.slice<ch_bitwidth_v<ch_ptr>>();
     
-  //--
-  /*ch_print("{0}: ctrl: state={1}, start={2}, done={3}, Bi={4}, Bn={5}, rq_ack={6}, rq_typ={7}, wr_ack={8}, wr_typ={9}",
-           ch_getTick(), state, m_start, done_, part_blk_curr_, part_blk_end_,
-           lsu_.rd_req_syn, lsu_.rd_req_type, lsu_.wr_req_ack, lsu_.wr_req_type);*/
+  /*//--
+  ch_print("{0}: ctrl_main: state={1}, start={2}, done={3}, Bi={4}, Bn={5}, rq_ack={6}, rq_typ={7}, wr_ack={8}, wr_typ={9}",
+           ch_getTick(), state, io.start, done, part_blk_curr_, part_blk_end_,
+           lsu_->io.ctrl.rd_req.syn, lsu_->io.ctrl.rd_req.type, lsu_->io.ctrl.wr_req.syn, lsu_->io.ctrl.wr_req.type);*/
 }
 
 void spmv_device::dispatch_thread() {
@@ -166,8 +162,8 @@ void spmv_device::dispatch_thread() {
   auto pe1_part = pe_[1]->io.ctrl.start.part.asSeq();
 
   //--
-  auto pe0_start_req_syn = pe_[0]->io.ctrl.start.syn.asSeq();
-  auto pe1_start_req_syn = pe_[1]->io.ctrl.start.syn.asSeq();
+  auto pe0_start_syn = pe_[0]->io.ctrl.start.syn.asSeq();
+  auto pe1_start_syn = pe_[1]->io.ctrl.start.syn.asSeq();
   
   // extract partition blocks from lsu buffer into pe_buf
   // extract partition data from pe_buf and give it to the PE's
@@ -189,12 +185,12 @@ void spmv_device::dispatch_thread() {
   )
   __case (ch_dispatch_state::dispatch_PE0) (
     // check if PE0 is ready
-    __if (pe0_start_req_syn != pe_[0]->io.ctrl.start.ack) (
-      pe0_start_req_syn.next = pe_[0]->io.ctrl.start.ack; // send request ack
+    __if (pe0_start_syn == pe_[0]->io.ctrl.start.ack) (
+      pe0_start_syn.next = ~pe0_start_syn; // send start request
       pe0_part.next.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
       part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
       part_curr_.next = part_curr_ + 1; // advance partition
-      ch_print("*** PE0 executing partition {0}", part_curr_);
+      //ch_print("*** PE0 executing partition {0}", part_curr_);
       // check if we still have partitions to process
       __if (part_curr_.next != numparts_) (
         part_buf_size_.next = part_buf_size_ - 1;
@@ -225,12 +221,12 @@ void spmv_device::dispatch_thread() {
   )
   __case (ch_dispatch_state::dispatch_PE1) (
     // check if PE1 is ready
-    __if (pe1_start_req_syn != pe_[1]->io.ctrl.start.ack) (
-      pe1_start_req_syn.next = pe_[1]->io.ctrl.start.ack; // send request ack
+    __if (pe1_start_syn == pe_[1]->io.ctrl.start.ack) (
+      pe1_start_syn.next = ~pe1_start_syn; // send request ack
       pe1_part.next.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
       part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
       part_curr_.next = part_curr_ + 1; // advance partition
-      ch_print("*** PE1 executing partition {0}", part_curr_);
+      //ch_print("*** PE1 executing partition {0}", part_curr_);
       // check if we still have partitions to process
       __if (part_curr_.next != numparts_) (
         part_buf_size_.next = part_buf_size_ - 1;
@@ -259,10 +255,12 @@ void spmv_device::dispatch_thread() {
     lsu_->io.ctrl.pbuf.ready = false; // off by default
   ));
     
-  //--
-  /*ch_print("{0}: disp: state={1}, pe0_rdy={2}, pe1_rdy={3}, p={4}, pbuf_sz={5}, pbuf={6}, part0={7}, part1={8}",
+  /*//--
+  ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, pe1_rdy={3}, p={4}, pbuf_sz={5}, pbuf={6}, part0={7}, part1={8}",
            ch_getTick(), state, 
-           m_PEs[0]->get_ctrl_req_ack() != pe_[0].req_ack,
-           m_PEs[1]->get_ctrl_req_ack() != pe_[1].req_ack,
-           part_curr_, part_buf_size_, part_buf_, pe_[0].parts, pe_[1].parts);*/
+           (pe_[0]->io.ctrl.start.syn == pe_[0]->io.ctrl.start.ack),
+           (pe_[0]->io.ctrl.start.syn == pe_[1]->io.ctrl.start.ack),
+           part_curr_, part_buf_size_, part_buf_,
+           pe_[0]->io.ctrl.start.part.asBits(),
+           pe_[1]->io.ctrl.start.part.asBits());*/
 }

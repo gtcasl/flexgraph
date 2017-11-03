@@ -12,8 +12,11 @@ spmv_lsu::spmv_lsu()
   //
   io.ctrl.rd_req.ack = ctrl_.rd_req_ack;
   io.ctrl.wr_req.ack = ctrl_.wr_req_ack;
+
   io.ctrl.pbuf(ctrl_.pbuf.io.deq);
+
   ctrl_.pbuf.io.enq.data = io.qpi.rd_rsp.data;
+
   io.ctrl.outstanding_writes = outstanding_writes_;
 
   for (int i =0; i < PE_COUNT; ++i) {
@@ -30,7 +33,7 @@ spmv_lsu::spmv_lsu()
     io.pe[i].xvbuf(pe_[i].xvbuf.io.deq);
     io.pe[i].xmbuf(pe_[i].xmbuf.io.deq);
 
-    io.pe[i].avbuf_size(pe_[i].avbuf.io.size);
+    io.pe[i].avbuf_size = pe_[i].avbuf.io.size;
 
     pe_[i].axbuf.io.enq.data = io.qpi.rd_rsp.data;
     pe_[i].asbuf.io.enq.data = io.qpi.rd_rsp.data;
@@ -116,10 +119,9 @@ void spmv_lsu::read_req_thread() {
   
   __switch (state) (
   __case (ch_rd_req_state::ping_PE0) (
-    __if (io.pe[0].rd_req.syn != pe_[0].rd_req_ack
-       && pe0_buf_ready) (
+    __if (pe0_buf_ready && io.pe[0].rd_req.syn != pe_[0].rd_req_ack) (
       // TODO: check if we have space in destination buffer
-      pe_[0].rd_req_ack.next = io.pe[0].rd_req.ack;
+      pe_[0].rd_req_ack.next = io.pe[0].rd_req.syn;
       const auto& rq_type = io.pe[0].rd_req.type;
       qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::PE0, rq_type);
       qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.pe[0].rd_req.addr;
@@ -142,10 +144,9 @@ void spmv_lsu::read_req_thread() {
     );
   )
   __case (ch_rd_req_state::ping_PE1) (
-    __if (io.pe[1].rd_req.syn != pe_[1].rd_req_ack
-       && pe1_buf_ready) (
+    __if (pe1_buf_ready && io.pe[1].rd_req.syn != pe_[1].rd_req_ack) (
       // TODO: check if we have space in destination buffer
-      pe_[1].rd_req_ack.next = io.pe[1].rd_req.ack;
+      pe_[1].rd_req_ack.next = io.pe[1].rd_req.syn;
       const auto& rq_type = io.pe[1].rd_req.type;
       qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::PE1, rq_type);
       qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.pe[1].rd_req.addr;
@@ -166,9 +167,9 @@ void spmv_lsu::read_req_thread() {
   )
   __case (ch_rd_req_state::ping_ctrl) (
     // check if a resuest is pending and we have space in destination buffer
-    __if ((io.ctrl.rd_req.ack != ctrl_.rd_req_ack)
+    __if ((io.ctrl.rd_req.syn != ctrl_.rd_req_ack)
        && (ctrl_.pbuf_pending_size != PBUF_SIZE)) (
-      ctrl_.rd_req_ack.next = io.ctrl.rd_req.ack;
+      ctrl_.rd_req_ack.next = io.ctrl.rd_req.syn;
       const auto& rq_type = io.ctrl.rd_req.type;
       qpi_rd_req_mdata.next = ch_rd_mdata_t(ch_rq_owner::ctrl, rq_type);
       qpi_rd_req_addr.next = get_baseaddr(rq_type) + io.ctrl.rd_req.addr;
@@ -218,9 +219,9 @@ void spmv_lsu::read_req_thread() {
   /*//--
   ch_print("{0}: lsu_rd_req: state={1}, ctrl_req={2}, pe0_req={3}, pe1_req={4}, ctrl_ack={5}, pe0_ack={6}, pe1_ack={7}, submit={8}, addr={9}, mdata={10}",
            ch_getTick(), state,
-           m_ctrl.get_lsu_rd_req_ack() != ctrl_.rd_req_ack,
-           io.pe[0].rd_req.ack != pe_[0].rd_req_ack,
-           io.pe[1].rd_req.ack != pe_[1].rd_req_ack,
+           io.ctrl.rd_req.syn != ctrl_.rd_req_ack,
+           io.pe[0].rd_req.syn != pe_[0].rd_req_ack,
+           io.pe[1].rd_req.syn != pe_[1].rd_req_ack,
            ctrl_.rd_req_ack, pe_[0].rd_req_ack, pe_[1].rd_req_ack,
            io.qpi.rd_req.valid, io.qpi.rd_req.addr, io.qpi.rd_req.mdata);*/
 } 
@@ -240,8 +241,8 @@ void spmv_lsu::write_req_thread() {
   
   __switch (state) (
   __case (ch_wr_req_state::ping_PE0) (
-    __if (io.pe[0].wr_req.ack != pe_[0].wr_req_ack) (
-      pe_[0].wr_req_ack.next = io.pe[0].wr_req.ack;
+    __if (io.pe[0].wr_req.syn != pe_[0].wr_req_ack) (
+      pe_[0].wr_req_ack.next = io.pe[0].wr_req.syn;
       const auto& rq_type = io.pe[0].wr_req.type;
       qpi_wr_req_data.next = io.pe[0].wr_req.data;
       qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE0, rq_type);
@@ -263,8 +264,8 @@ void spmv_lsu::write_req_thread() {
     );
   )
   __case (ch_wr_req_state::ping_PE1) (
-    __if (io.pe[1].wr_req.ack != pe_[1].wr_req_ack) (
-      pe_[1].wr_req_ack.next = io.pe[1].wr_req.ack;
+    __if (io.pe[1].wr_req.syn != pe_[1].wr_req_ack) (
+      pe_[1].wr_req_ack.next = io.pe[1].wr_req.syn;
       const auto& rq_type = io.pe[1].wr_req.type;
       qpi_wr_req_data.next = io.pe[1].wr_req.data;
       qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::PE1, rq_type);
@@ -283,8 +284,8 @@ void spmv_lsu::write_req_thread() {
     );
   )
   __case (ch_wr_req_state::ping_ctrl) (
-    __if (io.ctrl.wr_req.ack != ctrl_.wr_req_ack) (
-      ctrl_.wr_req_ack.next = io.ctrl.wr_req.ack;
+    __if (io.ctrl.wr_req.syn != ctrl_.wr_req_ack) (
+      ctrl_.wr_req_ack.next = io.ctrl.wr_req.syn;
       const auto& rq_type = io.ctrl.wr_req.type;
       qpi_wr_req_data.next = io.ctrl.wr_req.data;
       qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_rq_owner::ctrl, rq_type);
@@ -623,7 +624,8 @@ void spmv_lsu::writemask_thread() {
   
   m_writemask_state = state;
   
-  /*ch_print("{0}: writemask: state={1}, m_i={2}, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
+  /*//--
+  ch_print("{0}: writemask: state={1}, m_i={2}, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
              ch_getTick(), state, 
              m_pe_writemask_in, m_pe_writemask_out, m_writemask0_addr, m_writemask0_owners, m_writemask1_addr, m_writemask1_owners, m_writemask0, m_writemask1,
              io.qpi.wr_req.mdata.slice<2>(), io.qpi.wr_req.addr,
@@ -637,31 +639,31 @@ void spmv_lsu::read_rsp_thread() {
     __case (ch_rq_owner::PE0) (
       __switch (mdata.type) (
       __case (ch_rd_request::a_xindices) (pe_[0].axbuf.io.enq.valid = true;)
-      __case (ch_rd_request::a_ystarts) (pe_[0].asbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_ystarts)  (pe_[0].asbuf.io.enq.valid = true;)
       __case (ch_rd_request::a_yindices) (pe_[0].aybuf.io.enq.valid = true;)
-      __case (ch_rd_request::a_values) (pe_[0].avbuf.io.enq.valid = true;)
-      __case (ch_rd_request::x_values) (pe_[0].xvbuf.io.enq.valid = true;)
-      __case (ch_rd_request::x_masks) (pe_[0].xmbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_values)   (pe_[0].avbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_values)   (pe_[0].xvbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_masks)    (pe_[0].xmbuf.io.enq.valid = true;)
       );
       pe_[0].rd_rsp_type.next = mdata.type;
-      pe_[0].rd_rsp_valid.next = pe_[0].rd_req_ack;
+      pe_[0].rd_rsp_valid.next = io.pe[0].rd_req.ack;
     )
     __case (ch_rq_owner::PE1) (
       __switch (mdata.type) (
       __case (ch_rd_request::a_xindices) (pe_[1].axbuf.io.enq.valid = true;)
-      __case (ch_rd_request::a_ystarts) (pe_[1].asbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_ystarts)  (pe_[1].asbuf.io.enq.valid = true;)
       __case (ch_rd_request::a_yindices) (pe_[1].aybuf.io.enq.valid = true;)
-      __case (ch_rd_request::a_values) (pe_[1].avbuf.io.enq.valid = true;)
-      __case (ch_rd_request::x_values) (pe_[1].xvbuf.io.enq.valid = true;)
-      __case (ch_rd_request::x_masks) (pe_[1].xmbuf.io.enq.valid = true;)
+      __case (ch_rd_request::a_values)   (pe_[1].avbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_values)   (pe_[1].xvbuf.io.enq.valid = true;)
+      __case (ch_rd_request::x_masks)    (pe_[1].xmbuf.io.enq.valid = true;)
       );
       pe_[1].rd_rsp_type.next = mdata.type;
-      pe_[1].rd_rsp_valid.next = pe_[1].rd_req_ack;
+      pe_[1].rd_rsp_valid.next = io.pe[1].rd_req.ack;
     )
     __default (
       ctrl_.pbuf.io.enq.valid = true;
       ctrl_.rd_rsp_type.next = mdata.type;
-      ctrl_.rd_rsp_valid.next = ctrl_.rd_req_ack;
+      ctrl_.rd_rsp_valid.next = io.ctrl.rd_req.ack;
     ));    
   )
   __else (
@@ -679,7 +681,7 @@ void spmv_lsu::read_rsp_thread() {
   /*//--
   ch_print("{0}: lsu_rd_rsp: ctrl_ack={1}, pe0_ack={2}, pe1_ack={3}, pbuf_enq={4}, rsp_mdat={5}, rsp_dat={6}",
            ch_getTick(), ctrl_.rd_rsp_valid, pe_[0].rd_rsp_valid, pe_[1].rd_rsp_valid,
-           m_pbuf.enq_valid(), io.qpi.rd_rsp.mdata, io.qpi.rd_rsp.data);*/
+           ctrl_.pbuf.io.enq.valid, io.qpi.rd_rsp.mdata, io.qpi.rd_rsp.data);*/
 }
 
 void spmv_lsu::write_rsp0_thread() {
@@ -705,7 +707,7 @@ void spmv_lsu::write_rsp0_thread() {
     //--
   );
 
-  /*
+  /*//--
   ch_print("{0}: lsu_wr_rsp: ctrl_ack0={1}, ctrl_ack1={2}, pe0_ack0={3}, pe0_ack1={4}, pe1_ack0={5}, pe1_ack1={6}, rsp_val={7}, rsp0_mdat={8}, rsp1_mdat={9}",
            ch_getTick(), ctrl_.wr_rsp0_ack, ctrl_.wr_rsp1_ack,
            pe_[0].wr_rsp0_ack, pe_[0].wr_rsp1_ack,
@@ -734,7 +736,7 @@ void spmv_lsu::write_rsp1_thread() {
     //--
   );
 
-  /*
+  /*//--
   ch_print("{0}: lsu_wr_rsp: ctrl_ack0={1}, ctrl_ack1={2}, pe0_ack0={3}, pe0_ack1={4}, pe1_ack0={5}, pe1_ack1={6}, rsp_val={7}, rsp0_mdat={8}, rsp1_mdat={9}",
            ch_getTick(), ctrl_.wr_rsp0_ack, ctrl_.wr_rsp1_ack,
            pe_[0].wr_rsp0_ack, pe_[0].wr_rsp1_ack,

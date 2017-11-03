@@ -56,7 +56,7 @@ void spmv_pe::describe() {
     y_value1.slice<32>(i*32) = y_values[i+16];
   }
 
-  auto ctrl_start_req_ack = io.ctrl.start.ack.asSeq();
+  auto ctrl_start_ack = io.ctrl.start.ack.asSeq();
   
   auto lsu_rd_req_syn  = io.lsu.rd_req.syn.asSeq();
   auto lsu_rd_req_type = io.lsu.rd_req.type.asSeq();
@@ -74,9 +74,9 @@ void spmv_pe::describe() {
   auto& lsu_xvbuf_dequeue = io.lsu.xvbuf.ready;
   auto& lsu_xmbuf_dequeue = io.lsu.xmbuf.ready;
 
-  //--
-  /*if (id_ == 0) {
-    ch_print(fstring("{0}: PE[%d]: state={1}, rq_ack={2}, rq_typ={3}, rq_adr={4}, col={5}, coln={6}, ax={7}, xv={8}, row={9}, rown={10}, ya={11}, yv={12}, ym={13}, wq_ack={14}, wq_typ={15}, wq_adr={16}", id_).c_str(),
+  /*//--
+  if (id_ == 0) {
+    ch_print(fstring("{0}: PE%d: state={1}, rq_ack={2}, rq_typ={3}, rq_adr={4}, col={5}, coln={6}, ax={7}, xv={8}, row={9}, rown={10}, ya={11}, yv={12}, ym={13}, wq_ack={14}, wq_typ={15}, wq_adr={16}", id_).c_str(),
            ch_getTick(), state, lsu_rd_req_syn, lsu_rd_req_type, lsu_rd_req_addr,
            col_curr_, col_end_, a_xindex_, x_value_, row_curr_, row_end_, y_addr_, y_value_, y_mask_,
            lsu_wr_req_syn, lsu_wr_req_type, lsu_wr_req_addr);
@@ -86,7 +86,7 @@ void spmv_pe::describe() {
   __switch (state) (
   __case (ch_exec_state::get_partition) (
     // wait for partition data
-    __if (io.ctrl.start.syn == ctrl_start_req_ack) (
+    __if (io.ctrl.start.syn != ctrl_start_ack) (
       // get partition columns data
       auto& part = io.ctrl.start.part;
       col_curr_.next = part.start.slice<ch_bitwidth_v<ch_ptr>>();
@@ -110,7 +110,6 @@ void spmv_pe::describe() {
     );
   )
   __case (ch_exec_state::clear_output) (
-        ch_print("OK! col_curr_={0}, col_end_={1}", col_curr_, col_end_);
     y_clr_cntr_.next = y_clr_cntr_ + 1;
     __if (y_clr_cntr_ != 0) (
       y_value_ = 0.0f;
@@ -355,11 +354,6 @@ void spmv_pe::describe() {
     y_mask_.next = y_mask_ | (1_b32 << y_addr_);
     // advance row
     row_curr_.next = row_curr_ + 1;
-    //if (id_ == 0) {
-    //  ch_print("*** col={0}, row={1}, a_x={2}, a_y={3}, x_val={4:f}, a_val={5:f}, y_val={6:f}, y_mask={7}",
-    //          col_curr_, row_curr_, a_xindex_, a_yindex, x_value_, a_value, y_value_, y_mask_.next);
-    //}
-    //ch_assert(col_curr_ != 80, "stop execution!");
     // check if not last row
     __if (row_curr_.next != row_end_) (
       // check if last entry in block
@@ -453,7 +447,7 @@ void spmv_pe::describe() {
       hwcntrs_.next.total_latency = hwcntrs_.total_latency + runtime;
       hwcntrs_.next.num_partitions = hwcntrs_.num_partitions + 1;
       // advance to the next partition
-      ctrl_start_req_ack.next = ~ctrl_start_req_ack;
+      ctrl_start_ack.next = ~ctrl_start_ack;
       state.next = ch_exec_state::get_partition;      
     );
   )
