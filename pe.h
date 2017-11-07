@@ -6,14 +6,29 @@
 namespace spmv {
 namespace accelerator {
 
-__inout (ch_pe_start_req_io_t, (
-  __in(ch_bool)        syn,
-  __in(ch_dcsc_part_t) part,
-  __out(ch_bool)       ack
+enum {
+  AXBUF_SIZE = 2,
+  ASBUF_SIZE = 2,
+  AYBUF_SIZE = 32,
+  AVBUF_SIZE = 32,
+  XVBUF_SIZE = 2,
+  XMBUF_SIZE = 2,
+};
+
+using ch_axbuf_t = ch_queue<ch_block_t, AXBUF_SIZE>;
+using ch_asbuf_t = ch_queue<ch_block_t, ASBUF_SIZE>;
+using ch_aybuf_t = ch_queue<ch_block_t, AYBUF_SIZE>;
+using ch_avbuf_t = ch_queue<ch_block_t, AVBUF_SIZE>;
+
+using ch_xvbuf_t = ch_queue<ch_block_t, XVBUF_SIZE>;
+using ch_xmbuf_t = ch_queue<ch_block_t, XMBUF_SIZE>;
+
+__struct (ch_pe_start_req_t, (
+  __in(ch_dcsc_part_t) part
 ));
 
-__inout (ch_ctrl_pe_io_t, (
-  (ch_pe_start_req_io_t) start,
+__inout (ch_ctrl_pe_io, (
+  (ch_deq_io<ch_pe_start_req_t>) start,
   __in(ch_bit64) timer,
   __out(ch_pe_hwcntrs_t) hwcntrs
 ));
@@ -22,8 +37,8 @@ class spmv_pe {
 public:
 
   __io(
-    (ch_ctrl_pe_io_t) ctrl,
-    (ch_flip_t<ch_pe_lsu_io_t>) lsu
+    (ch_ctrl_pe_io) ctrl,
+    (ch_flip_t<ch_pe_lsu_io>) lsu
   );
   
   spmv_pe(uint32_t id);
@@ -35,7 +50,21 @@ private:
 
   using ch_bit480 = ch_bit<480>;
   
-  uint32_t  id_;
+  uint32_t  id_;  
+
+  ch_module<ch_axbuf_t> axbuf_;
+  ch_module<ch_asbuf_t> asbuf_;
+  ch_module<ch_aybuf_t> aybuf_;
+  ch_module<ch_avbuf_t> avbuf_;
+  ch_module<ch_xvbuf_t> xvbuf_;
+  ch_module<ch_xmbuf_t> xmbuf_;
+
+  ch_seq<ch_bit32>    axbuf_pending_size_;
+  ch_seq<ch_bit32>    asbuf_pending_size_;
+  ch_seq<ch_bit32>    aybuf_pending_size_;
+  ch_seq<ch_bit32>    avbuf_pending_size_;
+  ch_seq<ch_bit32>    xvbuf_pending_size_;
+  ch_seq<ch_bit32>    xmbuf_pending_size_;
   
   ch_seq<ch_ptr>      col_curr_;
   ch_seq<ch_ptr>      col_end_;
@@ -63,7 +92,7 @@ private:
   ch_seq<ch_pe_hwcntrs_t> hwcntrs_;
   ch_seq<ch_bit64>    prof_start_;
   
-  ch_seq<ch_bit<5>>   y_clr_cntr_;
+  ch_seq<ch_bit<LOG2_PARTITION_SIZE>> y_clr_cntr_;
   ch_float32          y_value_;
   ch_bit<5>           y_addr_;
   ch_bit1             y_wenable_;

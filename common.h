@@ -2,12 +2,14 @@
 
 #include <string.h>
 #include <cash.h>
-#include <../stl/queue.h>
+#include <../htl/queue.h>
+#include <../htl/xbar.h>
+#include <../htl/arbiter.h>
 #include "aal.h"
 
 using namespace ch::core;
 using namespace ch::literals;
-using namespace ch::stl;
+using namespace ch::htl;
 using namespace ch::sim;
 
 #define LOG2_BLOCK_SIZE   6
@@ -38,6 +40,7 @@ enum {
   PTR_MAX_VALUE  = (1 << aal::aal_qpi0::addr_wdith)-1,
 
   PARTITION_SIZE = 32,
+  LOG2_PARTITION_SIZE = 5,
 
   PARTITION_VALUE_BITS = 32,
   PARTITIONS_PER_BLOCK = ch_bitwidth_v<ch_block_t> / PARTITION_VALUE_BITS,
@@ -83,7 +86,7 @@ __struct (ch_pe_hwcntrs_t, (
   (ch_bit<20>) execute_latency,
   (ch_bit<20>) a_xindices_stalls,
   (ch_bit<20>) x_masks_stalls,
-  (ch_bit<20>) a_ystarts_stalls,
+  (ch_bit<20>) a_startys_stalls,
   (ch_bit<20>) a_values_stalls
 ));
 
@@ -111,7 +114,7 @@ __inout (ch_vertex_t, (
 
 using hwcntrs_addr_t = ch_bit<aal::aal_qpi0::addr_wdith>;
 
-__inout (ch_ctx_io_t, (
+__inout (ch_ctx_io, (
   (ch_matrix_dcsc_t) a,
   (ch_vertex_t) x,
   (ch_vertex_t) y,
@@ -119,7 +122,7 @@ __inout (ch_ctx_io_t, (
   __in(ch_bit<280>) __reserved__
 ));
 
-using spmv_aal_device = aal::aal_device0<ch_ctx_io_t>;
+using spmv_aal_device = aal::aal_device0<ch_ctx_io>;
 
 __struct (ch_dcsc_part_t, (
   (ch_bit32) start,

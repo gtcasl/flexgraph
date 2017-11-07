@@ -80,7 +80,7 @@ void cpu_device::init(const char* mtx_file) {
   m_accelerator.io.ctx.hwcntrs = (offset / BLOCK_SIZE);
   assert(__align(offset + __div_ceil(ch_bitwidth_v<ch_hwcntrs_t>, 8), BLOCK_SIZE) <= SHARE_MEM_SIZE);
   
-  /*printf("*** partitions=0x%x, a_xindices=0x%x, a_ystarts=0x%x, a_yindices=0x%x, a_values=0x%x, x_values=x0%x, x_masks=0x%x\n",
+  /*printf("*** partitions=0x%x, a_xindices=0x%x, a_startys=0x%x, a_yindices=0x%x, a_values=0x%x, x_values=x0%x, x_masks=0x%x\n",
          (uint32_t)m_afu_ctx.a.partitions,
          (uint32_t)m_afu_ctx.a.xindices,
          (uint32_t)m_afu_ctx.a.ystarts,
@@ -346,7 +346,7 @@ void cpu_device::dump_stats(ch_tick t) {
   DbgPrint(0,"PE0 maximum latency = %d ticks\n", (uint32_t)hwcntrs.PE0.max_latency);
   DbgPrint(0,"PE0 execution latency = %d ticks\n", (uint32_t)hwcntrs.PE0.execute_latency);
   DbgPrint(0,"PE0 matrix xindices stalls = %d\n", (uint32_t)hwcntrs.PE0.a_xindices_stalls);
-  DbgPrint(0,"PE0 matrix ystarts stalls = %d\n", (uint32_t)hwcntrs.PE0.a_ystarts_stalls);
+  DbgPrint(0,"PE0 matrix ystarts stalls = %d\n", (uint32_t)hwcntrs.PE0.a_startys_stalls);
   DbgPrint(0,"PE0 matrix values stalls = %d\n", (uint32_t)hwcntrs.PE0.a_values_stalls);
   DbgPrint(0,"PE0 vertex masks stalls = %d\n", (uint32_t)hwcntrs.PE0.x_masks_stalls);
   
@@ -356,7 +356,7 @@ void cpu_device::dump_stats(ch_tick t) {
   DbgPrint(0,"PE1 maximum latency = %d ticks\n", (uint32_t)hwcntrs.PE1.max_latency);
   DbgPrint(0,"PE1 execution latency = %d ticks\n", (uint32_t)hwcntrs.PE1.execute_latency);
   DbgPrint(0,"PE1 matrix xindices stalls = %d\n", (uint32_t)hwcntrs.PE1.a_xindices_stalls);
-  DbgPrint(0,"PE1 matrix ystarts stalls = %d\n", (uint32_t)hwcntrs.PE1.a_ystarts_stalls);
+  DbgPrint(0,"PE1 matrix ystarts stalls = %d\n", (uint32_t)hwcntrs.PE1.a_startys_stalls);
   DbgPrint(0,"PE1 matrix values stalls = %d\n", (uint32_t)hwcntrs.PE1.a_values_stalls);
   DbgPrint(0,"PE1 vertex masks stalls = %d\n", (uint32_t)hwcntrs.PE1.x_masks_stalls);
 
