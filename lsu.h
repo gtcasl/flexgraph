@@ -49,9 +49,6 @@ __struct(ch_wr_mdata_t, (
   (ch_bit<WR_REQ_INPUTS>) owner
 ));
 
-using ch_blk_addr = ch_bit<aal::aal_qpi0::addr_wdith>;
-using ch_ptr = ch_bit<aal::aal_qpi0::addr_wdith>;
-
 __struct (ch_lsu_rd_req_t, (
   (ch_rd_request) type,
   (ch_blk_addr)   addr
@@ -59,13 +56,13 @@ __struct (ch_lsu_rd_req_t, (
 
 __struct (ch_lsu_rd_rsp_t, (
   (ch_rd_request) type,
-  (ch_block_t)    data
+  (ch_block)      data
 ));
 
 __struct (ch_lsu_wr_req_t, (
   (ch_wr_request) type,
   (ch_blk_addr)   addr,
-  (ch_block_t)    data
+  (ch_block)      data
 ));
 
 __struct (ch_lsu_wr_rsp_t, (
@@ -135,9 +132,9 @@ private:
   ch_module<ch_rd_req_arb_t> rd_req_arb_;
   ch_module<ch_wr_req_arb_t> wr_req_arb_;
   
-  ch_seq<ch_block_t>  m_writemask0;
-  ch_seq<ch_block_t>  m_writemask1;
-  ch_seq<ch_block_t>  m_writemask_flush;
+  ch_seq<ch_block>    m_writemask0;
+  ch_seq<ch_block>    m_writemask1;
+  ch_seq<ch_block>    m_writemask_flush;
   ch_seq<ch_blk_addr> m_writemask_flush_addr;
   ch_seq<ch_bit<2>>   m_writemask0_owners;
   ch_seq<ch_bit<2>>   m_writemask1_owners;

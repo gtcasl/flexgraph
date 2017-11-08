@@ -66,19 +66,6 @@ void spmv_device::main_thread() {
   pbuf_.io.enq.valid = lsu_.io.ctrl.rd_rsp.valid && (lsu_.io.ctrl.rd_rsp.data.type == ch_rd_request::a_partition);
 
   //--
-  ch_hwcntrs_t hwcntrs(0);
-  hwcntrs.PE0 = pe_[0].io.ctrl.hwcntrs;
-  hwcntrs.PE1 = pe_[1].io.ctrl.hwcntrs;
-  hwcntrs.a_partitions_stalls = a_partitions_stalls_;
-
-  //--
-  lsu_.io.ctrl.rd_req.data.addr = 0;
-
-  //--
-  lsu_.io.ctrl.wr_req.data.addr = 0;
-  lsu_.io.ctrl.wr_req.data.data = ch_zext<ch_bitwidth_v<ch_block_t>>(hwcntrs.asBits());
-
-  //--
   pbuf_pending_size_.next = pbuf_pending_size_ +
       ch_zext<32>(lsu_.io.ctrl.rd_req.valid && lsu_.io.ctrl.rd_req.ready && (lsu_.io.ctrl.rd_req.data.type == ch_rd_request::a_partition)) -
       ch_zext<32>(pbuf_.io.deq.ready);
@@ -109,6 +96,7 @@ void spmv_device::main_thread() {
   )
   __case (ch_ctrl_state::get_partition) (
       lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_partition;
+      lsu_.io.ctrl.rd_req.data.addr = 0;
     __if (pbuf_pending_size_ != PBUF_SIZE) (
       lsu_.io.ctrl.rd_req.valid = true;
       // wait for LSU ack
@@ -143,17 +131,22 @@ void spmv_device::main_thread() {
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) (
       // write hardware counters      
-      state.next = ch_ctrl_state::write_hwcntrs; 
+      state.next = ch_ctrl_state::write_hwcntrs;
     );
   )
-  __case (ch_ctrl_state::write_hwcntrs) (         
-    // gather hardware counters
+  __case (ch_ctrl_state::write_hwcntrs) (
+    // write ctrl counters
     lsu_.io.ctrl.wr_req.data.type = ch_wr_request::hwcntrs;
+    lsu_.io.ctrl.wr_req.data.addr = ch_zext<ch_bitwidth_v<ch_blk_addr>>(hwcntrs_addr_);
+    lsu_.io.ctrl.wr_req.data.data = this->get_hwnctrs(hwcntrs_addr_);
     lsu_.io.ctrl.wr_req.valid = true;
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) (
-      // got wait for writes to complete
-      state.next = ch_ctrl_state::wait_for_writes;
+      hwcntrs_addr_.next = hwcntrs_addr_ + 1;
+      __if (hwcntrs_addr_ == PE_COUNT) (
+        // got wait for writes to complete
+        state.next = ch_ctrl_state::wait_for_writes;
+      );
     );
   )
   __case (ch_ctrl_state::wait_for_writes) (
@@ -165,18 +158,24 @@ void spmv_device::main_thread() {
   )
   __default (
     //--
+    lsu_.io.ctrl.rd_req.data.addr = 0;
     lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_partition;
     lsu_.io.ctrl.rd_req.valid = false;
 
     //--
+    lsu_.io.ctrl.wr_req.data.addr = 0;
     lsu_.io.ctrl.wr_req.data.type = ch_wr_request::y_values;
+    lsu_.io.ctrl.wr_req.data.data = 0;
     lsu_.io.ctrl.wr_req.valid = false;
   ));
     
   //--
-  ch_print("{0}: ctrl_main: state={1}, start={2}, done={3}, Bi={4}, Bn={5}, rq_val={6}, rq_typ={7}, wr_val={8}, wr_typ={9}",
+  ch_print("{0}: ctrl_main: state={1}, start={2}, done={3}, Bc={4}, Be={5}, "
+           "rq_val={6}, rq_typ={7}, rq_adr={8}, "
+           "wr_val={9}, wr_typ={10}, wr_adr={11}",
            ch_getTick(), state, io.start, done, part_blk_curr_, part_blk_end_,
-           lsu_.io.ctrl.rd_req.valid, lsu_.io.ctrl.rd_req.data.type, lsu_.io.ctrl.wr_req.valid, lsu_.io.ctrl.wr_req.data.type);
+           lsu_.io.ctrl.rd_req.valid, lsu_.io.ctrl.rd_req.data.type, lsu_.io.ctrl.rd_req.data.addr,
+           lsu_.io.ctrl.wr_req.valid, lsu_.io.ctrl.wr_req.data.type, lsu_.io.ctrl.wr_req.data.addr);
 }
 
 void spmv_device::dispatch_thread() {
@@ -190,11 +189,11 @@ void spmv_device::dispatch_thread() {
       pbuf_.io.deq.ready = true;
       __if (part_buf_size_ == 0) (
         part_curr_.next = 0;
-        part_buf_.next.slice<ch_bitwidth_v<ch_block_t>>(0) = pbuf_.io.deq.data;
+        part_buf_.next.slice<ch_bitwidth_v<ch_block>>(0) = pbuf_.io.deq.data;
         part_buf_size_.next = PARTITIONS_PER_BLOCK;
       )
       __else (
-        part_buf_.next.slice<ch_bitwidth_v<ch_block_t>>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
+        part_buf_.next.slice<ch_bitwidth_v<ch_block>>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
         part_buf_size_.next = PARTITIONS_PER_BLOCK + 1;
       );  
       state.next = ch_dispatch_state::dispatch_PE0;
@@ -286,4 +285,17 @@ void spmv_device::dispatch_thread() {
            part_curr_, part_buf_size_, part_buf_,
            pe_[0].io.ctrl.start.data.part.asBits(),
            pe_[1].io.ctrl.start.data.part.asBits());
+}
+
+ch_block spmv_device::get_hwnctrs(const ch_hwcntr_addr& addr) {
+  //--
+  ch_ctrl_hwcntrs_t ctrl_hwcntrs(0);
+  ctrl_hwcntrs.a_partitions_stalls = a_partitions_stalls_;
+
+  //--
+  auto cs = ch_case(addr, 0, ch_zext<ch_bitwidth_v<ch_block>>(ctrl_hwcntrs.asBits()));
+  for (int i = 1; i < PE_COUNT; ++i) {
+    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(pe_[i].io.ctrl.hwcntrs.asBits()));
+  }
+  return cs(ch_zext<ch_bitwidth_v<ch_block>>(pe_[PE_COUNT-1].io.ctrl.hwcntrs.asBits()));
 }

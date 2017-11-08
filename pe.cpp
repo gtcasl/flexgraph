@@ -65,13 +65,13 @@ void spmv_pe::describe() {
   );
   
   //--
-  ch_block_t y_value0;
+  ch_block y_value0;
   for (int i = 0; i < 16; ++i) {
     y_value0.slice<32>(i*32) = y_values[i];
   }
   
   //--
-  ch_block_t y_value1;
+  ch_block y_value1;
   for (int i = 0; i < 16; ++i) {
     y_value1.slice<32>(i*32) = y_values[i+16];
   }

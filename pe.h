@@ -15,13 +15,13 @@ enum {
   XMBUF_SIZE = 2,
 };
 
-using ch_axbuf_t = ch_queue<ch_block_t, AXBUF_SIZE>;
-using ch_asbuf_t = ch_queue<ch_block_t, ASBUF_SIZE>;
-using ch_aybuf_t = ch_queue<ch_block_t, AYBUF_SIZE>;
-using ch_avbuf_t = ch_queue<ch_block_t, AVBUF_SIZE>;
+using ch_axbuf_t = ch_queue<ch_block, AXBUF_SIZE>;
+using ch_asbuf_t = ch_queue<ch_block, ASBUF_SIZE>;
+using ch_aybuf_t = ch_queue<ch_block, AYBUF_SIZE>;
+using ch_avbuf_t = ch_queue<ch_block, AVBUF_SIZE>;
 
-using ch_xvbuf_t = ch_queue<ch_block_t, XVBUF_SIZE>;
-using ch_xmbuf_t = ch_queue<ch_block_t, XMBUF_SIZE>;
+using ch_xvbuf_t = ch_queue<ch_block, XVBUF_SIZE>;
+using ch_xmbuf_t = ch_queue<ch_block, XMBUF_SIZE>;
 
 __struct (ch_pe_start_req_t, (
   __in(ch_dcsc_part_t) part
@@ -69,12 +69,12 @@ private:
   ch_seq<ch_ptr>      col_curr_;
   ch_seq<ch_ptr>      col_end_;
 
-  ch_seq<ch_block_t>  axblock_;
-  ch_seq<ch_block_t>  asblock_;
-  ch_seq<ch_block_t>  ayblock_;
-  ch_seq<ch_block_t>  avblock_;
-  ch_seq<ch_block_t>  xmblock_;
-  ch_seq<ch_block_t>  xvblock_;
+  ch_seq<ch_block>    axblock_;
+  ch_seq<ch_block>    asblock_;
+  ch_seq<ch_block>    ayblock_;
+  ch_seq<ch_block>    avblock_;
+  ch_seq<ch_block>    xmblock_;
+  ch_seq<ch_block>    xvblock_;
   
   ch_seq<ch_ptr>      xmblock_addr_;
   ch_seq<ch_ptr>      xvblock_addr_;
