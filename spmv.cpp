@@ -6,16 +6,10 @@ using namespace spmv::accelerator;
 __enum (ch_ctrl_state, 3, (
   ready,            
   get_partition,
-  execute,
+  wait_for_execute,
   flush_buffers,
   write_hwcntrs,
   wait_for_writes
-));
-
-__enum (ch_dispatch_state, 2, (
-  get_partition,
-  dispatch_PE0,
-  dispatch_PE1
 ));
 
 spmv_device::spmv_device() {
@@ -103,8 +97,8 @@ void spmv_device::main_thread() {
       __if (lsu_.io.ctrl.rd_req.ready) (
         part_blk_curr_.next = part_blk_curr_ + 1;
         __if (part_blk_curr_.next == part_blk_end_) (
-          // goto execute
-          state.next = ch_ctrl_state::execute;
+          // go wait for execution to complete
+          state.next = ch_ctrl_state::wait_for_execute;
         );
       )
       __else (
@@ -117,7 +111,7 @@ void spmv_device::main_thread() {
       a_partitions_stalls_.next = a_partitions_stalls_ + 1;
     );
   )
-  __case (ch_ctrl_state::execute) (
+  __case (ch_ctrl_state::wait_for_execute) (
     // wait for the execution to complete
     __if (part_curr_ == numparts_ && all_PEs_ready) (
       // flush LSU write buffers      
@@ -179,103 +173,59 @@ void spmv_device::main_thread() {
 }
 
 void spmv_device::dispatch_thread() {
-  ch_seq<ch_dispatch_state> state;
+  ch_seq<ch_bit<log2ceil(1+PE_COUNT)>> state;
   
-  // extract partition blocks from lsu buffer into pe_buf
-  // extract partition data from pe_buf and give it to the PE's
-  __switch (state) (
-  __case (ch_dispatch_state::get_partition) (
+  // extract partition data from pbuf and assign it to eahc PE
+  auto sw = ch_switch(state);
+  sw __case (0) (
+    // wait for partition data
     __if (pbuf_.io.deq.valid) (
       pbuf_.io.deq.ready = true;
       __if (part_buf_size_ == 0) (
-        part_curr_.next = 0;
+        // get whole partition block
         part_buf_.next.slice<ch_bitwidth_v<ch_block>>(0) = pbuf_.io.deq.data;
         part_buf_size_.next = PARTITIONS_PER_BLOCK;
       )
       __else (
+        // append partition block
         part_buf_.next.slice<ch_bitwidth_v<ch_block>>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
-        part_buf_size_.next = PARTITIONS_PER_BLOCK + 1;
+        part_buf_size_.next = 1 + PARTITIONS_PER_BLOCK ;
       );  
-      state.next = ch_dispatch_state::dispatch_PE0;
+      state.next = 1;
     );
-  )
-  __case (ch_dispatch_state::dispatch_PE0) (
-    // dispatch partition to PE0
-    pe_[0].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
-    pe_[0].io.ctrl.start.valid = true;
-    // wait for PE0 ack
-    __if (pe_[0].io.ctrl.start.ready) (
-      part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
-      part_curr_.next = part_curr_ + 1; // advance partition
-      // ch_print("*** PE0 executing partition {0}", part_curr_);
-      // check if we still have partitions to process
-      __if (part_curr_.next != numparts_) (
+  );
+
+  for (int i = 0; i < PE_COUNT; ++i) {
+    sw __case (1+i) (
+      // dispatch partition to current PE
+      pe_[i].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
+      pe_[i].io.ctrl.start.valid = true;
+      // wait for PE ack
+      __if (pe_[i].io.ctrl.start.ready) (
+        part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
+        part_curr_.next = part_curr_ + 1; // advance partition
         part_buf_size_.next = part_buf_size_ - 1;
-        // check if we can pop another partition (we need at least two entries)            
-        __if (part_buf_size_.next != 1) (
-          // goto PE1 
-          if (!g_singlecore) {
-            state.next = ch_dispatch_state::dispatch_PE1;
-          }
+        // check if we can pop another partition from current block
+        // we need at least two entries to proceed
+        __if (part_curr_.next != numparts_
+           && part_buf_size_.next != 1) (
+          // goto next PE
+          state.next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
         )
         __else (
-          // fetch next block
-          state.next = ch_dispatch_state::get_partition;
-        );          
-      )
-      __else (
-        // restart
-        part_buf_size_.next = 0;
-        state.next = ch_dispatch_state::get_partition;
+          state.next = 0;
+        );
       );
-    )
-    __else (
-      // goto PE1 
-      if (!g_singlecore) {
-        state.next = ch_dispatch_state::dispatch_PE1;
-      }
     );
-  )
-  __case (ch_dispatch_state::dispatch_PE1) (
-    // dispatch partition to PE1
-    pe_[1].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
-    pe_[1].io.ctrl.start.valid = true;
-    // wait for PE1 ack
-    __if (pe_[1].io.ctrl.start.ready) (
-      part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
-      part_curr_.next = part_curr_ + 1; // advance partition
-      //ch_print("*** PE1 executing partition {0}", part_curr_);
-      // check if we still have partitions to process
-      __if (part_curr_.next != numparts_) (
-        part_buf_size_.next = part_buf_size_ - 1;
-        // check if we can pop another partition (we need at least two entries)
-        __if (part_buf_size_.next != 1) (
-          // goto PE0 
-          state.next = ch_dispatch_state::dispatch_PE0;
-        )
-        __else (
-          // fetch next block
-          state.next = ch_dispatch_state::get_partition;
-        );          
-      )
-      __else (
-        // restart
-        part_buf_size_.next = 0;
-        state.next = ch_dispatch_state::get_partition;
-      );
-    )
-    __else (
-      // goto PE0 
-      state.next = ch_dispatch_state::dispatch_PE0;  
-    );
-  )    
-  __default (
+  }
+
+  sw __default (
     for (int i = 0; i < PE_COUNT; ++i) {
       pe_[i].io.ctrl.start.data.part.asBits() = 0;
       pe_[i].io.ctrl.start.valid = false;
     }
     pbuf_.io.deq.ready = false; // off by default
-  ));
+  );
     
   //--
   ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, pe1_rdy={3}, p={4}, pbuf_sz={5}, pbuf={6}, part0={7}, part1={8}",
