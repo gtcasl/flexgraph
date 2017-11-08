@@ -141,10 +141,7 @@ private:
   ch_seq<ch_blk_addr> m_writemask0_addr;
   ch_seq<ch_blk_addr> m_writemask1_addr;
   ch_seq<ch_bit1>     m_writemask_flush_enable;
-  ch_seq<ch_bit1>     m_pe_writemask_in;
   ch_seq<ch_bit1>     m_pe_writemask_out;
-  ch_seq<ch_bit1>     m_pe0_writemask;
-  ch_seq<ch_bit1>     m_pe1_writemask;
   
   ch_wr_req_state     m_wr_req_state;
   ch_writemask_state  m_writemask_state;

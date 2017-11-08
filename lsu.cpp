@@ -89,7 +89,6 @@ void spmv_lsu::write_req_thread() {
         __if (wr_req_arb_.io.out.grant == CTRL_ID) (
           state.next = ch_wr_req_state::flush_writemask1;
         )__else (
-          m_pe_writemask_in.next = ch_select(wr_req_arb_.io.out.grant == PE_ID(0), m_pe0_writemask, m_pe1_writemask);
           state.next = ch_wr_req_state::writemask;
         );
       )__else (
@@ -108,35 +107,17 @@ void spmv_lsu::write_req_thread() {
   __case (ch_wr_req_state::writemask) (
     // wait for the writemask controller to complete
     __if (m_writemask_state == ch_writemask_state::done) (
-      ch_wr_mdata_t mdata(qpi_wr_req_mdata);
-      __switch (mdata.owner) (
-      __case (PE_ID(0)) (
-        m_pe0_writemask.next = m_pe_writemask_out; // update mask assignment
-        __if (m_writemask_flush_enable) (
-          qpi_wr_req_data.next  = m_writemask_flush;
-          qpi_wr_req_mdata.next = ch_wr_mdata_t(PE_ID(0), ch_wr_request::y_masks);
-          qpi_wr_req_addr.next  = m_writemask_flush_addr;
-          state.next = ch_wr_req_state::submit;    
-        )
-        __else (
-          // move next
-          state.next = ch_wr_req_state::get_request;
-        );
+      __if (m_writemask_flush_enable) (
+        qpi_wr_req_data.next  = m_writemask_flush;
+        qpi_wr_req_mdata.next = ch_wr_mdata_t(wr_req_arb_.io.out.grant, ch_wr_request::y_masks);
+        qpi_wr_req_addr.next  = m_writemask_flush_addr;
+        state.next = ch_wr_req_state::submit;
       )
-      __case (PE_ID(1)) (
-        m_pe1_writemask.next = m_pe_writemask_out; // update mask assignment
-        __if (m_writemask_flush_enable) (
-          qpi_wr_req_data.next  = m_writemask_flush;
-          qpi_wr_req_mdata.next = ch_wr_mdata_t(PE_ID(1), ch_wr_request::y_masks);
-          qpi_wr_req_addr.next  = m_writemask_flush_addr;
-          state.next = ch_wr_req_state::submit;    
-        )
-        __else (
-          // move next
-          state.next = ch_wr_req_state::get_request;
-        );  
-      ));      
-    );    
+      __else (
+        // move next
+        state.next = ch_wr_req_state::get_request;
+      );
+    );
   )
   __case (ch_wr_req_state::flush_writemask1) (
     // check if both writemasks are dirty
@@ -206,7 +187,7 @@ void spmv_lsu::writemask_thread() {
   __switch (state) (
   __case (ch_writemask_state::ready) (
     __if (m_wr_req_state == ch_wr_req_state::writemask) (
-      __if (m_pe_writemask_in == 0) (
+      __if (wr_req_arb_.io.out.grant == PE_ID(0)) (
         state.next = ch_writemask_state::check_mask0;
       )
       __else (
@@ -400,9 +381,9 @@ void spmv_lsu::writemask_thread() {
   m_writemask_state = state;
   
   //--
-  ch_print("{0}: writemask: state={1}, m_i={2}, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
+  ch_print("{0}: writemask: state={1}, m_i=x, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
              ch_getTick(), state, 
-             m_pe_writemask_in, m_pe_writemask_out, m_writemask0_addr, m_writemask0_owners, m_writemask1_addr, m_writemask1_owners, m_writemask0, m_writemask1,
+             m_pe_writemask_out, m_pe_writemask_out, m_writemask0_addr, m_writemask0_owners, m_writemask1_addr, m_writemask1_owners, m_writemask0, m_writemask1,
              io.qpi.wr_req.mdata.slice<2>(), io.qpi.wr_req.addr,
              m_writemask_flush_enable, m_writemask_flush_addr, m_writemask_flush);
 }
