@@ -91,10 +91,8 @@ void spmv_pe::describe() {
   io.ctrl.start.ready = (state == ch_exec_state::get_partition);
 
   //--
-  if (id_ == 0) {
-    ch_print(fstring("{0}: *** PE%d: state={1}, axbuf.enq.val={2}, axbuf.deq.val={3}, asbuf.enq.val={4}, asbuf.deq.val={5}, asbuf_psz={6}, #p={7}", id_),
-             ch_getTick(), state, axbuf_.io.enq.valid, axbuf_.io.deq.valid, asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_, hwcntrs_.num_partitions);
-  }
+  ch_print(fstring("{0}: *** PE%d: state={1}, axbuf.enq.val={2}, axbuf.deq.val={3}, asbuf.enq.val={4}, asbuf.deq.val={5}, asbuf_psz={6}, #p={7}", id_),
+           ch_getTick(), state, axbuf_.io.enq.valid, axbuf_.io.deq.valid, asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_, hwcntrs_.num_partitions);
 
   // ch_exec_state FSM
   __switch (state) (

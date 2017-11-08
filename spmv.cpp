@@ -197,11 +197,12 @@ void spmv_device::dispatch_thread() {
 
   for (int i = 0; i < PE_COUNT; ++i) {
     sw __case (1+i) (
-      // dispatch partition to current PE
-      pe_[i].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
-      pe_[i].io.ctrl.start.valid = true;
-      // wait for PE ack
+      // check if PE is ready
       __if (pe_[i].io.ctrl.start.ready) (
+        // dispatch partition to PE
+        pe_[i].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
+        pe_[i].io.ctrl.start.valid = true;
+        // advance counters
         part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
         part_curr_.next = part_curr_ + 1; // advance partition
         part_buf_size_.next = part_buf_size_ - 1;
@@ -215,6 +216,9 @@ void spmv_device::dispatch_thread() {
         __else (
           state.next = 0;
         );
+      )__else (
+        // goto next PE
+        state.next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
       );
     );
   }
@@ -245,7 +249,7 @@ ch_block spmv_device::get_hwnctrs(const ch_hwcntr_addr& addr) {
   //--
   auto cs = ch_case(addr, 0, ch_zext<ch_bitwidth_v<ch_block>>(ctrl_hwcntrs.asBits()));
   for (int i = 1; i < PE_COUNT; ++i) {
-    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(pe_[i].io.ctrl.hwcntrs.asBits()));
+    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(pe_[i-1].io.ctrl.hwcntrs.asBits()));
   }
   return cs(ch_zext<ch_bitwidth_v<ch_block>>(pe_[PE_COUNT-1].io.ctrl.hwcntrs.asBits()));
 }
