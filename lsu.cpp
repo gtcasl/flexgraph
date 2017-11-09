@@ -3,9 +3,15 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-spmv_lsu::spmv_lsu()
-  : m_writemask0_addr(PTR_MAX_VALUE)
-  , m_writemask1_addr(PTR_MAX_VALUE) {
+__enum (ch_wr_req_state, 3, (
+  get_request,
+  submit,
+  writemask,
+  flush,
+  wait_for_flush
+));
+
+spmv_lsu::spmv_lsu() {
   //
   // bind modules
   //
@@ -26,7 +32,6 @@ void spmv_lsu::describe() {
   this->read_rsp_thread();
   this->write_rsp0_thread();
   this->write_rsp1_thread();
-  this->writemask_thread();
 }
 
 void spmv_lsu::read_req_thread() {
@@ -60,7 +65,11 @@ void spmv_lsu::write_req_thread() {
   ch_seq<ch_wr_req_state> state;
 
   //--
-  wr_req_arb_.io.out.ready = (state == ch_wr_req_state::get_request);
+  wr_cache_.io.evict.ready = (state == ch_wr_req_state::get_request);
+
+  //--
+  wr_req_arb_.io.out.ready = (state == ch_wr_req_state::get_request
+                           && !wr_cache_.io.evict.valid);
 
   //--
   auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
@@ -77,17 +86,34 @@ void spmv_lsu::write_req_thread() {
 
   //---
   auto outstanding_writes = io.ctrl.outstanding_writes.asSeq();
+
+  // QPI write thread
+  {
+
+    __switch (qstate) (
+    __case (
+
+    )
+
+    );
+  }
   
-  //--
+  // control thread
   __switch (state) (
   __case (ch_wr_req_state::get_request) (
-    __if (wr_req_arb_.io.out.valid) (
+    __if (wr_cache_.io.evict.valid) (
+      qpi_wr_req_data.next  = wr_cache_.io.evict.data.data;
+      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner), ch_wr_request::y_masks);
+      qpi_wr_req_addr.next  = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
+      state.next = ch_wr_req_state::submit;
+    )
+    __elif (wr_req_arb_.io.out.valid) (
       qpi_wr_req_data.next  = wr_req_arb_.io.out.data.data;
       qpi_wr_req_mdata.next = ch_wr_mdata_t(wr_req_arb_.io.out.grant, wr_req_arb_.io.out.data.type);
       qpi_wr_req_addr.next  = get_baseaddr(wr_req_arb_.io.out.data.type) + wr_req_arb_.io.out.data.addr;
       __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) (
         __if (wr_req_arb_.io.out.grant == CTRL_ID) (
-          state.next = ch_wr_req_state::flush_writemask1;
+          state.next = ch_wr_req_state::flush;
         )__else (
           state.next = ch_wr_req_state::writemask;
         );
@@ -105,66 +131,44 @@ void spmv_lsu::write_req_thread() {
     );
   )
   __case (ch_wr_req_state::writemask) (
-    // wait for the writemask controller to complete
-    __if (m_writemask_state == ch_writemask_state::done) (
-      __if (m_writemask_flush_enable) (
-        qpi_wr_req_data.next  = m_writemask_flush;
-        qpi_wr_req_mdata.next = ch_wr_mdata_t(wr_req_arb_.io.out.grant, ch_wr_request::y_masks);
-        qpi_wr_req_addr.next  = m_writemask_flush_addr;
-        state.next = ch_wr_req_state::submit;
-      )
-      __else (
-        // move next
-        state.next = ch_wr_req_state::get_request;
-      );
-    );
-  )
-  __case (ch_wr_req_state::flush_writemask1) (
-    // check if both writemasks are dirty
-    __if ((m_writemask0_owners & m_writemask1_owners) != 0) (          
-      qpi_wr_req_data.next  = m_writemask0;
-      qpi_wr_req_mdata.next = ch_wr_mdata_t(CTRL_ID, ch_wr_request::y_masks);
-      qpi_wr_req_addr.next  = m_writemask0_addr;
-      // wait for QPI request ready
-      __if (!io.qpi.wr_req.almostfull) (
-        qpi_wr_req_valid.next = true;
-        outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
-        // flush the other mask
-        state.next = ch_wr_req_state::flush_writemask2;
-      );
-    )
-    __elif (m_writemask0_owners != 0) (
-      // submit writemask0
-      qpi_wr_req_data.next  = m_writemask0;
-      qpi_wr_req_mdata.next = ch_wr_mdata_t(CTRL_ID, ch_wr_request::y_masks);
-      qpi_wr_req_addr.next  = m_writemask0_addr;
-      state.next = ch_wr_req_state::submit;
-    )
-    __elif (m_writemask1_owners != 0) (
-      // submit writemask1
-      qpi_wr_req_data.next  = m_writemask1;
-      qpi_wr_req_mdata.next = ch_wr_mdata_t(CTRL_ID, ch_wr_request::y_masks);
-      qpi_wr_req_addr.next  = m_writemask1_addr;
-      state.next = ch_wr_req_state::submit;
-    )
-    __else (
+    // send the request to the write cache
+    wr_cache_.io.enq.data.owner = ch_slice<PE_COUNT>(wr_req_arb_.io.out.grant); // remove ctrl's onehot bit
+    wr_cache_.io.enq.data.tag   = wr_req_arb_.io.out.data.addr;
+    wr_cache_.io.enq.data.data  = wr_req_arb_.io.out.data.data;
+    wr_cache_.io.enq.valid = true;
+    // wait for the cache ack
+    __if (wr_cache_.io.enq.ready) (
       // move next
       state.next = ch_wr_req_state::get_request;
     );
   )
-  __case (ch_wr_req_state::flush_writemask2) (
-    // submit writemask1
-    qpi_wr_req_data.next = m_writemask1;
-    qpi_wr_req_mdata.next = ch_wr_mdata_t(CTRL_ID, ch_wr_request::y_masks);
-    qpi_wr_req_addr.next = m_writemask1_addr;
-    state.next = ch_wr_req_state::submit;
+  __case (ch_wr_req_state::flush) (
+    // enable cache flush
+    wr_cache_.io.flush = true;
+    // wait for the cache ack
+    __if (wr_cache_.io.enq.ready) (
+      // go wait for data
+      state.next = ch_wr_req_state::wait_for_flush;
+    );
+  )
+  __case (ch_wr_req_state::wait_for_flush) (
+    // waitr for write flushes to complete
+    __if (wr_cache_.io.enq.ready) (
+      // return
+      state.next = ch_wr_req_state::get_request;
+    );
   )
   __default (
+    //--
+    wr_cache_.io.enq.data.owner = 0;
+    wr_cache_.io.enq.data.tag   = 0;
+    wr_cache_.io.enq.data.data  = 0;
+    wr_cache_.io.enq.valid = false;
+    wr_cache_.io.flush = false;
+    //--
     qpi_wr_req_valid.next = false;
     outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
-  ));    
-
-  m_wr_req_state = state;
+  ));
     
   //--
   ch_print("{0}: lsu_wr_req: state={1}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
@@ -175,217 +179,6 @@ void spmv_lsu::write_req_thread() {
            wr_req_arb_.io.out.data.type,
            wr_req_arb_.io.out.data.addr,
            wr_req_arb_.io.out.data.data);
-}
-
-void spmv_lsu::writemask_thread() {
-  //--
-  ch_seq<ch_writemask_state> state;
-  
-  auto mdata = io.qpi.wr_req.mdata.slice<ch_bitwidth_v<ch_wr_mdata_t>>().as<ch_wr_mdata_t>();
-  ch_bit<2> owner_mask = ch_select(mdata.owner == PE_ID(0), 01_b2, 10_b2);
-  
-  __switch (state) (
-  __case (ch_writemask_state::ready) (
-    __if (m_wr_req_state == ch_wr_req_state::writemask) (
-      __if (wr_req_arb_.io.out.grant == PE_ID(0)) (
-        state.next = ch_writemask_state::check_mask0;
-      )
-      __else (
-        state.next = ch_writemask_state::check_mask1;      
-      );
-    );
-  )
-  __case (ch_writemask_state::check_mask0) (
-    // check if address matches    
-    __if (m_writemask0_addr == io.qpi.wr_req.addr) (
-      // update the block and we are done
-      m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
-      m_writemask0_owners.next = m_writemask0_owners | owner_mask;
-      m_pe_writemask_out.next = 0;
-      state.next = ch_writemask_state::done;
-    )
-    __else (
-      // check if owned    
-      __if ((m_writemask0_owners & owner_mask) != 0) (
-        // check if we are the sole owner of the block
-        __if (m_writemask0_owners == owner_mask) (
-          // flush current block  
-          m_writemask_flush.next = m_writemask0;
-          m_writemask_flush_addr.next = m_writemask0_addr;
-          m_writemask_flush_enable.next = true;
-          // check if the other block address matches
-          __if (m_writemask1_addr == io.qpi.wr_req.addr) (
-            // clear current block ownership
-            m_writemask0_owners.next = 0;          
-            // update the other block and we are done
-            m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
-            m_writemask1_owners.next = m_writemask1_owners | owner_mask;
-            m_pe_writemask_out.next = 1;
-            state.next = ch_writemask_state::done;
-          )
-          __else (
-            // overwrite current block and we are done
-            m_writemask0_addr.next = io.qpi.wr_req.addr;
-            m_writemask0.next = io.qpi.wr_req.data;
-            //m_writemask0_owners.next = owner_mask; - keep the ownerhip
-            m_pe_writemask_out.next = 0;
-            state.next = ch_writemask_state::done;     
-          );
-        )
-        __else (
-          // clear current block ownership
-          m_writemask0_owners.next = m_writemask0_owners & ~owner_mask;
-          // if current block still in use, the other block should be free
-          // overwrite the other block and we are done
-          m_writemask1_addr.next = io.qpi.wr_req.addr;
-          m_writemask1.next = io.qpi.wr_req.data;
-          m_writemask1_owners.next = owner_mask;
-          m_pe_writemask_out.next = 1;
-          state.next = ch_writemask_state::done;     
-        );
-      )
-      __else (
-        // we don't own the assigned block (happens at start up)
-        // check if the other block address matches
-        __if (m_writemask1_addr == io.qpi.wr_req.addr) (
-          // update the other block and we are done
-          m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
-          m_writemask1_owners.next = m_writemask1_owners | owner_mask;
-          m_pe_writemask_out.next = 1;
-          state.next = ch_writemask_state::done;
-        )
-        __else (
-          // check if current block is free
-          __if (m_writemask0_owners == 0) (
-            // overwrite current block and we are done
-            m_writemask0_addr.next = io.qpi.wr_req.addr;
-            m_writemask0.next = io.qpi.wr_req.data;
-            m_writemask0_owners.next = owner_mask;
-            m_pe_writemask_out.next = 0;
-            state.next = ch_writemask_state::done;                     
-          )
-          __else (
-            // if current block still in use, the other block should be free
-            // overwrite the other block and we are done
-            m_writemask1_addr.next = io.qpi.wr_req.addr;
-            m_writemask1.next = io.qpi.wr_req.data;
-            m_writemask1_owners.next = owner_mask;
-            m_pe_writemask_out.next = 1;
-            state.next = ch_writemask_state::done;          
-          );
-        );
-      );        
-    );      
-  )
-  __case (ch_writemask_state::check_mask1) (
-    // check if address matches    
-    __if (m_writemask1_addr == io.qpi.wr_req.addr) (
-      // update the block and we are done
-      m_writemask1.next = m_writemask1 | io.qpi.wr_req.data;
-      m_writemask1_owners.next = m_writemask1_owners | owner_mask;
-      m_pe_writemask_out.next = 1;
-      state.next = ch_writemask_state::done;
-    )
-    __else (
-      // check if owned    
-      __if ((m_writemask1_owners & owner_mask) != 0) (
-        // check if we are the sole owner of the block
-        __if (m_writemask1_owners == owner_mask) (
-          // flush current block  
-          m_writemask_flush.next = m_writemask1;
-          m_writemask_flush_addr.next = m_writemask1_addr;
-          m_writemask_flush_enable.next = true;
-          // check if the other block address matches
-          __if (m_writemask0_addr == io.qpi.wr_req.addr) (
-            // clear current block ownership
-            m_writemask1_owners.next = 0;          
-            // update the other block and we are done
-            m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
-            m_writemask0_owners.next = m_writemask0_owners | owner_mask;
-            m_pe_writemask_out.next = 0;
-            state.next = ch_writemask_state::done;
-          )
-          __else (
-            // overwrite current block and we are done
-            m_writemask1_addr.next = io.qpi.wr_req.addr;
-            m_writemask1.next = io.qpi.wr_req.data;
-            //m_writemask1_owners.next = owner_mask; - keep the ownerhip
-            m_pe_writemask_out.next = 1;
-            state.next = ch_writemask_state::done;     
-          );
-        )
-        __else (
-          // clear current block ownership
-          m_writemask1_owners.next = m_writemask1_owners & ~owner_mask;
-          // if current block still in use, the other block should be free
-          // overwrite the other block and we are done
-          m_writemask0_addr.next = io.qpi.wr_req.addr;
-          m_writemask0.next = io.qpi.wr_req.data;
-          m_writemask0_owners.next = owner_mask;
-          m_pe_writemask_out.next = 0;
-          state.next = ch_writemask_state::done;     
-        );
-      )
-      __else (
-        // we don't own the assigned block (happens at start up)
-        // check if the other block address matches
-        __if (m_writemask0_addr == io.qpi.wr_req.addr) (
-          // update the other block and we are done
-          m_writemask0.next = m_writemask0 | io.qpi.wr_req.data;
-          m_writemask0_owners.next = m_writemask1_owners | owner_mask;
-          m_pe_writemask_out.next = 0;
-          state.next = ch_writemask_state::done;
-        )
-        __else (
-          // check if current block is free
-          __if (m_writemask1_owners == 0) (
-            // overwrite current block and we are done
-            m_writemask1_addr.next = io.qpi.wr_req.addr;
-            m_writemask1.next = io.qpi.wr_req.data;
-            m_writemask1_owners.next = owner_mask;
-            m_pe_writemask_out.next = 1;
-            state.next = ch_writemask_state::done;                     
-          )
-          __else (
-            // if current block still in use, the other block should be free
-            // overwrite the other block and we are done
-            m_writemask0_addr.next = io.qpi.wr_req.addr;
-            m_writemask0.next = io.qpi.wr_req.data;
-            m_writemask0_owners.next = owner_mask;
-            m_pe_writemask_out.next = 0;
-            state.next = ch_writemask_state::done;          
-          );
-        );
-      );        
-    );       
-  )
-  __case (ch_writemask_state::done) (
-    __if (m_wr_req_state != ch_wr_req_state::writemask) (
-      state.next = ch_writemask_state::ready;  
-    );
-  )
-  __default (
-    state.next = state; 
-    m_writemask0.next = m_writemask0;
-    m_writemask1.next = m_writemask1;
-    m_writemask0_addr.next = m_writemask0_addr;
-    m_writemask1_addr.next = m_writemask1_addr;
-    m_writemask0_owners.next = m_writemask0_owners;
-    m_writemask1_owners.next = m_writemask1_owners;
-    m_writemask_flush.next = m_writemask_flush;
-    m_writemask_flush_addr.next = m_writemask_flush_addr;
-    m_writemask_flush_enable.next = false; // off by default
-    m_pe_writemask_out.next = m_pe_writemask_out;
-  ));  
-  
-  m_writemask_state = state;
-  
-  //--
-  ch_print("{0}: writemask: state={1}, m_i=x, m_o={3}, m0_a={4}, m0_o={5}, m1_a={6}, m1_o={7}, m0={8}, m1={9}, owner={10}, addr={11}, f_e={12}, f_a={13}, f_v={14}",
-             ch_getTick(), state, 
-             m_pe_writemask_out, m_pe_writemask_out, m_writemask0_addr, m_writemask0_owners, m_writemask1_addr, m_writemask1_owners, m_writemask0, m_writemask1,
-             io.qpi.wr_req.mdata.slice<2>(), io.qpi.wr_req.addr,
-             m_writemask_flush_enable, m_writemask_flush_addr, m_writemask_flush);
 }
 
 void spmv_lsu::read_rsp_thread() {

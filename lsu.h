@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "wrcache.h"
 
 namespace spmv {
 namespace accelerator {
@@ -102,21 +103,6 @@ public:
 
 private:
 
-  __enum (ch_wr_req_state, 3, (
-    get_request,
-    submit,
-    writemask,
-    flush_writemask1,
-    flush_writemask2
-  ));
-
-  __enum (ch_writemask_state, 2, (
-    ready,
-    check_mask0,
-    check_mask1,
-    done
-  ));
-
   void read_req_thread();
   void write_req_thread();
   
@@ -124,27 +110,12 @@ private:
   void write_rsp0_thread();
   void write_rsp1_thread();
   
-  void writemask_thread();
-  
   ch_blk_addr get_baseaddr(const ch_rd_request& rq_type);
   ch_blk_addr get_baseaddr(const ch_wr_request& rq_type);
 
   ch_module<ch_rd_req_arb_t> rd_req_arb_;
   ch_module<ch_wr_req_arb_t> wr_req_arb_;
-  
-  ch_seq<ch_block>    m_writemask0;
-  ch_seq<ch_block>    m_writemask1;
-  ch_seq<ch_block>    m_writemask_flush;
-  ch_seq<ch_blk_addr> m_writemask_flush_addr;
-  ch_seq<ch_bit<2>>   m_writemask0_owners;
-  ch_seq<ch_bit<2>>   m_writemask1_owners;
-  ch_seq<ch_blk_addr> m_writemask0_addr;
-  ch_seq<ch_blk_addr> m_writemask1_addr;
-  ch_seq<ch_bit1>     m_writemask_flush_enable;
-  ch_seq<ch_bit1>     m_pe_writemask_out;
-  
-  ch_wr_req_state     m_wr_req_state;
-  ch_writemask_state  m_writemask_state;
+  ch_module<spmv_write_cache<ch_block, PE_COUNT, ch_bitwidth_v<ch_blk_addr>>> wr_cache_;
 };
 
 }
