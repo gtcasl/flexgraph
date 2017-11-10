@@ -50,7 +50,11 @@ enum {
   PARTITION_VALUE_BITS = 32,
   PARTITIONS_PER_BLOCK = ch_bitwidth_v<ch_block> / PARTITION_VALUE_BITS,
   LOG2_PARTITIONS_PER_BLOCK = log2ceil(PARTITIONS_PER_BLOCK+1),
+
+  CTRL_ID = (1 << PE_COUNT),
 };
+
+#define PE_ID(x) (1 << x)
 
 extern bool g_singlecore; 
 

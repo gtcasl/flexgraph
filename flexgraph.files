@@ -1,3 +1,4 @@
+test_wmcache.cpp
 wrcache.h
 Makefile
 aal.h

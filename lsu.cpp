@@ -11,6 +11,11 @@ __enum (ch_wr_req_state, 3, (
   wait_for_flush
 ));
 
+__enum (ch_qpi_write_state, 1, (
+  ready,
+  write
+));
+
 spmv_lsu::spmv_lsu() {
   //
   // bind modules
@@ -63,112 +68,132 @@ void spmv_lsu::read_req_thread() {
 void spmv_lsu::write_req_thread() {
   //--
   ch_seq<ch_wr_req_state> state;
+  ch_seq<ch_qpi_write_state> qw_state;
 
   //--
-  wr_cache_.io.evict.ready = (state == ch_wr_req_state::get_request);
+  ch_bool lsu_write_valid;
+  auto qpi_write_ready = (qw_state == ch_qpi_write_state::ready);
 
   //--
-  wr_req_arb_.io.out.ready = (state == ch_wr_req_state::get_request
-                           && !wr_cache_.io.evict.valid);
+  wr_req_arb_.io.out.ready = (state == ch_wr_req_state::get_request);
+  wr_cache_.io.evict.ready = (qpi_write_ready & !lsu_write_valid);
 
-  //--
-  auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
-  auto qpi_wr_req_addr  = io.qpi.wr_req.addr.asSeq();
-  auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
-
-  //--
-  ch_seq<ch_wr_mdata_t> qpi_wr_req_mdata;
-  io.qpi.wr_req.mdata = ch_zext<aal::aal_qpi0::mdata_width>(qpi_wr_req_mdata.asBits());
-
-  //--
-  auto wr_rsp_cnt = ch_select(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
-                              (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
-
-  //---
-  auto outstanding_writes = io.ctrl.outstanding_writes.asSeq();
+  ch_seq<ch_lsu_wr_req_t> req_data;
+  ch_seq<ch_bit<PE_COUNT+1>> req_owner;
 
   // QPI write thread
   {
+    auto wr_rsp_cnt = ch_select(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
+                                (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
 
-    __switch (qstate) (
-    __case (
+    auto outstanding_writes = io.ctrl.outstanding_writes.asSeq();
 
-    )
+    auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
+    auto qpi_wr_req_addr  = io.qpi.wr_req.addr.asSeq();
+    auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
+    auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.asSeq();
 
-    );
-  }
-  
-  // control thread
-  __switch (state) (
-  __case (ch_wr_req_state::get_request) (
-    __if (wr_cache_.io.evict.valid) (
-      qpi_wr_req_data.next  = wr_cache_.io.evict.data.data;
-      qpi_wr_req_mdata.next = ch_wr_mdata_t(ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner), ch_wr_request::y_masks);
-      qpi_wr_req_addr.next  = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
-      state.next = ch_wr_req_state::submit;
-    )
-    __elif (wr_req_arb_.io.out.valid) (
-      qpi_wr_req_data.next  = wr_req_arb_.io.out.data.data;
-      qpi_wr_req_mdata.next = ch_wr_mdata_t(wr_req_arb_.io.out.grant, wr_req_arb_.io.out.data.type);
-      qpi_wr_req_addr.next  = get_baseaddr(wr_req_arb_.io.out.data.type) + wr_req_arb_.io.out.data.addr;
-      __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) (
-        __if (wr_req_arb_.io.out.grant == CTRL_ID) (
-          state.next = ch_wr_req_state::flush;
-        )__else (
-          state.next = ch_wr_req_state::writemask;
-        );
-      )__else (
-        state.next = ch_wr_req_state::submit;
+    __switch (qw_state) (
+    __case (ch_qpi_write_state::ready) (
+      __if (lsu_write_valid) (
+        // get the data
+        ch_wr_mdata_t mdata(req_owner, req_data.type);
+        qpi_wr_req_addr.next  = get_baseaddr(req_data.type) + req_data.addr;
+        qpi_wr_req_data.next  = req_data.data;
+        qpi_wr_req_mdata.next = ch_zext<aal::aal_qpi0::mdata_width>(mdata.asBits());
+        // go to write
+        qw_state.next = ch_qpi_write_state::write;
+      )
+      __elif (wr_cache_.io.evict.valid) (
+        // get the data
+        ch_wr_mdata_t mdata(ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner), ch_wr_request::y_masks);
+        qpi_wr_req_addr.next  = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
+        qpi_wr_req_data.next  = wr_cache_.io.evict.data.data;
+        qpi_wr_req_mdata.next = ch_zext<aal::aal_qpi0::mdata_width>(mdata.asBits());
+        // go to write
+        qw_state.next = ch_qpi_write_state::write;
       );
-    );
-  )
-  __case (ch_wr_req_state::submit) (
-    __if (!io.qpi.wr_req.almostfull) (
-      qpi_wr_req_valid.next = true;
-      outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
-      // move next
-      state.next = ch_wr_req_state::get_request;
-    );
-  )
-  __case (ch_wr_req_state::writemask) (
-    // send the request to the write cache
-    wr_cache_.io.enq.data.owner = ch_slice<PE_COUNT>(wr_req_arb_.io.out.grant); // remove ctrl's onehot bit
-    wr_cache_.io.enq.data.tag   = wr_req_arb_.io.out.data.addr;
-    wr_cache_.io.enq.data.data  = wr_req_arb_.io.out.data.data;
-    wr_cache_.io.enq.valid = true;
-    // wait for the cache ack
-    __if (wr_cache_.io.enq.ready) (
-      // move next
-      state.next = ch_wr_req_state::get_request;
-    );
-  )
-  __case (ch_wr_req_state::flush) (
-    // enable cache flush
-    wr_cache_.io.flush = true;
-    // wait for the cache ack
-    __if (wr_cache_.io.enq.ready) (
-      // go wait for data
-      state.next = ch_wr_req_state::wait_for_flush;
-    );
-  )
-  __case (ch_wr_req_state::wait_for_flush) (
-    // waitr for write flushes to complete
-    __if (wr_cache_.io.enq.ready) (
-      // return
-      state.next = ch_wr_req_state::get_request;
-    );
-  )
-  __default (
-    //--
-    wr_cache_.io.enq.data.owner = 0;
-    wr_cache_.io.enq.data.tag   = 0;
-    wr_cache_.io.enq.data.data  = 0;
-    wr_cache_.io.enq.valid = false;
-    wr_cache_.io.flush = false;
-    //--
-    qpi_wr_req_valid.next = false;
-    outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
-  ));
+    )
+    __case (ch_qpi_write_state::write) (
+      __if (!io.qpi.wr_req.almostfull) (
+        qpi_wr_req_valid.next = true; // QPI write enable
+        outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
+        qw_state.next = ch_qpi_write_state::ready;
+      );
+    )
+    __default (
+      qpi_wr_req_valid.next = false; // valid signal is a pulse (goes off the following cycle)
+      outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
+    ));
+  }
+
+  // control thread
+  {
+    __switch (state) (
+    __case (ch_wr_req_state::get_request) (
+      __if (wr_req_arb_.io.out.valid) (
+        req_data.next.addr = wr_req_arb_.io.out.data.addr;
+        req_data.next.type = wr_req_arb_.io.out.data.type;
+        req_data.next.data = wr_req_arb_.io.out.data.data;
+        req_owner.next     = wr_req_arb_.io.out.grant;
+        __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) (
+          __if (wr_req_arb_.io.out.grant == CTRL_ID) (
+            state.next = ch_wr_req_state::flush;
+          )__else (
+            state.next = ch_wr_req_state::writemask;
+          );
+        )__else (
+          state.next = ch_wr_req_state::submit;
+        );
+      );
+    )
+    __case (ch_wr_req_state::submit) (
+      lsu_write_valid = true;
+      // wait for QPI write ack
+      __if (qpi_write_ready) (
+        // return
+        state.next = ch_wr_req_state::get_request;
+      );
+    )
+    __case (ch_wr_req_state::writemask) (
+      // send the request to the write cache
+      wr_cache_.io.enq.data.owner = ch_slice<PE_COUNT>(req_owner); // remove ctrl's bit
+      wr_cache_.io.enq.data.tag   = req_data.addr;
+      wr_cache_.io.enq.data.data  = req_data.data;
+      wr_cache_.io.enq.valid      = true;
+      // wait for the cache ack
+      __if (wr_cache_.io.enq.ready) (
+        // return
+        state.next = ch_wr_req_state::get_request;
+      );
+    )
+    __case (ch_wr_req_state::flush) (
+      // enable cache flush
+      wr_cache_.io.flush = true;
+      // wait for the cache ack
+      __if (wr_cache_.io.enq.ready) (
+        // go wait for data
+        state.next = ch_wr_req_state::wait_for_flush;
+      );
+    )
+    __case (ch_wr_req_state::wait_for_flush) (
+      // waitr for write flushes to complete
+      __if (wr_cache_.io.enq.ready) (
+        // return
+        state.next = ch_wr_req_state::get_request;
+      );
+    )
+    __default (
+      //--
+      wr_cache_.io.enq.data.owner = 0;
+      wr_cache_.io.enq.data.tag   = 0;
+      wr_cache_.io.enq.data.data  = 0;
+      wr_cache_.io.enq.valid = false;
+      wr_cache_.io.flush = false;
+      //--
+      lsu_write_valid = false;
+    ));
+  }
     
   //--
   ch_print("{0}: lsu_wr_req: state={1}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",

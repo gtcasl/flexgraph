@@ -18,11 +18,7 @@ namespace accelerator {
 enum {
   RD_REQ_INPUTS = PE_COUNT + 1,
   WR_REQ_INPUTS = PE_COUNT + 1,
-
-  CTRL_ID = (1 << PE_COUNT),
 };
-
-#define PE_ID(x) (1 << x)
 
 __enum (ch_rd_request, 3, (
   a_partition,

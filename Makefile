@@ -2,13 +2,13 @@
 CXXFLAGS += -std=c++17 -O0 -g -fmax-errors=5
 LDFLAGS += -lcash
 
-PROJECT = spmv.out
-
-TESTS = test_spmv.out test_pe.out test_lsu.out test_vcache.out
-
 PROJECT_SRCS = lsu.cpp pe.cpp spmv.cpp mtx.cpp graph.cpp cpu.cpp simulator.cpp main.cpp
 
-TEST_SRCS = test_lsu.cpp test_pe.cpp test_vcache.cpp test_spmv.cpp
+TEST_SRCS = test_lsu.cpp test_pe.cpp test_vcache.cpp test_spmv.cpp test_wmcache.cpp
+
+PROJECT = spmv.out
+
+TESTS = $(TEST_SRCS:.cpp=.out)
 
 PROJECT_OBJS = $(PROJECT_SRCS:.cpp=.o)
 

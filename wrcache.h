@@ -5,7 +5,7 @@
 namespace spmv {
 namespace accelerator {
 
-template <typename T, unsigned N, unsigned TagBits, unsigned LookupCycles = 1 + N/8>
+template <typename T, unsigned N, unsigned TagBits, unsigned LookupCycles = CH_CEILDIV(N, 4)>
 class spmv_write_cache {
 private:
 
@@ -16,23 +16,34 @@ private:
     MAX_TAG_VALUE = (1 << TagBits) - 1,
   };
 
-  __enum (ch_state, 2, (
+  __enum (ch_state, 3, (
     ready,
     lookup,
+    check_evict,
     evict,
     flush
   ));
 
   __struct (tag_t, (
     (ch_bit<N>) owners,
-    (ch_tag)    tag,
-    (ch_bool)   valid
+    (ch_tag)    tag
   ));
 
-  ch_ram<tag_t, N>    tags_;
-  ch_ram<ch_block, N> data_;
-  ch_seq<ch_idx>      last_used_idx_;
-  ch_seq<ch_tag>      last_used_tag_;
+  ch_ram<tag_t, N> tags_;
+  ch_ram<T, N>     data_;
+  ch_seq<ch_idx>   last_used_idx_;
+  ch_seq<ch_tag>   last_used_tag_;
+
+  ch_idx port0_;
+  ch_idx port1_;
+
+  T data_value_;
+  ch_bool data_wenable_;
+
+  tag_t tag_value_;
+  ch_bool tag_wenable_;
+
+  ch_seq<ch_idx> counter_;
 
 public:
 
@@ -45,45 +56,58 @@ public:
   __io (
     (ch_deq_io<entry_t>) enq,
     (ch_enq_io<entry_t>) evict,
-    __in(ch_bool)        flush,
+    __in(ch_bool)        flush
   );
 
-  spmv_write_cache() : last_used_tag_(MAX_TAG_VALUE)
-  {}
+  spmv_write_cache() {
+    //--
+    __if (data_wenable_) (
+      data_[port0_] = data_value_;
+    );
+
+    //--
+    __if (tag_wenable_) (
+      tags_[port0_] = tag_value_;
+    );
+  }
 
   void describe() {
-    //--
-    ch_idx match_block_idx(0);
-    ch_idx owned_block_idx(0);
-    ch_idx free_block_idx(0);
-    ch_bool lookup_valid = io.enq.valid;
-
-    // lookup thread
-    {
-      int step = CH_CEILDIV(N, LookupCycles);
-      for (int i = 1; i < N; ++i) {
-        match_block_idx = ch_select((tags_[i].tag == io.enq.data.tag), i, ch_clone(match_block_idx));
-        owned_block_idx = ch_select((tags_[i].owners & io.enq.data.owner) != 0, i, ch_clone(owned_block_idx));
-        free_block_idx  = ch_select(tags_[i].owners == 0, i, ch_clone(free_block_idx));
-        if (0 == (i % step)) {
-          match_block_idx = ch_reg(match_block_idx);
-          owned_block_idx = ch_reg(owned_block_idx);
-          free_block_idx  = ch_reg(free_block_idx);
-          lookup_valid    = ch_reg(lookup_valid);
-        }
-      }
-      match_block_idx = ch_reg(match_block_idx);
-      owned_block_idx = ch_reg(owned_block_idx);
-      free_block_idx  = ch_reg(free_block_idx);
-      lookup_valid    = ch_reg(lookup_valid);
-    }
-
     //--
     ch_seq<ch_state> state;
     ch_seq<entry_t> enq_data;
 
     //--
+    ch_idx match_block_idx(0);
+    ch_idx owned_block_idx(0);
+    ch_idx free_block_idx(N-1);
+    ch_bool lookup_valid(io.enq.valid);
+
+    // lookup unit
+    {
+      int step = CH_CEILDIV(N, LookupCycles);
+      entry_t lookup_data = io.enq.data; // use io.enq.data in first cycle
+      for (int i = 1; i < N; ++i) {
+        match_block_idx = ch_select((tags_[i].tag == lookup_data.tag) && (tags_[i].owners != 0), i, ch_clone(match_block_idx));
+        owned_block_idx = ch_select((tags_[i].owners & lookup_data.owner) != 0, i, ch_clone(owned_block_idx));
+        free_block_idx  = ch_select(tags_[N-1-i].owners == 0, N-1-i, ch_clone(free_block_idx));
+        if (0 == (i % step)) {
+          lookup_data = enq_data; // io.enq.data is not avaiable beyond first cycle, use cbackup value
+          match_block_idx = ch_reg(ch_clone(match_block_idx));
+          owned_block_idx = ch_reg(ch_clone(owned_block_idx));
+          free_block_idx  = ch_reg(ch_clone(free_block_idx));
+          lookup_valid    = ch_reg(ch_clone(lookup_valid)) & (state == ch_state::lookup);
+        }
+      }
+      match_block_idx = ch_reg(ch_clone(match_block_idx));
+      owned_block_idx = ch_reg(ch_clone(owned_block_idx));
+      free_block_idx  = ch_reg(ch_clone(free_block_idx));
+      lookup_valid    = ch_reg(ch_clone(lookup_valid));
+    }
+
+    //--
     io.enq.ready = (state == ch_state::ready);
+
+    ch_seq<ch_idx> evict_block_idx;
 
     // control thread
     {
@@ -91,70 +115,100 @@ public:
       __case (ch_state::ready) (
         __if (io.enq.valid) (
           // check if last used block matches (fast path)
-          __if (io.enq.data.tag == last_used_tag_) (
-            data_[last_used_idx_] = data_[last_used_idx_] | io.enq.data.data;
-            tags_[last_used_idx_].owners = tags_[last_used_idx_].owners | io.enq.data.owner;
+          port0_ = last_used_idx_;
+          __if (io.enq.data.tag == last_used_tag_
+             && (tags_[port0_].owners & io.enq.data.owner) != 0) (
+            ch_print("@ fast hit!");
+            data_wenable_ = true;
+            tag_wenable_  = true;
+            data_value_ = data_[port0_] | io.enq.data.data;
+            tag_value_  = tag_t(tags_[port0_].tag, tags_[port0_].owners | io.enq.data.owner);
           )__else (
             enq_data.next = io.enq.data;
             state.next = ch_state::lookup;
           );
         )__elif (io.flush) (
+          counter_.next = 0;
           state.next = ch_state::flush;
         );
       )
       __case (ch_state::lookup) (
         // wait for lookup to complete
         __if (lookup_valid) (
-          // found a matching block?
-          __if (tags_[match_block_idx].valid
-            &&  tags_[match_block_idx].tag == enq_data.tag) (
-
+          // found a valid matching block?
+          port1_ = match_block_idx;
+          __if (tags_[port1_].owners != 0
+            &&  tags_[port1_].tag == enq_data.tag) (
+            ch_print("@ lookup match!");
             // append data to matching block
-            data_[match_block_idx] = data_[match_block_idx] | enq_data.data;
-            tags_[match_block_idx].owners = tags_[match_block_idx].owners | enq_data.owner;
+            data_wenable_ = true;
+            tag_wenable_  = true;
+            port0_      = match_block_idx;
+            data_value_ = data_[port0_] | enq_data.data;
+            tag_value_  = tag_t(tags_[port0_].tag, tags_[port0_].owners | enq_data.owner);
 
-            // udpate last used block
+            // udpate last used info
             last_used_tag_.next = enq_data.tag;
             last_used_idx_.next = match_block_idx;
 
-            // check if previous owned block is different
-            __if ((tags_[owned_block_idx].owners & enq_data.owner) != 0
-               && owned_block_idx != match_block_idx) (
-              // if sole owner
-              __if (tags_[owned_block_idx].owners == enq_data.owner) (
-                // reset ownerhip
-                tags_[owned_block_idx].owners = 0;
-                // evict the block
-                state.next = ch_state::evict;
-              )__else (
-                // clear ownership
-                tags_[owned_block_idx].owners = tags_[owned_block_idx].owners & ~enq_data.owner;
-                // done
-                state.next = ch_state::ready;
-              );
+            // need to check for evection
+            __if (match_block_idx != owned_block_idx) (
+              evict_block_idx.next = owned_block_idx;
+              state.next = ch_state::check_evict;
+            )__else (
+              // done
+              state.next = ch_state::ready;
             );
           )__else (
+            ch_print("@ new entry!");
             // add data to existing free block
-            data_[free_block_idx] = enq_data.data;
-            tags_[free_block_idx].owners = enq_data.owner;
+            data_wenable_ = true;
+            tag_wenable_  = true;
+            port0_      = free_block_idx;
+            data_value_ = enq_data.data;
+            tag_value_  = tag_t(enq_data.tag, enq_data.owner);
 
-            // flag block as valid
-            tags_[free_block_idx].valid = true;
-
-            // udpate last used block
+            // udpate last used info
             last_used_tag_.next = enq_data.tag;
             last_used_idx_.next = free_block_idx;
 
-            // done
-            state.next = ch_state::ready;
+            // need to check for evection
+            __if (free_block_idx != owned_block_idx) (
+              evict_block_idx.next = owned_block_idx;
+              state.next = ch_state::check_evict;
+            )__else (
+              // done
+              state.next = ch_state::ready;
+            );
           );
         );
       )
+      __case (ch_state::check_evict) (
+        port0_ = evict_block_idx;
+        // if sole owner of previous block?
+        __if (tags_[port0_].owners == enq_data.owner) (
+          // reset ownerhip
+          tag_wenable_ = true;
+          tag_value_  = tag_t(tags_[port0_].tag, 0);
+          // evict the block
+          state.next = ch_state::evict;
+        )__else (
+          // has block ownership?
+          __if ((tags_[port0_].owners & enq_data.owner) != 0) (
+            // clear ownership
+            tag_wenable_ = true;
+            tag_value_ = tag_t(tags_[port0_].tag, tags_[port0_].owners & ~enq_data.owner);
+          );
+          // done
+          state.next = ch_state::ready;
+        );
+      )
       __case (ch_state::evict) (
-        // send evicted block to LSU
+        // evict unused dirty block
+        port0_ = evict_block_idx;
         io.evict.data.owner = enq_data.owner;
-        io.evict.data.tag   = tags_[owned_block_idx].tag;
-        io.evict.data.data  = data_[owned_block_idx];
+        io.evict.data.tag   = tags_[port0_].tag;
+        io.evict.data.data  = data_[port0_];
         io.evict.valid = true;
         // wait for the LSU ack
         __if (io.evict.ready) (
@@ -163,28 +217,26 @@ public:
         );
       )
       __case (ch_state::flush) (
-        ch_seq<ch_idx> counter;
-        // send evicted block to LSU
-        io.evict.data.owner = 0;
-        io.evict.data.tag   = tags_[counter].tag;
-        io.evict.data.data  = data_[counter];
-
-        // check if block is dirty
-        __if (tags_[counter].owners != 0) (
+        // evict all dirty blocks
+        port0_ = counter_;
+        __if (tags_[port0_].owners != 0) (
+          io.evict.data.owner = 0;
+          io.evict.data.tag   = tags_[port0_].tag;
+          io.evict.data.data  = data_[port0_];
           io.evict.valid = true;
           // wait for the LSU ack
           __if (io.evict.ready) (
             // advance counter
-            counter.next = counter + 1;
-            __if (counter == (N-1)) (
+            counter_.next = counter_ + 1;
+            __if (counter_ == (N-1)) (
               // done
               state.next = ch_state::ready;
             );
           );
         )__else (
           // advance counter
-          counter.next = counter + 1;
-          __if (counter == (N-1)) (
+          counter_.next = counter_ + 1;
+          __if (counter_ == (N-1)) (
             // done
             state.next = ch_state::ready;
           );
@@ -195,9 +247,27 @@ public:
         io.evict.data.owner = 0;
         io.evict.data.tag   = 0;
         io.evict.data.data  = 0;
-        io.evict.valid = false;
+        io.evict.valid      = false;
+        //--
+        port0_ = 0;
+        port1_ = 0;
+        data_wenable_ = false;
+        tag_wenable_ = false;
+        data_value_.asBits() = 0;
+        tag_value_.asBits() = 0;
       ));
     }
+
+    /*ch_print("{0}: state={1}, enq_val={2}, enq_tag={3}, enq_own={4}, enq_dat={5}, "
+             "l_val={6}, mb_idx={7}, ob_idx={8}, fb_idx={9}, lu_idx={10}, "
+             "flush={11}, evt_val={12}, evt_rdy={13}, evt_dat={14}, evt_cntr={15}",
+             ch_getTick(), state, io.enq.valid, io.enq.data.tag, io.enq.data.owner, io.enq.data.data,
+             lookup_valid, match_block_idx, owned_block_idx, free_block_idx, last_used_idx_,
+             io.flush, io.evict.valid, io.evict.ready, io.evict.data.data, counter_);
+
+    ch_print("{0}: *** data[0]={1}, data[1]={2}, data[2]={3}, data[3]={4}, tags[0]={5}, tags[1]={6}",
+             ch_getTick(), data_[0], data_[1], data_[2], data_[3], tags_[0], tags_[1]);
+    ch_print("");*/
   }
 };
 
