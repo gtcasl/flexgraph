@@ -1,0 +1,167 @@
+\begin{thebibliography}{10}
+
+\bibitem{Tesseract}
+J.~Ahn, S.~Hong, S.~Yoo, O.~Mutlu, and K.~Choi.
+\newblock Tesseract: A scalable processing-in-memory accelerator for parallel
+  graph processing.
+\newblock In {\em Proceedings of the 42Nd Annual International Symposium on
+  Computer Architecture}, ISCA '15, pages 105--117, New York, NY, USA, 2015.
+  ACM.
+
+\bibitem{BlueSpec}
+Arvind.
+\newblock Bluespec: A language for hardware design, simulation, synthesis and
+  verification invited talk.
+\newblock In {\em Proceedings of the First ACM and IEEE International
+  Conference on Formal Methods and Models for Co-Design}, MEMOCODE '03, pages
+  249--, Washington, DC, USA, 2003. IEEE Computer Society.
+
+\bibitem{Chisel}
+J.~Bachrach, H.~Vo, B.~Richards, Y.~Lee, A.~Waterman, R.~Avižienis,
+  J.~Wawrzynek, and K.~Asanović.
+\newblock Chisel: Constructing hardware in a scala embedded language.
+\newblock In {\em Design Automation Conference (DAC), 2012 49th ACM/EDAC/IEEE},
+  pages 1212--1221, June 2012.
+
+\bibitem{JHDL}
+P.~Bellows and B.~Hutchings.
+\newblock Jhdl-an hdl for reconfigurable systems.
+\newblock In {\em FPGAs for Custom Computing Machines, 1998. Proceedings. IEEE
+  Symposium on}, pages 175--184, Apr 1998.
+
+\bibitem{Esterel}
+G.~Berry and G.~Gonthier.
+\newblock The esterel synchronous programming language: Design, semantics,
+  implementation.
+\newblock {\em Sci. Comput. Program.}, 19(2):87--152, Nov. 1992.
+
+\bibitem{DCSC}
+A.~Buluc and J.~R. Gilbert.
+\newblock On the representation and multiplication of hypersparse matrices.
+\newblock In {\em 2008 IEEE International Symposium on Parallel and Distributed
+  Processing}, pages 1--11, April 2008.
+
+\bibitem{MyHDL}
+J.~Decaluwe.
+\newblock Myhdl: A python-based hardware description language.
+\newblock {\em Linux J.}, 2004(127):5--, Nov. 2004.
+
+\bibitem{Dark-Silicon}
+H.~Esmaeilzadeh, E.~Blem, R.~S. Amant, K.~Sankaralingam, and D.~Burger.
+\newblock Dark silicon and the end of multicore scaling.
+\newblock In {\em 2011 38th Annual International Symposium on Computer
+  Architecture (ISCA)}, pages 365--376, June 2011.
+
+\bibitem{IBM-FPGA}
+Y.~L. Fei~Chen.
+\newblock Fpga acceleration in a power8 cloud.
+\newblock
+  \url{https://openpowerfoundation.org/blogs/fpga-acceleration-in-a-power8-cloud}.
+
+\bibitem{BigData}
+D.~Gage.
+\newblock The new shape of big data.
+\newblock
+  \url{http://www.wsj.com/articles/SB10001424127887323452204578288264046780392},
+  2013.
+
+\bibitem{Intel-FPGA}
+P.~Gupta.
+\newblock Intel xeon+fpga platform for the data center.
+\newblock
+  \url{http://reconfigurablecomputing4themasses.net/files/2.2%20PK.pdf}.
+
+\bibitem{Graphicionado}
+T.~J. Ham, W.~Lisa, S.~Narayanan, S.~Nadathur, and M.~Margaret.
+\newblock Graphicionado: A high-performance and energy efficient accelerator
+  for graph analytics.
+\newblock In {\em the 49th Annual IEEE/ACM International Symposium on
+  Microarchitecture (MICRO)}, 2016.
+
+\bibitem{CHDL}
+C.~D. Kersey.
+\newblock Chdl: Open­source c++ hardware design library.
+\newblock \url{https://github.com/cdkersey/chdl}, 2012.
+
+\bibitem{GraphLab}
+Y.~Low, D.~Bickson, J.~Gonzalez, C.~Guestrin, A.~Kyrola, and J.~M. Hellerstein.
+\newblock Distributed graphlab: A framework for machine learning and data
+  mining in the cloud.
+\newblock {\em Proc. VLDB Endow.}, 5(8):716--727, Apr. 2012.
+
+\bibitem{Pregel}
+G.~Malewicz, M.~H. Austern, A.~J. Bik, J.~C. Dehnert, I.~Horn, N.~Leiser, and
+  G.~Czajkowski.
+\newblock Pregel: A system for large-scale graph processing.
+\newblock In {\em Proceedings of the 2010 ACM SIGMOD International Conference
+  on Management of Data}, SIGMOD '10, pages 135--146, New York, NY, USA, 2010.
+  ACM.
+
+\bibitem{Galois}
+D.~Nguyen, A.~Lenharth, and K.~Pingali.
+\newblock A lightweight infrastructure for graph analytics.
+\newblock In {\em Proceedings of the Twenty-Fourth ACM Symposium on Operating
+  Systems Principles}, SOSP '13, pages 456--471, New York, NY, USA, 2013. ACM.
+
+\bibitem{GraphOps}
+T.~Oguntebi and K.~Olukotun.
+\newblock Graphops: A dataflow library for graph analytics acceleration.
+\newblock In {\em Proceedings of the 2016 ACM/SIGDA International Symposium on
+  Field-Programmable Gate Arrays}, FPGA '16, pages 111--117, New York, NY, USA,
+  2016. ACM.
+
+\bibitem{GraphX}
+L.~Page, S.~Brin, R.~Motwani, and T.~Winograd.
+\newblock Apache spark's api for graph and graph-parallel computation.
+\newblock \url{http://spark.apache.org/graphx/}.
+
+\bibitem{PageRank}
+L.~Page, S.~Brin, R.~Motwani, and T.~Winograd.
+\newblock The pagerank citation ranking: Bringing order to the web.
+\newblock Technical Report 1999-66, Stanford InfoLab, November 1999.
+\newblock Previous number = SIDL-WP-1999-0120.
+
+\bibitem{SystemC}
+P.~R. Panda.
+\newblock Systemc - a modeling platform supporting multiple design
+  abstractions.
+\newblock In {\em System Synthesis, 2001. Proceedings. The 14th International
+  Symposium on}, pages 75--80, 2001.
+
+\bibitem{Catapult}
+A.~Putnam, A.~M. Caulfield, E.~S. Chung, D.~Chiou, K.~Constantinides, J.~Demme,
+  H.~Esmaeilzadeh, J.~Fowers, G.~P. Gopal, J.~Gray, M.~Haselman, S.~Hauck,
+  S.~Heil, A.~Hormati, J.-Y. Kim, S.~Lanka, J.~Larus, E.~Peterson, S.~Pope,
+  A.~Smith, J.~Thong, P.~Y. Xiao, and D.~Burger.
+\newblock A reconfigurable fabric for accelerating large-scale datacenter
+  services.
+\newblock {\em SIGARCH Comput. Archit. News}, 42(3):13--24, June 2014.
+
+\bibitem{GraphMat}
+N.~Sundaram, N.~Satish, M.~M.~A. Patwary, S.~R. Dulloor, M.~J. Anderson, S.~G.
+  Vadlamudi, D.~Das, and P.~Dubey.
+\newblock Graphmat: High performance graph analytics made productive.
+\newblock {\em Proc. VLDB Endow.}, 8(11):1214--1225, July 2015.
+
+\bibitem{Cocoh}
+B.~Tine.
+\newblock Cocoh, a c++ domain specific library for hardware design and
+  simulation.
+\newblock \url{http://casl.gatech.edu/research/cocoh}, 2017.
+
+\bibitem{BFS}
+wikipedia.
+\newblock Breadth-first search.
+\newblock \url{https://en.wikipedia.org/wiki/Breadth-first_search}.
+
+\bibitem{SSSP}
+wikipedia.
+\newblock Shortest path problem.
+\newblock \url{https://en.wikipedia.org/wiki/Shortest_path_problem}.
+
+\bibitem{CSC}
+wikipedia.
+\newblock Sparse matrix.
+\newblock \url{https://en.wikipedia.org/wiki/Sparse_matrix}.
+
+\end{thebibliography}

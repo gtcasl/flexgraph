@@ -467,6 +467,10 @@ void spmv_pe::describe() {
     __if (io.lsu.wr_req.ready) (
       // write second y_value block
       state.next = ch_exec_state::write_y_value1;
+    )
+    __else (
+      // profiling
+      hwcntrs_.next.write_value_stalls = hwcntrs_.write_value_stalls + 1;
     );
   )
   __case (ch_exec_state::write_y_value1) (        
@@ -478,6 +482,10 @@ void spmv_pe::describe() {
     // wait for LSU ack
     __if (io.lsu.wr_req.ready) (
       state.next = ch_exec_state::write_y_mask;
+    )
+    __else (
+      // profiling
+      hwcntrs_.next.write_value_stalls = hwcntrs_.write_value_stalls + 1;
     );
   )
   __case (ch_exec_state::write_y_mask) (
@@ -496,7 +504,11 @@ void spmv_pe::describe() {
       hwcntrs_.next.num_partitions = hwcntrs_.num_partitions + 1;
       // advance to the next partition
       state.next = ch_exec_state::get_partition;      
-    );
+    )
+      __else (
+        // profiling
+        hwcntrs_.next.write_mask_stalls = hwcntrs_.write_mask_stalls + 1;
+      );
   )
   __default (
     //--

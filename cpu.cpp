@@ -362,5 +362,7 @@ void cpu_device::dump_stats(ch_tick t) {
     DbgPrint(0, "PE%d matrix ystarts stalls = %d\n", i, (uint32_t)hwcntrs.a_startys_stalls);
     DbgPrint(0, "PE%d matrix values stalls = %d\n", i, (uint32_t)hwcntrs.a_values_stalls);
     DbgPrint(0, "PE%d vertex masks stalls = %d\n", i, (uint32_t)hwcntrs.x_masks_stalls);
+    DbgPrint(0, "PE%d matrix write values stalls = %d\n", i, (uint32_t)hwcntrs.write_value_stalls);
+    DbgPrint(0, "PE%d matrix write masks stalls = %d\n", i, (uint32_t)hwcntrs.write_mask_stalls);
   }
 }

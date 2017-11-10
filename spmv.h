@@ -43,7 +43,7 @@ protected:
 
   ch_seq<ch_bit32> pbuf_pending_size_;
 
-  ch_seq<ch_bit<32>> a_partitions_stalls_;
+  ch_seq<ch_bit32> a_partitions_stalls_;
 
   ch_seq<ch_ptr> part_blk_curr_;
   ch_seq<ch_ptr> part_blk_end_;

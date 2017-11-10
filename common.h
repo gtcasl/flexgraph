@@ -88,21 +88,23 @@ inline bool test_bitvector(const uint32_t* bitvec, uint32_t idx) {
 }
 
 __struct (ch_pe_hwcntrs_t, (
-  (ch_bit<32>) num_partitions,
-  (ch_bit<32>) min_latency,
-  (ch_bit<32>) max_latency,
-  (ch_bit<32>) total_latency,
-  (ch_bit<32>) execute_latency,
-  (ch_bit<32>) a_xindices_stalls,
-  (ch_bit<32>) x_masks_stalls,
-  (ch_bit<32>) a_startys_stalls,
-  (ch_bit<32>) a_values_stalls
+  (ch_bit32) num_partitions,
+  (ch_bit32) min_latency,
+  (ch_bit32) max_latency,
+  (ch_bit32) total_latency,
+  (ch_bit32) execute_latency,
+  (ch_bit32) a_xindices_stalls,
+  (ch_bit32) x_masks_stalls,
+  (ch_bit32) a_startys_stalls,
+  (ch_bit32) a_values_stalls,
+  (ch_bit32) write_value_stalls,
+  (ch_bit32) write_mask_stalls
 ));
 
 __struct (ch_ctrl_hwcntrs_t, (
-  (ch_bit<32>) a_partitions_stalls,
-  (ch_bit<32>) vcache_hits,
-  (ch_bit<32>) vcache_stalls
+  (ch_bit32) a_partitions_stalls,
+  (ch_bit32) vcache_hits,
+  (ch_bit32) vcache_stalls
 ));
 
 __inout (ch_matrix_dcsc_t, (
