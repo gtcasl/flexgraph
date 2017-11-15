@@ -1,5 +1,7 @@
 \section{Background and Motivation}
 
+In this section, we provide the background and motivation for this work.
+
 \subsection{Graph Vertex Processing}
 
 \begin{figure}[htbp]
@@ -23,22 +25,22 @@
 \label{fig:sample_algorithm}
 \end{figure} 
 
-\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=Graph Processing Kernel]
-GraphKernel (G, P, iterations) :
-  for_each iterations
-    x := Assign(P)
-  	y := Process(G,x)
-  	P := Apply(y)	  
-  end_for
+\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=GraphMath Processing Model]
+GraphProgram(%\textit{G}%, %\textit{P}%, %\textit{N}%) :
+  for %\textit{N}% iterations :
+    x := Assign(%\textit{P}%)
+  	y := Process(%\textit{G}%,x)
+  	%\textit{P}% := Apply(y)	  
   
-e.g.: 
-	FindIncomingEdges (A, identity, 1):
-	with Assign(P)    := P
-	     Process(A,x) := A * x
-	     Apply(y)     := y
+e.g. FindIncomingEdges(%\textit{G}%=A, %\textit{P}%=%\textit{\textbf{I}}%, %\textit{N}%=1) :
+       Assign(%\textit{P}%)    := %\textit{P}%
+  with Process(%\textit{G}%,x) := %\textit{G}% * x
+       Apply(y)     := y
 \end{lstlisting}
 
-FlexGraph's architecture is based on GraphMat \cite{GraphMat}'s vertex computing paradigm where a graph algorithm is described as a set of linear algebra operations on vectors and matrices. Figure \ref{fig:graph_vertex_programming} shows an example where graph (a) is represented as a matrix (b), allowing us to execute vertex multiplication on the matrix transpose (c). The above linear algebra operation (c) generates the number of incoming edges for each vertex in the graph. All GraphMat algorithms, Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, etc.. are expressed in this fashion such that computation can be efficiently accelerated in hardware. In FlexGraph, we accelerate the matrix vertex computation on the FPGA, instead of executing it on the multi-core host processor.
+A large variety of programming models have been proposed for describing Graph algorithms, expressing computation using vertex operations on matrices \cite{GraphMat} \cite{GraphLab}, \cite{Pregel}, \cite{MapGraph} \cite{GraphX} task-based models \cite{Galois} or domain-specific languages \cite{GreenMarl}. The vertex programming model has show great adoption for its ease of abstraction for describing algorithms using linear algebra and its efficient computation on commodity multi-core processors. Figure \ref{fig:sample_graph} shows a simple 3 vertices graph example with its corresponding 3x3 matrix representation. For every edge between a source and destination vertex, the corresponding row and column entry in the matrix is activate.  
+ 
+ deal  FlexGraph's architecture is based on GraphMat \cite{GraphMat}'s vertex computing paradigm where a graph algorithm is described as a set of linear algebra operations on vectors and matrices. Figure \ref{fig:graph_vertex_programming} shows an example where graph (a) is represented as a matrix (b), allowing us to execute vertex multiplication on the matrix transpose (c). The above linear algebra operation (c) generates the number of incoming edges for each vertex in the graph. All GraphMat algorithms, Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, etc.. are expressed in this fashion such that computation can be efficiently accelerated in hardware. In FlexGraph, we accelerate the matrix vertex computation on the FPGA, instead of executing it on the multi-core host processor.
 
 \subsection{Intel Heterogeneous CPU-FPGA Platform}
 

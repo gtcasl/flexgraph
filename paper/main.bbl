@@ -81,6 +81,19 @@ T.~Oguntebi and K.~Olukotun, ``Graphops: A dataflow library for graph analytics
 \bibitem{Cash}
 B.~P. Tine, ``Cash: A c++ api and simulator for hardware,'' 2017.
 
+\bibitem{MapGraph}
+Z.~Fu, M.~Personick, and B.~Thompson, ``Mapgraph: A high level api for fast
+  development of high performance graph analytics on gpus,'' in {\em
+  Proceedings of Workshop on GRAph Data Management Experiences and Systems},
+  GRADES'14, (New York, NY, USA), pp.~2:1--2:6, ACM, 2014.
+
+\bibitem{GreenMarl}
+S.~Hong, H.~Chafi, E.~Sedlar, and K.~Olukotun, ``Green-marl: A dsl for easy and
+  efficient graph analysis,'' in {\em Proceedings of the Seventeenth
+  International Conference on Architectural Support for Programming Languages
+  and Operating Systems}, ASPLOS XVII, (New York, NY, USA), pp.~349--362, ACM,
+  2012.
+
 \bibitem{BFS}
 wikipedia, ``Breadth-first search.''
   \url{https://en.wikipedia.org/wiki/Breadth-first_search}.
