@@ -1,1 +1,10 @@
+\section{Future Work}
+
+As stated in the results discussion, FlexGraph performance can be greatly improved once we implement the proposed optimizations. Doing this first step will be our priority for future work.
+The Cocoh C++ library we used in this work did not yet have support for verilog generation, we plan to add that support such that we could install the accelerator on the actual FPGA board for evaluation.
+We also anticipate to do some power and energy efficiency analysis ion the final design, hopefully identifying all the components in the system consuming the most energy. 
+We also plan to add some real world datasets to our evaluation, popular benchmarks include Flicker, Facebook, Wikipedia, Twitter, Netflix and LiveJournal.
+
 \section{Conclusion}
+
+In this paper we presented FlexGraph, a reconfigurable Graph Analytics Accelerator targeting commodity heterogeneous CPU-FPGA platforms. FlexGraph was implemented using Cocoh C++ libary, providing a productive and efficiency development support for modifying the accelerator when needed to accommodate all graph algorithms. FlexGraph architecture implements a customized SPMV kernel adapted for graphs vertex computation. It implements some memory optimizations and tasks parallelization to improve its performance. FlexGraph current performance is not ideal and we identified several strategies to fix that, including doing some memory prefetching and adding additional processing elements. 

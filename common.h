@@ -2,10 +2,11 @@
 
 #include <string.h>
 #include <cash.h>
-#include <../htl/queue.h>
-#include <../htl/xbar.h>
-#include <../htl/arbiter.h>
-#include <../htl/counter.h>
+#include <htl/queue.h>
+#include <htl/xbar.h>
+#include <htl/arbiter.h>
+#include <htl/counter.h>
+#include <htl/pipe.h>
 #include "aal.h"
 
 using namespace ch::core;
@@ -92,7 +93,7 @@ __struct (ch_pe_hwcntrs_t, (
   (ch_bit32) min_latency,
   (ch_bit32) max_latency,
   (ch_bit32) total_latency,
-  (ch_bit32) execute_latency,
+  (ch_bit32) execute_stalls,
   (ch_bit32) a_xindices_stalls,
   (ch_bit32) x_masks_stalls,
   (ch_bit32) a_startys_stalls,

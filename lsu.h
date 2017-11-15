@@ -73,14 +73,17 @@ __inout (ch_ctrl_lsu_io, (
   __out(ch_bit32) outstanding_writes
 ));
 
-__inout (ch_pe_lsu_io, (
+__inout (ch_walker_lsu_io, (
   (ch_deq_io<ch_lsu_rd_req_t>) rd_req,
-  (ch_deq_io<ch_lsu_wr_req_t>) wr_req,
   (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp
 ));
 
-using ch_rd_req_arb_t = ch_arbiter<ch_lsu_rd_req_t, RD_REQ_INPUTS>;
-using ch_wr_req_arb_t = ch_arbiter<ch_lsu_wr_req_t, WR_REQ_INPUTS>;
+__inout (ch_pe_lsu_io, (
+  (ch_deq_io<ch_lsu_wr_req_t>) wr_req
+));
+
+using ch_rd_req_arb_t = ch_xbar_switch<ch_lsu_rd_req_t, RD_REQ_INPUTS>;
+using ch_wr_req_arb_t = ch_xbar_switch<ch_lsu_wr_req_t, WR_REQ_INPUTS>;
 
 class spmv_lsu {
 public:
@@ -89,7 +92,8 @@ public:
     (spmv_aal_device::qpi_io) qpi,
     (ch_ctx_io) ctx,
     (ch_ctrl_lsu_io) ctrl,
-    (ch_vec<ch_pe_lsu_io, PE_COUNT>) pe
+    (ch_vec<ch_walker_lsu_io, PE_COUNT>) walkers,
+    (ch_vec<ch_pe_lsu_io, PE_COUNT>) PEs
   );
 
   spmv_lsu();

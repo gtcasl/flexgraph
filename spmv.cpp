@@ -14,14 +14,18 @@ __enum (ch_ctrl_state, 3, (
 
 spmv_device::spmv_device() {
   // create the PEs
-  pe_.reserve(PE_COUNT);
+  PEs_.reserve(PE_COUNT);
+  walkers_.reserve(PE_COUNT);
   for (int i = 0; i < PE_COUNT; ++i) {
-    pe_.emplace_back(i);
+    PEs_.emplace_back(i);
+    walkers_.emplace_back(i);
   }
 
   // bind modules
   for (int i = 0; i < PE_COUNT; ++i) {
-    lsu_.io.pe[i](pe_[i].io.lsu);
+    PEs_[i].io.req(walkers_[i].io.pe);
+    lsu_.io.walkers[i](walkers_[i].io.lsu);
+    lsu_.io.PEs[i](PEs_[i].io.lsu);
   }
   lsu_.io.ctx(io.ctx);
   lsu_.io.qpi(io.qpi);
@@ -38,8 +42,8 @@ void spmv_device::describe() {
   // timer
   ch_seq<ch_bit64> timer;
   timer.next = timer + 1;
-  for (auto& pe : pe_) {
-    pe.io.ctrl.timer = timer;
+  for (auto& w : walkers_) {
+    w.io.ctrl.timer = timer;
   }
   
   // main thread
@@ -65,9 +69,9 @@ void spmv_device::main_thread() {
       ch_zext<32>(pbuf_.io.deq.ready);
 
   //--
-  ch_bool all_PEs_ready = pe_[0].io.ctrl.start.ready;
+  ch_bool all_PEs_ready = walkers_[0].io.ctrl.start.ready && PEs_[0].io.is_idle;
   for (int i = 1; i < PE_COUNT; ++i) {
-    all_PEs_ready = ch_clone(all_PEs_ready) & pe_[i].io.ctrl.start.ready;
+    all_PEs_ready = ch_clone(all_PEs_ready) && walkers_[i].io.ctrl.start.ready && PEs_[i].io.is_idle;
   }
       
   //--
@@ -84,7 +88,6 @@ void spmv_device::main_thread() {
       __else (
         // no work to do!
         done.next = true; // set done signal
-        state.next = ch_ctrl_state::ready;
       );
     );
   )
@@ -198,10 +201,10 @@ void spmv_device::dispatch_thread() {
   for (int i = 0; i < PE_COUNT; ++i) {
     sw __case (1+i) (
       // check if PE is ready
-      __if (pe_[i].io.ctrl.start.ready) (
+      __if (walkers_[i].io.ctrl.start.ready) (
         // dispatch partition to PE
-        pe_[i].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
-        pe_[i].io.ctrl.start.valid = true;
+        walkers_[i].io.ctrl.start.data.part.asBits() = part_buf_.slice<ch_bitwidth_v<ch_dcsc_part_t>>(); // copy two entries
+        walkers_[i].io.ctrl.start.valid = true;
         // advance counters
         part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
         part_curr_.next = part_curr_ + 1; // advance partition
@@ -225,20 +228,18 @@ void spmv_device::dispatch_thread() {
 
   sw __default (
     for (int i = 0; i < PE_COUNT; ++i) {
-      pe_[i].io.ctrl.start.data.part.asBits() = 0;
-      pe_[i].io.ctrl.start.valid = false;
+      walkers_[i].io.ctrl.start.data.part.asBits() = 0;
+      walkers_[i].io.ctrl.start.valid = false;
     }
     pbuf_.io.deq.ready = false; // off by default
   );
     
   //--
-  ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, pe1_rdy={3}, p={4}, pbuf_sz={5}, pbuf={6}, part0={7}, part1={8}",
+  ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, p={3}, pbuf_sz={4}, pbuf={5}, part0={6}",
            ch_getTick(), state, 
-           (pe_[0].io.ctrl.start.valid == pe_[0].io.ctrl.start.ready),
-           (pe_[0].io.ctrl.start.valid == pe_[1].io.ctrl.start.ready),
+           (walkers_[0].io.ctrl.start.valid == walkers_[0].io.ctrl.start.ready),
            part_curr_, part_buf_size_, part_buf_,
-           pe_[0].io.ctrl.start.data.part.asBits(),
-           pe_[1].io.ctrl.start.data.part.asBits());
+           walkers_[0].io.ctrl.start.data.part.asBits());
 }
 
 ch_block spmv_device::get_hwnctrs(const ch_hwcntr_addr& addr) {
@@ -249,7 +250,7 @@ ch_block spmv_device::get_hwnctrs(const ch_hwcntr_addr& addr) {
   //--
   auto cs = ch_case(addr, 0, ch_zext<ch_bitwidth_v<ch_block>>(ctrl_hwcntrs.asBits()));
   for (int i = 1; i < PE_COUNT; ++i) {
-    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(pe_[i-1].io.ctrl.hwcntrs.asBits()));
+    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(walkers_[i-1].io.ctrl.hwcntrs.asBits()));
   }
-  return cs(ch_zext<ch_bitwidth_v<ch_block>>(pe_[PE_COUNT-1].io.ctrl.hwcntrs.asBits()));
+  return cs(ch_zext<ch_bitwidth_v<ch_block>>(walkers_[PE_COUNT-1].io.ctrl.hwcntrs.asBits()));
 }

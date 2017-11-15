@@ -1,3 +1,6 @@
+dcsc_walk.cpp
+dcsc_walk.h
+pipew.h
 test_wmcache.cpp
 wrcache.h
 Makefile
@@ -24,5 +27,4 @@ test_lsu.cpp
 test_pe.cpp
 test_spmv.cpp
 test_vcache.cpp
-tmp.h
 vcache.h

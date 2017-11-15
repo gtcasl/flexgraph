@@ -21,8 +21,8 @@ spmv_lsu::spmv_lsu() {
   // bind modules
   //
   for (int i = 0; i < PE_COUNT; ++i) {
-    rd_req_arb_.io.in[i](io.pe[i].rd_req);
-    wr_req_arb_.io.in[i](io.pe[i].wr_req);
+    rd_req_arb_.io.in[i](io.walkers[i].rd_req);
+    wr_req_arb_.io.in[i](io.PEs[i].wr_req);
   }
   rd_req_arb_.io.in[PE_COUNT](io.ctrl.rd_req);
   wr_req_arb_.io.in[PE_COUNT](io.ctrl.wr_req);
@@ -217,9 +217,9 @@ void spmv_lsu::read_rsp_thread() {
 
   //--
   for (int i = 0; i < PE_COUNT; ++i) {
-    io.pe[i].rd_rsp.valid     = io.qpi.rd_rsp.valid & (mdata.owner == PE_ID(i));
-    io.pe[i].rd_rsp.data.data = io.qpi.rd_rsp.data;
-    io.pe[i].rd_rsp.data.type = mdata.type;
+    io.walkers[i].rd_rsp.valid     = io.qpi.rd_rsp.valid & (mdata.owner == PE_ID(i));
+    io.walkers[i].rd_rsp.data.data = io.qpi.rd_rsp.data;
+    io.walkers[i].rd_rsp.data.type = mdata.type;
   }
 
   //--

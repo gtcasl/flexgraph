@@ -1,46 +1,48 @@
 This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: main.aux
-The style file: abbrv.bst
-Database file #1: reference.bib
-You've used 26 entries,
-            2118 wiz_defined-function locations,
-            678 strings with 8986 characters,
-and the built_in function-call counts, 10145 in all, are:
-= -- 976
-> -- 552
-< -- 11
-+ -- 225
-- -- 194
-* -- 691
-:= -- 1628
-add.period$ -- 84
-call.type$ -- 26
-change.case$ -- 175
+The style file: ieeetr.bst
+Database file #1: ref.bib
+Warning--empty booktitle in Cash
+You've used 22 entries,
+            1876 wiz_defined-function locations,
+            619 strings with 8084 characters,
+and the built_in function-call counts, 6115 in all, are:
+= -- 521
+> -- 345
+< -- 1
++ -- 125
+- -- 103
+* -- 468
+:= -- 892
+add.period$ -- 23
+call.type$ -- 22
+change.case$ -- 22
 chr.to.int$ -- 0
-cite$ -- 26
-duplicate$ -- 367
-empty$ -- 763
-format.name$ -- 194
-if$ -- 2172
+cite$ -- 23
+duplicate$ -- 278
+empty$ -- 581
+format.name$ -- 103
+if$ -- 1450
 int.to.chr$ -- 0
-int.to.str$ -- 26
-missing$ -- 16
-newline$ -- 134
-num.names$ -- 52
-pop$ -- 218
+int.to.str$ -- 22
+missing$ -- 13
+newline$ -- 70
+num.names$ -- 22
+pop$ -- 98
 preamble$ -- 1
-purify$ -- 149
+purify$ -- 0
 quote$ -- 0
-skip$ -- 308
+skip$ -- 218
 stack$ -- 0
-substring$ -- 520
-swap$ -- 118
-text.length$ -- 11
+substring$ -- 335
+swap$ -- 99
+text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 104
-warning$ -- 0
-while$ -- 87
-width$ -- 28
-write$ -- 289
+type$ -- 0
+warning$ -- 1
+while$ -- 52
+width$ -- 24
+write$ -- 202
+(There was 1 warning)

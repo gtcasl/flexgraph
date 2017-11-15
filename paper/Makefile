@@ -9,9 +9,6 @@ all: $(PAPER).pdf
 view: $(PAPER).pdf
 	open $(PAPER).pdf
 
-spell::
-	ispell *.tex
-
 clean::
 	rm -fv *.aux *.log *.bbl *.blg *.toc *.out *.lot *.lof $(PAPER).pdf
 

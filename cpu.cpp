@@ -357,7 +357,7 @@ void cpu_device::dump_stats(ch_tick t) {
     DbgPrint(0, "PE%d average latency = %d ticks\n", i, __safediv((uint32_t)hwcntrs.total_latency, (uint32_t)hwcntrs.num_partitions));
     DbgPrint(0, "PE%d minimum latency = %d ticks\n", i, (uint32_t)hwcntrs.min_latency);
     DbgPrint(0, "PE%d maximum latency = %d ticks\n", i, (uint32_t)hwcntrs.max_latency);
-    DbgPrint(0, "PE%d execution latency = %d ticks\n", i, (uint32_t)hwcntrs.execute_latency);
+    DbgPrint(0, "PE%d execution latency = %d ticks\n", i, (uint32_t)hwcntrs.execute_stalls);
     DbgPrint(0, "PE%d matrix xindices stalls = %d\n", i, (uint32_t)hwcntrs.a_xindices_stalls);
     DbgPrint(0, "PE%d matrix ystarts stalls = %d\n", i, (uint32_t)hwcntrs.a_startys_stalls);
     DbgPrint(0, "PE%d matrix values stalls = %d\n", i, (uint32_t)hwcntrs.a_values_stalls);

@@ -2,7 +2,7 @@
 CXXFLAGS += -std=c++17 -O0 -g -fmax-errors=5
 LDFLAGS += -lcash
 
-PROJECT_SRCS = lsu.cpp pe.cpp spmv.cpp mtx.cpp graph.cpp cpu.cpp simulator.cpp main.cpp
+PROJECT_SRCS = lsu.cpp dcsc_walk.cpp pe.cpp spmv.cpp mtx.cpp graph.cpp cpu.cpp simulator.cpp main.cpp
 
 TEST_SRCS = test_lsu.cpp test_pe.cpp test_vcache.cpp test_spmv.cpp test_wmcache.cpp
 

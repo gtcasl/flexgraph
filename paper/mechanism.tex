@@ -1,57 +1,157 @@
+\section{Background and Motivation}
+
+\subsection{Graph Vertex Processing}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/sample_graph}
+\caption{Sample Graph Representation}
+\label{fig:sample_graph}
+\end{figure}
+
+\begin{figure}[ htbp ] 
+\begin{equation}
+\#Edges = A^{T} \times Identity
+\end{equation}
+\begin{equation}
+\#Edges = 
+\left(\begin{array}{ccc} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 1 & 0 \end{array}\right) \times
+\left(\begin{array}{c} 1 \\ 1 \\ 1 \end{array}\right) 
+= \left(\begin{array}{c} 0 \\ 1 \\ 2 \end{array}\right) 
+\end{equation}
+\caption{Incoming Edges Algorithm}
+\label{fig:sample_algorithm}
+\end{figure} 
+
+\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=Graph Processing Kernel]
+GraphKernel (A, P, iterations) :
+  for_each iterations
+    x := Assign(P)
+  	y := Process(A,x)
+  	P := Apply(y)	  
+  end_for
+  
+Incoming Edges := GraphKernel(A, identity, 1):
+	with Assign(P)    := P
+	     Process(A,x) := A * x
+	     Apply(y)     := y
+\end{lstlisting}
+
+FlexGraph's architecture is based on GraphMat \cite{GraphMat}'s vertex computing paradigm where a graph algorithm is described as a set of linear algebra operations on vectors and matrices. Figure \ref{fig:graph_vertex_programming} shows an example where graph (a) is represented as a matrix (b), allowing us to execute vertex multiplication on the matrix transpose (c). The above linear algebra operation (c) generates the number of incoming edges for each vertex in the graph. All GraphMat algorithms, Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, etc.. are expressed in this fashion such that computation can be efficiently accelerated in hardware. In FlexGraph, we accelerate the matrix vertex computation on the FPGA, instead of executing it on the multi-core host processor.
+
+\subsection{Intel Heterogeneous CPU-FPGA Platform}
+
+\subsection{Collaborative CPU-FPGA Computation}
+
 \section{FlexGraph Architecture}
 
 In this section, we describes the overall architecture of the FlexGraph Accelerator.
 
-\subsection{FlexGraph Computing Model}
+\subsection{The DCSC Matrix Format}
 
 \begin{figure}[htbp]
-\includegraphics[width=0.4\textwidth]{figures/graph_vertex_programming}
-\caption{Graph Vertex Programming}
-\label{fig:graph_vertex_programming}
-\end{figure}
-
-FlexGraph's architecture is based on GraphMat \cite{GraphMat}'s vertex computing paradigm where a graph algorithm is described as a linear algebra set of operations operating on sparse matrix with input vertices. Figure \ref{fig:graph_vertex_programming} shows an example where graph (a) is converted into matrix (b), allowing us to execute operations on the graph using simple matrix vertex multiplication (c). This above example will to generate the number of incoming edges for each vertex. All GraphMat algorithms, Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, etc.. are expressed in this fashion such that computation can be efficiently accelerated in hardware. In FlexGraph, we accelerate the matrix vertex computation on the FPGA, instead of executing it on the multi-core host processor.
-
-\subsection{The Doubly Compressed Sparse Matrix}
-
-\begin{figure}[htbp]
+\centering
 \includegraphics[width=0.4\textwidth]{figures/DCSC_matrix_format}
 \caption{DCSC hyperspace matrix format}
 \label{fig:DCSC_matrix_format}
 \end{figure}
 
-Most Data Analytics graphs are represented in a sparse matrix format to save memory space due to the large amount of empty edges that exist. FlexGraph's matrices are stored using a Doubly Compressed Sparse Column (DCSC) \cite{DCSC} format. The format allows minimal traversal into the sparse matrix structure, saving necessary memory bandwidth when fetching empty columns. Figure \ref{fig:DCSC_matrix_format} shows a sample matrix A = \{(0,5,a), (0,7,b), (6,3,c), (7,1,d)\} with four non-zero edges (src, dst, weight) encoded using DCSC versus the conventional CSC \cite{CSC} format. It is encoded as follows: The CSC encoding for this matrix is as follows: The \textit{Cols} buffer holds the column ranges stored as incremental distances from first value, which allows efficient packing of consecutive non-zero columns. The limitation of this scheme is that it entries are replicated to skip empty columns. \textit{Rows} and \textit{Values} hold the corresponding rows and values referenced by a given non-empty column.
-The traversal over CSC requires accessing all consecutive column ranges \textit{(cols[i+2] - cols[i])} even though most of the distances are empty. DCSC saves on bandwidth by using an additional indirection  buffer inside its structure to only encode non-zero columns. It is important to note that the saving this format introduced additional space and compute overhead that only pays off when the matrix is very large and sparse, a prevalent characteristic of Graph Analytics datasets.
+Most Data Analytics graphs are represented in a sparse matrix format to save memory space due to the large amount of empty edges that exist. FlexGraph's matrices are stored using a Doubly Compressed Sparse Column (DCSC) \cite{DCSC} format. The format allows minimal traversal into the sparse matrix structure, saving necessary memory bandwidth when fetching empty columns. Figure \ref{fig:DCSC_matrix_format} shows a sample matrix A = \{(0,5,a), (0,7,b), (6,3,c), (7,1,d)\} with four non-zero edges (src, dst, weight) encoded using DCSC versus the conventional CSC \cite{CSC} format. The traversal over CSC requires accessing all consecutive column ranges \textit{(cols[i+2] - cols[i])} even though most of the distances are empty. DCSC saves on bandwidth by using an additional indirection  buffer inside its structure to only encode non-zero columns. It is important to note that the saving this format introduced additional space and compute overhead that only pays off when the matrix is very large and sparse, a prevalent characteristic of Graph Analytics datasets.
 
-\subsection{Sparse Matrix Multiplication Kernel}
+\subsection{The Sparse Matrix Multiplication Kernel}
 
-\begin{lstlisting}[language=Python, caption=Pseudocode for SPMV kernel]
+FlexGraph architecture implements a custom Sparse Matrix Vertex Multiplication (SPMV) kernel. Its architecture diverges from conventional implementations in two ways: First, it uses the dirty masks from  the input vertices to select the edges to process and return a new dirty masks capturing the intersection of the active input vertices and the non-zero edges actually visited. Second, it matrix data structure (DCSC) contains an additional indirection buffer for accessing the matrix columns. These two properties present unique performance challenges when designing the accelerator. Listing 1 shows the pseudo-code of the SPMV kernel. The program iterates through each column and fetch the corresponding input vertex active mask to check if the column should be process, then access all the non-zero rows of the matrix for that column to evaluate each edge. In the code's comments on the right are highlighted the different types performance hogs present; semi-random memory accesses (*), fully-random memory accesses (!) and control branches (?). The memory accesses for the columns and rows data (lines 4 and 9) are semi-random because only the access cannot be predicted and after that the address is simply incremented. FlexGraph's architecture attempts to address some of those performance hogs using several optimizations detailed in section 4.
+
+\begin{lstlisting}[language=Python, caption=Pseudo-code for SPMV kernel]
 def SPMV_kernel(x_values, x_activemask) :
   y_values = {0}, y_activemask = {0}
-    for col in cols :                        # +	
-      (a_x, rows) = coldata[col]             # *
-      x_value  = x_values[a_x]               # *
-      x_active = x_activemask[a_x]           # *
+    for col in (c_start, c_end) :            	
+      (a_x, r_start, r_end) = coldata[col]   # *
+      x_value  = x_values[a_x]               # !
+      x_active = x_activemask[a_x]           # !
       if (x_active):                         # ?
-        for row in rows:                     # +
+        for row in (r_start, r_end):         
           (a_y, a_value) = rowdata[row]      # *
-          y_values[a_y] += a_value * x_value # *
-          x_activemask[a_y] = true           # *
+          y_values[a_y] += a_value * x_value # !
+          x_activemask[a_y] = true           # !
   return (y_values, y_activemask)
 \end{lstlisting}
 
-\subsection{FlexGraph Micro-architecture}
+\subsection{FlexGraph Microarchitecture}
+
+Externally, FlexGraph input and output signals implement an Accelerator Functional Unit (AFU) interface defined by Intel's Accelerator Abstraction Layer (AAL) \cite{Intel-FPGA}. AFUs implementing the interface are able to bind with the FPGA's board support package (BSP) and seamlessly communicate with the AAL software runnign on the host processor. Listing 2 shows AAL device interface implementation using Cocoh's API. Our FlexGraph Accelerator's class in Cocoh simply derives from this interface and override the \textit{initialize()} function to provide its implementation and Cocoh takes care of generating the corresponding verilog module. It implements three input signals \textit{(start, qpi\_in, ctx)} and two output signals \textit{(qpi\_out, done)}. The AFU starts execution when the \textit{start} signal is asserted and communicate completion by asserting the \textit{done} signal. The \textit{ctx} signal provides application's specific data like constants and buffers address in the case of FlexGraph. The \textit{qpi} in/out signals implement Intel Quick Path Interconnect (QPI) interface \cite{QPI}, providing single channel read/write ports for accessing external shared memory. The FPGA socket hosts a 64-byte cache coherent interface (CCI) \cite{CCI} that connects to the host processor's last level cache (LLC) via QPI.     
+
+\begin{lstlisting}[language=C++, caption=AAL Device Interface in Cocoh C++]
+class aal_device {
+public: 
+  virtual out_t initialize()(
+    const ch_logic& start, 
+    const qpi::in_t& qpi_in, 
+    const afu_ctx_t& ctx, 
+    qpi::out_t& qpi_out, 
+    ch_logic& done
+  ) const = 0;  
+};
+\end{lstlisting}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/microarchitecture}
+\caption{FlexGraph Microarchitecture}
+\label{fig:microarchitecture}
+\end{figure}
+
+Figure \ref{fig:microarchitecture} illustrates FlexGraph accelerator microarchitecture. It is comprised of four main module types, a controller, processing elements (PEs), a load store unit (LSU) and vertex caches. The main controller is responsible for starting the accelerator, scheduling tasks for execution, reporting hardware counters and terminating the execution. The processing elements execute partition tasks assigned to them by the controller and communicate with the LSU to access the matrix and vertex data for their partition. They are also responsible for sending their final output result back to memory. The LSU is the module responsible for managing external communication between the accelerator and memory via the QPI interface. It directly binds to the QPI ports defined in listing 2.
+The vertex caches store intermediate vertex data and active masks for sharing between the processing elements. FlexGraph processing pipeline sightly resembles the SPMV execution steps illustrated in listing 1. We made several important modifications to it to improve performance.  
 
 \section{FlexGraph Parallelization}
 
+The first optimization we performed in FlexGraph early during the design phase was the support of multiple processing units. The reasoning behind it was to extract the maximum bandwidth out of the LSU such that the QPi is always busy processing a request when some processing element are stalled waiting for their data to return. the other advantage of parallelization for FlexGraph is to increase the overall accelerator throughput by processing multiple a larger chunk of the workload per unit of time. The scheduling of the partitions for execution on the processing elements is controlled by a dispatch unit inside the main controller module. The dispatch unit fetches partitions data from the LSU and pass down each partition in a first come first serve fashion to the processing elements.
+
 \subsection{DCSC Matrix partitioning}
 
-\subsection{Precessing Tasks Scheduling}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/matrix_partitioning}
+\caption{DCSC Matrix Partitioning}
+\label{fig:matrix_partitioning}
+\end{figure}
 
-\subsection{Synchronising Memory Writes for Dirty Masks}
+To enable the parallelization of FlexGraph tasks, the DCSC sparse matrix is first partitioned into aligned partitions of 32 consecutive rows containing non-zero edges. we choose a partition size of 32 mainly to match the 32-bit size of the bitmasks encoding the vertices that are active. These masks are used by the software on the host processor to determine the regions of the acceleration's output buffer that have been updated. Figure \ref{fig:matrix_partitioning} illustrates sample matrix partitioning in which the non-zero horizontal regions have been broken into two partitions P0 and P1. The non-zero column ranges \textit{(c0, c1, c2, c3)} represent the selected chunks covered by each partition. Partition P0 will only contain ranges \textit{c0} and \textit{c2} while P2 has non-zeros in all four ranges. The partitioning scheme is not ideal because of the workload in-balance that might exist when the number of non-zero varies disproportionally between partitions.  
+
+\subsection{Synchronising Memory Accesses}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.35\textwidth]{figures/write_masks_synchronization}
+\caption{Active Masks Write Synchronization}
+\label{fig:write_masks_synchronization}
+\end{figure}
+
+An implementation challenge we faced when supporting multiple processing elements in FlexGraph was the synchronization of write accesses for the output active masks. Because the LSU data transfer granularity is 64 byte (matching CCI \cite{CCI}), FlexGraph need to manage shared write accesses to the same block to avoid having a processing element override the content of another one. Luckily this doesn't pose any problem for writing out partition output values because the 32 rows within a partition occupy 32 * 4 bytes = 2 x 64 bytes blocks. Because the partitioning reinforces 32 rows alignment, each processing element can safely write into their assigned blocks. However, writing out the active masks poses a challenge because a single 4-byte mask encodes the active states of all 32 rows in a partition. This causes the processing elements to potentially share a single 64-byte block when writing the masks out to memory. To alleviate the contention, FlexGraph keep N active 64-byte blocks locally assigned to either one of the N processing elements. It assigns an ownership bit mask to each block to track their reference count and the processing element assigned to them. It also tracks the current address value assigned to each block. When a processing element is ready to write its 4-byte active mask, it passes the mask address and value to the LSU. The LSU goes to last active block the processing element previous wrote to and check if the block address matches. If so, it simply adds the new content to the existing block. If there is no match, it clears its ownership bit and flushes the block to memory if the ownership mask goes to zero. Then it looks up the other active block if anyone already has the address to use it, otherwise if it acquires the last unused block. Figure \ref{fig:write_masks_synchronization} shows a simplified illustration of the scheme with two processing elements. We don't need to keep more than N blocks in local storage for this scheme to work because the block address references are always incremental and never regress, meaning that there is always going to be free block available to use. It is important to also point out that for this scheme to work, the operation has to be atomic. FlexGraph has a single communication channel between all processing elements and the LSU which does some round robin arbitration and blocks the write mask request until it is committed. We also investigated an alternative solution to avoid this synchronization, which is simply increasing the partition size to 16 * 32 rows, allowing the aggregated active masks to occupy a full 64-byte block. They were two major issues with this approach. Firstly, the total size of all resident partitions will be too large if we support multiple processing elements. Secondly, it will worsen the workload imbalance that is already present with 32 rows.     
 
 \section{FlexGraph Optimizations}
 
+This section describes some optimizations we added to FlexGraph to improve its performance. 
+
 \subsection{Optimizing Memory Accesses via Stream Buffers}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/stream_buffers}
+\caption{Stream Buffers}
+\label{fig:stream_buffers}
+\end{figure}
+
+As stated before, FlexGraph's LSU transfer granularity is 64 bytes, which is much larger than the 4 bytes of elements accessed by the processing elements. To save on bandwidth, the LSU uses stream buffers that fetch a 64-byte blocks of data but extracts 4-byte elements at the time. It is implemented using a fifo structure in the back-end where 64-byte responses from QPI go
+ into. In the front-end, there is a temporary 64-byte block that is extracted from the fifo on demand to deliver 4-byte element at the time. We employ a shift register to extract the 4-byte element to pass it to the processing element. Figure \ref{fig:stream_buffers} shows an illustration of the stream buffer concept.
+   
 \subsection{Caching Vertex Values and Masks}
+
+Another optimization we implemented in FlexGraph is the caching of vertex values and masks. Looking at the SPMV speudo-code in listing 1, we can observe in lines 5 and 6 that there is a random memory access to buffers \textit{x\_values} and \textit{x\_activemask}. FlexGraph employs a stream buffer like concept to consume 64-byte vertex data once they arrive inside the processing element to each iteration loop. However, the same block can be referenced by another processing element and sharing them inside the cache structure can save unnecessary memory traffic. We implemented two small fully associative caches with first-in-First-out replacement to hold active vertex data during execution. The caches are implemented inside the LSU which is responsible for managing them. When a vertex request arrives from a processing element, the LSU first looks up the cache if the block is already present and return it. If the block is not there, it sends the request to QPI. QPI output interface support a 14-bit metadata field that is used to identify the block once it is returned. We use that field to store the index of the block such that we can compute the cache tag when it arrives. Because the cache is small, we implemented a one cycle tag lookup for the LSU to known if the block is present and accessible.
+
+\subsection{Executing Non-blocking Memory writes}
+
+FlexGraph memory writes are all non-blocking, this applies to both the output values and active masks. This allows the processing elements to push their write request and resume execution while the LSU is processing them. Upon write responses from the QPI channel, the LSU internally keeps track of the count of outstanding requested to ensure that all writes have completed. The QPI interface exposes two write response ports by which the memory replies could be sent. This allows servicing two responses simultaneously. The LSU implements a mechanism to process both channels simultaneously when they are active. At completion time when all processing elements are done executing the current run, the controller waits for all outstanding write requests to complete before asserting the \textit{done} signal.
+
+\section{FlexGraph Software-Hardware Codesign}

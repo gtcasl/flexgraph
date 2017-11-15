@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "lsu.h"
+#include "dcsc_walk.h"
 #include "pe.h"
 
 namespace spmv {
@@ -34,7 +35,8 @@ protected:
 
   ch_block get_hwnctrs(const ch_hwcntr_addr& addr);
 
-  std::vector<ch_module<spmv_pe>> pe_;
+  std::vector<ch_module<spmv_dcsc_walk>> walkers_;
+  std::vector<ch_module<spmv_pe>> PEs_;
   ch_module<spmv_lsu> lsu_;
   ch_module<ch_pbuf_t> pbuf_;
 

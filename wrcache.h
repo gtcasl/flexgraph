@@ -12,16 +12,18 @@ private:
   using ch_idx = ch_bit<log2ceil(N)>;
   using ch_tag = ch_bit<TagBits>;
 
-  enum {
-    MAX_TAG_VALUE = (1 << TagBits) - 1,
-  };
-
   __enum (ch_state, 3, (
     ready,
     lookup,
     check_evict,
     evict,
     flush
+  ));
+
+  __struct (entry_t, (
+    (ch_bit<N>) owner,  // one-hot representation
+    (ch_tag)    tag,
+    (T)         data
   ));
 
   __struct (tag_t, (
@@ -46,12 +48,6 @@ private:
   ch_seq<ch_idx> counter_;
 
 public:
-
-  __struct (entry_t, (
-    (ch_bit<N>) owner,  // one-hot representation
-    (ch_tag)    tag,
-    (T)         data
-  ));
 
   __io (
     (ch_deq_io<entry_t>) enq,
@@ -91,7 +87,7 @@ public:
         owned_block_idx = ch_select((tags_[i].owners & lookup_data.owner) != 0, i, ch_clone(owned_block_idx));
         free_block_idx  = ch_select(tags_[N-1-i].owners == 0, N-1-i, ch_clone(free_block_idx));
         if (0 == (i % step)) {
-          lookup_data = enq_data; // io.enq.data is not avaiable beyond first cycle, use cbackup value
+          lookup_data = enq_data; // io.enq.data is not avaiable beyond first cycle, use backup value
           match_block_idx = ch_reg(ch_clone(match_block_idx));
           owned_block_idx = ch_reg(ch_clone(owned_block_idx));
           free_block_idx  = ch_reg(ch_clone(free_block_idx));
@@ -118,7 +114,7 @@ public:
           port0_ = last_used_idx_;
           __if (io.enq.data.tag == last_used_tag_
              && (tags_[port0_].owners & io.enq.data.owner) != 0) (
-            ch_print("@ fast hit!");
+            //ch_print("@ fast hit!");
             data_wenable_ = true;
             tag_wenable_  = true;
             data_value_ = data_[port0_] | io.enq.data.data;
@@ -139,7 +135,7 @@ public:
           port1_ = match_block_idx;
           __if (tags_[port1_].owners != 0
             &&  tags_[port1_].tag == enq_data.tag) (
-            ch_print("@ lookup match!");
+            //ch_print("@ lookup match!");
             // append data to matching block
             data_wenable_ = true;
             tag_wenable_  = true;
@@ -160,7 +156,7 @@ public:
               state.next = ch_state::ready;
             );
           )__else (
-            ch_print("@ new entry!");
+            //ch_print("@ new entry!");
             // add data to existing free block
             data_wenable_ = true;
             tag_wenable_  = true;
