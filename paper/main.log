@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  15 NOV 2017 15:13
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  15 NOV 2017 15:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -549,20 +549,20 @@ File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 26.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 36.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 37.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 36.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 37.
 
 
 LaTeX Warning: Reference `fig:graph_vertex_programming' on page 2 undefined on 
-input line 40.
+input line 41.
 
 
-Overfull \hbox (3.33783pt too wide) in paragraph at lines 40--41
+Overfull \hbox (3.33783pt too wide) in paragraph at lines 41--42
 \T1/ptm/m/n/10 tex com-put-ing paradigm where a graph al-go-rithm is de-scribed
 
  []
@@ -571,7 +571,7 @@ Overfull \hbox (3.33783pt too wide) in paragraph at lines 40--41
 File: figures/DCSC_matrix_format.png Graphic file (type png)
 
 <use figures/DCSC_matrix_format.png>
-Package pdftex.def Info: figures/DCSC_matrix_format.png used on input line 54.
+Package pdftex.def Info: figures/DCSC_matrix_format.png used on input line 55.
 (pdftex.def)             Requested size: 201.59692pt x 75.95247pt.
  [2 <./figures/sample_graph.png> <./figures/DCSC_matrix_format.png>]
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -583,40 +583,40 @@ File: lstlang1.sty 2013/08/26 1.5b listings language file
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 )
-<figures/microarchitecture.png, id=184, 812.03375pt x 641.39626pt>
+<figures/microarchitecture.png, id=185, 812.03375pt x 641.39626pt>
 File: figures/microarchitecture.png Graphic file (type png)
 
 <use figures/microarchitecture.png>
-Package pdftex.def Info: figures/microarchitecture.png used on input line 99.
+Package pdftex.def Info: figures/microarchitecture.png used on input line 100.
 (pdftex.def)             Requested size: 201.59692pt x 159.23296pt.
 
-<figures/matrix_partitioning.png, id=186, 485.815pt x 228.855pt>
+<figures/matrix_partitioning.png, id=187, 485.815pt x 228.855pt>
 File: figures/matrix_partitioning.png Graphic file (type png)
 
 <use figures/matrix_partitioning.png>
-Package pdftex.def Info: figures/matrix_partitioning.png used on input line 115
+Package pdftex.def Info: figures/matrix_partitioning.png used on input line 116
 .
 (pdftex.def)             Requested size: 201.59692pt x 94.96606pt.
 
-Overfull \hbox (2.9477pt too wide) in paragraph at lines 120--121
+Overfull \hbox (2.9477pt too wide) in paragraph at lines 121--122
 []\T1/ptm/m/n/10 To en-able the par-al-leliza-tion of Flex-Graph tasks, the DCS
 C
  []
 
 [3 <./figures/microarchitecture.png>]
-<figures/write_masks_synchronization.png, id=221, 344.28625pt x 243.91125pt>
+<figures/write_masks_synchronization.png, id=222, 344.28625pt x 243.91125pt>
 File: figures/write_masks_synchronization.png Graphic file (type png)
 
 <use figures/write_masks_synchronization.png>
 Package pdftex.def Info: figures/write_masks_synchronization.png used on input 
-line 126.
+line 127.
 (pdftex.def)             Requested size: 176.40308pt x 124.97368pt.
 
-<figures/stream_buffers.png, id=224, 565.11125pt x 83.31125pt>
+<figures/stream_buffers.png, id=225, 565.11125pt x 83.31125pt>
 File: figures/stream_buffers.png Graphic file (type png)
 
 <use figures/stream_buffers.png>
-Package pdftex.def Info: figures/stream_buffers.png used on input line 141.
+Package pdftex.def Info: figures/stream_buffers.png used on input line 142.
 (pdftex.def)             Requested size: 201.59692pt x 29.71997pt.
  [4 <./figures/matrix_partitioning.png> <./figures/write_masks_synchronization.
 png> <./figures/stream_buffers.png>])
@@ -688,10 +688,10 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 89.
  ) 
 Here is how much of TeX's memory you used:
- 8504 strings out of 494985
- 119502 string characters out of 6180356
+ 8509 strings out of 494985
+ 119550 string characters out of 6180356
  316636 words of memory out of 5000000
- 11457 multiletter control sequences out of 15000+600000
+ 11461 multiletter control sequences out of 15000+600000
  70704 words of font info for 102 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  41i,11n,60p,2940b,1402s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -705,10 +705,10 @@ etic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (6 pages, 261425 bytes).
+Output written on main.pdf (6 pages, 261470 bytes).
 PDF statistics:
- 318 PDF objects out of 1000 (max. 8388607)
- 285 compressed objects within 3 object streams
- 97 named destinations out of 1000 (max. 500000)
+ 319 PDF objects out of 1000 (max. 8388607)
+ 286 compressed objects within 3 object streams
+ 98 named destinations out of 1000 (max. 500000)
  207 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -24,14 +24,15 @@
 \end{figure} 
 
 \begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=Graph Processing Kernel]
-GraphKernel (A, P, iterations) :
+GraphKernel (G, P, iterations) :
   for_each iterations
     x := Assign(P)
-  	y := Process(A,x)
+  	y := Process(G,x)
   	P := Apply(y)	  
   end_for
   
-Incoming Edges := GraphKernel(A, identity, 1):
+e.g.: 
+	FindIncomingEdges (A, identity, 1):
 	with Assign(P)    := P
 	     Process(A,x) := A * x
 	     Apply(y)     := y
