@@ -148,6 +148,8 @@ void cpu_device::check_output(const float* values, const uint32_t* masks, bool d
       if (mask != y_mask) {
         printf("*** dirty mask mismatch in partition%d, : actual=0x%x, expected=0x%x\n", p, mask, y_mask);
         ++errors;
+      } else {
+        printf("OK: dirty mask mismatch in partition%d, : actual=0x%x\n", p, mask);
       }
       for (int i = 0; i < 32; ++i) {
         if (y_mask & (1 << i)) {
@@ -156,6 +158,8 @@ void cpu_device::check_output(const float* values, const uint32_t* masks, bool d
           if (value != value_ref) {
             printf("*** value mismatch in partition%d, row=%d: actual=%f, expected=%f\n", p, i, value, value_ref);
             ++errors;
+          } else {
+            printf("Ok: partition%d, row=%d: actual=%f\n", p, i, value);
           }
         }
       }

@@ -27,14 +27,16 @@ void spmv_pe::describe() {
   ch_seq<ch_pe_state> state;
 
   //--
+  ch_bool do_enq = io.req.valid && io.req.ready;
+
+  //--
   auto mult_value = ch_fmult<ALTFP_SP_MULT>(io.req.data.a_value, io.req.data.x_value);
   mult_pipe_.io.enq.data.a_yindex = io.req.data.a_yindex;
   mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
-  mult_pipe_.io.enq.valid = io.req.valid;
+  mult_pipe_.io.enq.valid = do_enq;
 
   //--
-  auto mult_yindex = mult_pipe_.io.deq.data.a_yindex;
-  auto y_raddr = (mult_yindex & 0x1f).slice<5>();
+  auto y_raddr = (mult_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();
   auto add_value = ch_fadd<ALTFP_SP_ADD_SUB>(mult_value, y_values_[y_raddr]);
   add_pipe_.io.enq.data.a_yindex = mult_pipe_.io.deq.data.a_yindex;
   add_pipe_.io.enq.data.is_end = mult_pipe_.io.deq.data.is_end;
@@ -45,10 +47,10 @@ void spmv_pe::describe() {
   auto y_waddr_mask = 1_b32 << y_waddr_;
 
   //--
-  __if (io.req.valid && !add_pipe_.io.deq.valid) (
+  __if (do_enq && !add_pipe_.io.deq.valid) (
     pending_reqs_.next = pending_reqs_ + 1;
   )
-  __elif (!io.req.valid && add_pipe_.io.deq.valid) (
+  __elif (!do_enq && add_pipe_.io.deq.valid) (
     pending_reqs_.next = pending_reqs_ - 1;
   );
 
