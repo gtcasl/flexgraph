@@ -120,6 +120,10 @@ N.~Oliver, R.~R. Sharma, S.~Chang, B.~Chitlur, E.~Garcia, J.~Grecco, A.~Grier,
   cache-coherent fabric,'' in {\em 2011 International Conference on
   Reconfigurable Computing and FPGAs}, pp.~80--85, Nov 2011.
 
+\bibitem{QPI}
+wikipedia, ``Intel quickpath interconnect.''
+  \url{https://en.wikipedia.org/wiki/Intel_QuickPath_Interconnect}.
+
 \bibitem{DCSC}
 A.~Buluc and J.~R. Gilbert, ``On the representation and multiplication of
   hypersparse matrices,'' in {\em 2008 IEEE International Symposium on Parallel
@@ -129,8 +133,12 @@ A.~Buluc and J.~R. Gilbert, ``On the representation and multiplication of
 wikipedia, ``Sparse matrix.''
   \url{https://en.wikipedia.org/wiki/Sparse_matrix}.
 
-\bibitem{QPI}
-wikipedia, ``Intel quickpath interconnect.''
-  \url{https://en.wikipedia.org/wiki/Intel_QuickPath_Interconnect}.
+\bibitem{Cocoh}
+B.~Tine, ``Cocoh, a c++ domain specific library for hardware design and
+  simulation.'' \url{http://casl.gatech.edu/research/cocoh}, 2017.
+
+\bibitem{Graph500}
+R.~C. Murphy, K.~B. Wheeler, B.~W. Barrett, and J.~A. Ang, ``Introducing the
+  graph 500.'' \url{http://www.graph500.org/}, 2010.
 
 \end{thebibliography}

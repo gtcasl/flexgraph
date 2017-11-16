@@ -55,8 +55,7 @@
 \citation{CPU-FPGA}
 \citation{CAPI}
 \citation{CCI}
-\citation{DCSC}
-\citation{CSC}
+\citation{QPI}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Background and Motivation}{2}{section.2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Graph Vertex Processing}{2}{subsection.2.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Sample Graph Representation}}{2}{figure.1}}
@@ -67,12 +66,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Intel Heterogeneous CPU-FPGA Platform}{2}{subsection.2.2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Intel HARP Architecture}}{2}{figure.3}}
 \newlabel{fig:harp_arch}{{3}{2}{Intel HARP Architecture}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Collaborative CPU-FPGA Computation}{2}{subsection.2.3}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}FlexGraph Architecture}{2}{section.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}The DCSC Matrix Format}{2}{subsection.3.1}}
+\citation{DCSC}
+\citation{CSC}
 \citation{Intel-FPGA}
 \citation{QPI}
 \citation{CCI}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Collaborative CPU-FPGA Computation}{3}{subsection.2.3}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}FlexGraph Architecture}{3}{section.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}The DCSC Matrix Format}{3}{subsection.3.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces DCSC hyperspace matrix format}}{3}{figure.4}}
 \newlabel{fig:DCSC_matrix_format}{{4}{3}{DCSC hyperspace matrix format}{figure.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}The Sparse Matrix Multiplication Kernel}{3}{subsection.3.2}}
@@ -89,11 +90,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Synchronising Memory Accesses}{4}{subsection.4.2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Active Masks Write Synchronization}}{4}{figure.7}}
 \newlabel{fig:write_masks_synchronization}{{7}{4}{Active Masks Write Synchronization}{figure.7}{}}
-\citation{GraphMat}
-\citation{DCSC}
-\citation{Graphicionado}
-\citation{GraphMat}
-\citation{GraphOps}
+\citation{Cocoh}
+\citation{Intel-FPGA}
+\citation{CCI}
 \@writefile{toc}{\contentsline {section}{\numberline {5}FlexGraph Optimizations}{5}{section.5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Optimizing Memory Accesses via Stream Buffers}{5}{subsection.5.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Stream Buffers}}{5}{figure.8}}
@@ -101,10 +100,41 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Caching Vertex Values and Masks}{5}{subsection.5.2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Executing Non-blocking Memory writes}{5}{subsection.5.3}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}FlexGraph Software-Hardware Codesign}{5}{section.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Related Work}{5}{section.7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}GraphMat}{5}{subsection.7.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Graphicionado}{5}{subsection.7.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}GraphOps}{5}{subsection.7.3}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Experimental Setup}{5}{section.7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Intel QPI Simulation}{5}{subsection.7.1}}
+\citation{Graph500}
+\citation{GraphMat}
+\citation{GraphOps}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces FlexGraph Simulation Environment}}{6}{figure.9}}
+\newlabel{fig:simulation}{{9}{6}{FlexGraph Simulation Environment}{figure.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces FlexGraph Simulation Parameters}}{6}{figure.10}}
+\newlabel{fig:simulation_parameters}{{10}{6}{FlexGraph Simulation Parameters}{figure.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Graph Datasets}{6}{subsection.7.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Graph500 dataset}}{6}{figure.11}}
+\newlabel{fig:graph500_dataset}{{11}{6}{Graph500 dataset}{figure.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Results Analysis}{6}{section.8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Throughput Performance}{6}{subsection.8.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces FlexGraph Throughput Performance}}{6}{figure.12}}
+\newlabel{fig:dual_core_perf}{{12}{6}{FlexGraph Throughput Performance}{figure.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}The Impact of Parallelism}{6}{subsection.8.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}The Impact of Memory Optimizations}{6}{subsection.8.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Summary Discussion}{6}{subsection.8.4}}
+\citation{GraphMat}
+\citation{DCSC}
+\citation{Graphicionado}
+\citation{GraphMat}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces FlexGraph Single Core Performance}}{7}{figure.13}}
+\newlabel{fig:single_core_perf}{{13}{7}{FlexGraph Single Core Performance}{figure.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces FlexGraph Performance with memory optimizations}}{7}{figure.14}}
+\newlabel{fig:no_opts_perf}{{14}{7}{FlexGraph Performance with memory optimizations}{figure.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces FlexGraph Memory Stalls}}{7}{figure.15}}
+\newlabel{fig:memory_stalls}{{15}{7}{FlexGraph Memory Stalls}{figure.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Cocoh's hardware cost evaluation}}{7}{figure.16}}
+\newlabel{fig:hardware_cost}{{16}{7}{Cocoh's hardware cost evaluation}{figure.16}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Related Work}{7}{section.9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}GraphMat}{7}{subsection.9.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Graphicionado}{7}{subsection.9.2}}
+\citation{GraphOps}
 \bibstyle{ieeetr}
 \bibdata{ref}
 \bibcite{Dark-Silicon}{1}
@@ -124,12 +154,18 @@
 \bibcite{Cash}{15}
 \bibcite{MapGraph}{16}
 \bibcite{GreenMarl}{17}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}GraphOps}{8}{subsection.9.3}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Future Work}{8}{section.10}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{8}{section.11}}
+\@writefile{toc}{\contentsline {section}{\numberline {12}Acknowledgment}{8}{section.12}}
+\@writefile{toc}{\contentsline {section}{\numberline {13}References}{8}{section.13}}
 \bibcite{BFS}{18}
 \bibcite{PageRank}{19}
 \bibcite{SSSP}{20}
 \bibcite{CAPI}{21}
 \bibcite{CCI}{22}
-\bibcite{DCSC}{23}
-\bibcite{CSC}{24}
-\bibcite{QPI}{25}
-\@writefile{toc}{\contentsline {section}{\numberline {8}References}{6}{section.8}}
+\bibcite{QPI}{23}
+\bibcite{DCSC}{24}
+\bibcite{CSC}{25}
+\bibcite{Cocoh}{26}
+\bibcite{Graph500}{27}

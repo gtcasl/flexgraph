@@ -25,17 +25,17 @@ In this section, we provide the background and motivation for this work.
 \label{fig:sample_algorithm}
 \end{figure} 
 
-\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=Graph Vertex Processing Model]
+\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, caption=Graph Vertex Processing Model]
 GraphProgram(%\textit{G}%, %\textit{P}%, %\textit{N}%) :
-  for %\textit{N}% iterations :
+  for_each %\textit{N}% :
     x := Assign(%\textit{P}%)
   	y := Process(%\textit{G}%,x)
   	%\textit{P}% := Apply(%\textit{P}%,y)	  
   
 e.g. FindIncomingEdges(%\textit{G}%=A, %\textit{P}%=%\textit{\textbf{I}}%, %\textit{N}%=1) :
-       Assign(%\textit{P}%)    := %\textit{P}%
-  with Process(%\textit{G}%,x) := %\textit{G}% * x
-       Apply(%\textit{P}%,y)   := y
+           Assign(%\textit{P}%)    := %\textit{P}%
+     where Process(%\textit{G}%,x) := %\textit{G}% * x
+           Apply(%\textit{P}%,y)   := y
 \end{lstlisting}
 
 A large variety of programming models have been proposed for describing Graph algorithms, expressing computation using vertex operations on matrices \cite{GraphMat} \cite{GraphLab}, \cite{Pregel}, \cite{MapGraph} \cite{GraphX} task-based models \cite{Galois} or domain-specific languages \cite{GreenMarl}. The vertex programming model has show great adoption for its ease of abstraction for describing algorithms using Linear Algebra and its efficient computation on commodity multi-core processors.
@@ -53,7 +53,7 @@ Listing 1 shows the three stages of a generalized graph vertex processing model 
 \label{fig:harp_arch}
 \end{figure}
 
-With the rising adoption of FPGAs in production data centers \cite{Catapult}, there is a need to increase its ecosystem by making them more energy efficient and accessible to both the users and designers. Modern CPU-FPGA platforms \cite{CPU-FPGA} provide tightly-coupled shared-memory CPU-FPGA integration \cite{CAPI} \cite{CCI}, making then easier to program and providing and efficient for collaborative execution.  
+With the rising adoption of FPGAs in production data centers \cite{Catapult}, there is a need to increase its ecosystem by making them more energy efficient as well as accessible to both the users and designers. Modern CPU-FPGA platforms \cite{CPU-FPGA} provide tightly-coupled shared-memory CPU-FPGA integration \cite{CAPI} \cite{CCI}, making then easier to program and efficient for hardware acceleration. Figure \ref{fig:harp_arch} shows an overview architecture of the Intel Xeon-FPGA platform prototype that we used in our evaluation. It has a dual-socket system, one containing a 10-core Intel Xeon E5-2680 CPU and the other containing an Altera Stratix V 5SGXEA FPGA operating at 200 MHz. The two sockets are connected via a 6.4 GT/s QPI \cite{QPI} link for data transfer. The FPGA's area is partitioned into two main blocks - the Application Function Unit (AFU) or 'Green' bitstream allocated for the custom accelerator and the 'Blue' bitstream implementing the Cache Coherent Interface (CCI) for the accelerator. The CCI runtime implements address translation (1024 page table entries) with request re-ordering for a total of 2 GB of addressable memory. The AFU memory interface is 64-byte cache-line addressable and it is up to the accelerator to extend the memory interface if fine grained (e.g. single byte) access is desired.
 
 \subsection{Collaborative CPU-FPGA Computation}
 
