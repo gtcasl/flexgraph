@@ -124,6 +124,22 @@ N.~Oliver, R.~R. Sharma, S.~Chang, B.~Chitlur, E.~Garcia, J.~Grecco, A.~Grier,
 wikipedia, ``Intel quickpath interconnect.''
   \url{https://en.wikipedia.org/wiki/Intel_QuickPath_Interconnect}.
 
+\bibitem{Accelerators}
+C.~Ca\c{s}caval, S.~Chatterjee, H.~Franke, K.~J. Gildea, and P.~Pattnaik, ``A
+  taxonomy of accelerator architectures and their programming models,'' {\em
+  IBM J. Res. Dev.}, vol.~54, pp.~473--482, Sept. 2010.
+
+\bibitem{CombBlas}
+A.~Bulu\c{c} and J.~R. Gilbert, ``The combinatorial blas: Design,
+  implementation, and applications,'' {\em Int. J. High Perform. Comput.
+  Appl.}, vol.~25, pp.~496--509, Nov. 2011.
+
+\bibitem{Pegasus}
+U.~Kang, C.~E. Tsourakakis, and C.~Faloutsos, ``Pegasus: A peta-scale graph
+  mining system implementation and observations,'' in {\em Proceedings of the
+  2009 Ninth IEEE International Conference on Data Mining}, ICDM '09,
+  (Washington, DC, USA), pp.~229--238, IEEE Computer Society, 2009.
+
 \bibitem{DCSC}
 A.~Buluc and J.~R. Gilbert, ``On the representation and multiplication of
   hypersparse matrices,'' in {\em 2008 IEEE International Symposium on Parallel

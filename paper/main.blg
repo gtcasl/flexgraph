@@ -4,45 +4,45 @@ The top-level auxiliary file: main.aux
 The style file: ieeetr.bst
 Database file #1: ref.bib
 Warning--empty booktitle in Cash
-You've used 27 entries,
+You've used 30 entries,
             1876 wiz_defined-function locations,
-            652 strings with 9093 characters,
-and the built_in function-call counts, 7508 in all, are:
-= -- 656
-> -- 402
+            680 strings with 9814 characters,
+and the built_in function-call counts, 8568 in all, are:
+= -- 769
+> -- 438
 < -- 1
-+ -- 146
-- -- 119
-* -- 570
-:= -- 1081
-add.period$ -- 28
-call.type$ -- 27
-change.case$ -- 27
++ -- 159
+- -- 129
+* -- 651
+:= -- 1221
+add.period$ -- 31
+call.type$ -- 30
+change.case$ -- 30
 chr.to.int$ -- 0
-cite$ -- 28
-duplicate$ -- 344
-empty$ -- 719
-format.name$ -- 119
-if$ -- 1794
+cite$ -- 31
+duplicate$ -- 397
+empty$ -- 812
+format.name$ -- 129
+if$ -- 2053
 int.to.chr$ -- 0
-int.to.str$ -- 27
-missing$ -- 16
-newline$ -- 85
-num.names$ -- 27
-pop$ -- 117
+int.to.str$ -- 30
+missing$ -- 19
+newline$ -- 94
+num.names$ -- 30
+pop$ -- 122
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 273
+skip$ -- 320
 stack$ -- 0
-substring$ -- 427
-swap$ -- 126
+substring$ -- 523
+swap$ -- 153
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 1
-while$ -- 65
-width$ -- 29
-write$ -- 252
+while$ -- 77
+width$ -- 32
+write$ -- 284
 (There was 1 warning)

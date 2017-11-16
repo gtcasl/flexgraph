@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  16 NOV 2017 09:26
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  16 NOV 2017 17:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -363,26 +363,58 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip54
 )
-(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count119
-\lst@gtempboxa=\box33
-\lst@token=\toks35
-\lst@length=\count120
-\lst@currlwidth=\dimen130
-\lst@column=\count121
-\lst@pos=\count122
-\lst@lostspace=\dimen131
-\lst@width=\dimen132
-\lst@newlines=\count123
-\lst@lineno=\count124
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2013/02/03 v1.1-62 Sub-captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2013/05/02 v3.3-89 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2013/05/02 v1.6-88 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 57.
+\captionmargin=\dimen130
+\captionmargin@=\dimen131
+\captionwidth=\dimen132
+\caption@tempdima=\dimen133
+\caption@indent=\dimen134
+\caption@parindent=\dimen135
+\caption@hangindent=\dimen136
 \abovecaptionskip=\skip55
 \belowcaptionskip=\skip56
-\lst@maxwidth=\dimen133
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+)
+
+Package caption Warning: Unsupported document class (or package) detected,
+(caption)                usage of the caption package is not recommended.
+See the caption package documentation for explanation.
+
+Package caption Info: \@makecaption = \long macro:#1#2-> \vskip 10pt \setbox \@
+tempboxa \hbox {\textbf {#1: #2}} \ifdim \wd \@tempboxa >\hsize \textbf {#1: #2
+}\par \else \hbox to\hsize {\hfil \box \@tempboxa \hfil } \fi .
+\c@ContinuedFloat=\count119
+Package caption Info: hyperref package is loaded.
+)
+\c@subfigure=\count120
+\c@subtable=\count121
+) (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count122
+\lst@gtempboxa=\box33
+\lst@token=\toks35
+\lst@length=\count123
+\lst@currlwidth=\dimen137
+\lst@column=\count124
+\lst@pos=\count125
+\lst@lostspace=\dimen138
+\lst@width=\dimen139
+\lst@newlines=\count126
+\lst@lineno=\count127
+\lst@maxwidth=\dimen140
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
-\c@lstnumber=\count125
-\lst@skipnumbers=\count126
+\c@lstnumber=\count128
+\lst@skipnumbers=\count129
 \lst@framebox=\box34
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
@@ -400,37 +432,37 @@ Package color Info: Driver file: pdftex.def on input line 130.
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Try loading font information for T1+ptm on input line 69.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 71.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count127
-\scratchdimen=\dimen134
+\scratchcounter=\count130
+\scratchdimen=\dimen141
 \scratchbox=\box35
-\nofMPsegments=\count128
-\nofMParguments=\count129
+\nofMPsegments=\count131
+\nofMParguments=\count132
 \everyMPshowfont=\toks36
-\MPscratchCnt=\count130
-\MPscratchDim=\dimen135
-\MPnumerator=\count131
-\makeMPintoPDFobject=\count132
+\MPscratchCnt=\count133
+\MPscratchDim=\dimen142
+\MPnumerator=\count134
+\makeMPintoPDFobject=\count135
 \everyMPtoPDFconversion=\toks37
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
@@ -453,64 +485,67 @@ e
 Package hyperref Warning: Height of page (\paperheight) is invalid (0.0pt),
 (hyperref)                using 11in.
 
-Package hyperref Info: Link coloring OFF on input line 69.
+Package hyperref Info: Link coloring OFF on input line 71.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count133
+\c@section@level=\count136
 )
-LaTeX Info: Redefining \ref on input line 69.
-LaTeX Info: Redefining \pageref on input line 69.
-LaTeX Info: Redefining \nameref on input line 69.
+LaTeX Info: Redefining \ref on input line 71.
+LaTeX Info: Redefining \pageref on input line 71.
+LaTeX Info: Redefining \nameref on input line 71.
 
 (./main.out) (./main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-\c@lstlisting=\count134
-LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 71
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: listings package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\c@lstlisting=\count137
+LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 73
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 71
+LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 73
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 71
+LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 73
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 71
+LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 73
 .
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 71.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 73.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 71.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 73.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 71.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 71.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 71.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
  (./abstract.tex)
 (./introduction.tex
 Overfull \hbox (4.418pt too wide) in paragraph at lines 3--12
@@ -564,15 +599,33 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 51--52
  [][] 
  []
 
-[2 <./figures/sample_graph.png> <./figures/harp_arch.png>]
-<figures/DCSC_matrix_format.png, id=243, 708.6475pt x 266.9975pt>
+<figures/offload_model.png, id=199, 414.54875pt x 174.6525pt>
+File: figures/offload_model.png Graphic file (type png)
+
+<use figures/offload_model.png>
+Package pdftex.def Info: figures/offload_model.png used on input line 59.
+(pdftex.def)             Requested size: 201.59692pt x 84.93288pt.
+
+<figures/collaborative_model.png, id=200, 381.425pt x 174.6525pt>
+File: figures/collaborative_model.png Graphic file (type png)
+
+<use figures/collaborative_model.png>
+Package pdftex.def Info: figures/collaborative_model.png used on input line 65.
+
+(pdftex.def)             Requested size: 201.59692pt x 92.30954pt.
+ [2 <./figures/sample_graph.png> <./figures/harp_arch.png>]
+<figures/DCSC_matrix_format.png, id=252, 708.6475pt x 266.9975pt>
 File: figures/DCSC_matrix_format.png Graphic file (type png)
 
 <use figures/DCSC_matrix_format.png>
-Package pdftex.def Info: figures/DCSC_matrix_format.png used on input line 68.
+Package pdftex.def Info: figures/DCSC_matrix_format.png used on input line 87.
 (pdftex.def)             Requested size: 201.59692pt x 75.95247pt.
 
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+Underfull \vbox (badness 1442) has occurred while \output is active []
+
+ [3 <./figures/offload_model.png> <./figures/collaborative_model.png> <./figure
+s/DCSC_matrix_format.png>] (/usr/share/texlive/texmf-dist/tex/latex/listings/ls
+tlang1.sty
 File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -584,70 +637,71 @@ File: lstlang1.sty 2013/08/26 1.5b listings language file
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 )
-<figures/microarchitecture.png, id=250, 812.03375pt x 641.39626pt>
+<figures/microarchitecture.png, id=273, 812.03375pt x 641.39626pt>
 File: figures/microarchitecture.png Graphic file (type png)
 
 <use figures/microarchitecture.png>
-Package pdftex.def Info: figures/microarchitecture.png used on input line 113.
+Package pdftex.def Info: figures/microarchitecture.png used on input line 132.
 (pdftex.def)             Requested size: 201.59692pt x 159.23296pt.
- [3 <./figures/DCSC_matrix_format.png>]
-<figures/matrix_partitioning.png, id=284, 485.815pt x 228.855pt>
+
+<figures/matrix_partitioning.png, id=275, 485.815pt x 228.855pt>
 File: figures/matrix_partitioning.png Graphic file (type png)
 
 <use figures/matrix_partitioning.png>
-Package pdftex.def Info: figures/matrix_partitioning.png used on input line 129
+Package pdftex.def Info: figures/matrix_partitioning.png used on input line 148
 .
 (pdftex.def)             Requested size: 201.59692pt x 94.96606pt.
 
-Overfull \hbox (2.9477pt too wide) in paragraph at lines 134--135
+Overfull \hbox (2.9477pt too wide) in paragraph at lines 153--154
 []\T1/ptm/m/n/10 To en-able the par-al-leliza-tion of Flex-Graph tasks, the DCS
 C
  []
 
-<figures/write_masks_synchronization.png, id=286, 344.28625pt x 243.91125pt>
+[4 <./figures/microarchitecture.png>]
+<figures/write_masks_synchronization.png, id=308, 344.28625pt x 243.91125pt>
 File: figures/write_masks_synchronization.png Graphic file (type png)
 
 <use figures/write_masks_synchronization.png>
 Package pdftex.def Info: figures/write_masks_synchronization.png used on input 
-line 140.
+line 159.
 (pdftex.def)             Requested size: 176.40308pt x 124.97368pt.
- [4 <./figures/microarchitecture.png> <./figures/matrix_partitioning.png> <./fi
-gures/write_masks_synchronization.png>] <figures/stream_buffers.png, id=299, 56
-5.11125pt x 83.31125pt>
+
+<figures/stream_buffers.png, id=311, 565.11125pt x 83.31125pt>
 File: figures/stream_buffers.png Graphic file (type png)
 
 <use figures/stream_buffers.png>
-Package pdftex.def Info: figures/stream_buffers.png used on input line 155.
+Package pdftex.def Info: figures/stream_buffers.png used on input line 174.
 (pdftex.def)             Requested size: 201.59692pt x 29.71997pt.
-) (./evaluation.tex
-<figures/simulation.png, id=304, 404.51125pt x 394.47375pt>
+ [5 <./figures/matrix_partitioning.png> <./figures/write_masks_synchronization.
+png> <./figures/stream_buffers.png>])
+(./evaluation.tex <figures/simulation.png, id=326, 404.51125pt x 394.47375pt>
 File: figures/simulation.png Graphic file (type png)
 
 <use figures/simulation.png>
 Package pdftex.def Info: figures/simulation.png used on input line 7.
 (pdftex.def)             Requested size: 151.20154pt x 147.45177pt.
 
-<figures/simulation_parameters.png, id=305, 1085.05376pt x 582.175pt>
+<figures/simulation_parameters.png, id=327, 1085.05376pt x 582.175pt>
 File: figures/simulation_parameters.png Graphic file (type png)
 
 <use figures/simulation_parameters.png>
 Package pdftex.def Info: figures/simulation_parameters.png used on input line 1
 4.
 (pdftex.def)             Requested size: 201.59692pt x 108.16261pt.
- [5 <./figures/stream_buffers.png>]
+
 Overfull \hbox (2.28665pt too wide) in paragraph at lines 24--25
 \T1/ptm/m/n/10 are rel-a-tively small mainly due to sim-u-la-tion time con-stra
 ints,
  []
 
-<figures/graph500_dataset.png, id=321, 523.9575pt x 99.37125pt>
+<figures/graph500_dataset.png, id=333, 523.9575pt x 99.37125pt>
 File: figures/graph500_dataset.png Graphic file (type png)
 
 <use figures/graph500_dataset.png>
 Package pdftex.def Info: figures/graph500_dataset.png used on input line 28.
 (pdftex.def)             Requested size: 201.59692pt x 38.23302pt.
 
-<figures/dual_core_perf.png, id=322, 241.40187pt x 124.96687pt>
+<figures/dual_core_perf.png, id=334, 241.40187pt x 124.96687pt>
 File: figures/dual_core_perf.png Graphic file (type png)
 
 <use figures/dual_core_perf.png>
@@ -658,7 +712,9 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 41--42
  [][] 
  []
 
-<figures/single_core_perf.png, id=326, 543.53062pt x 260.47313pt>
+[6 <./figures/simulation.png> <./figures/simulation_parameters.png> <./figures/
+graph500_dataset.png>]
+<figures/single_core_perf.png, id=351, 543.53062pt x 260.47313pt>
 File: figures/single_core_perf.png Graphic file (type png)
 
 <use figures/single_core_perf.png>
@@ -671,11 +727,11 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 56--57
 
 
 Overfull \hbox (3.77754pt too wide) in paragraph at lines 63--64
-[]\T1/ptm/m/n/10 Figure []14[] shows the ac-cel-er-a-tor per-for-mance with all
+[]\T1/ptm/m/n/10 Figure []15[] shows the ac-cel-er-a-tor per-for-mance with all
  mem-
  []
 
-<figures/no_opts_perf.png, id=328, 543.53062pt x 262.73157pt>
+<figures/no_opts_perf.png, id=353, 543.53062pt x 262.73157pt>
 File: figures/no_opts_perf.png Graphic file (type png)
 
 <use figures/no_opts_perf.png>
@@ -686,7 +742,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 67--68
  [][] 
  []
 
-<figures/memory_stalls.png, id=329, 978.65625pt x 229.60782pt>
+<figures/memory_stalls.png, id=354, 978.65625pt x 229.60782pt>
 File: figures/memory_stalls.png Graphic file (type png)
 
 <use figures/memory_stalls.png>
@@ -697,7 +753,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 76--77
  [][] 
  []
 
-<figures/hardware_cost.png, id=330, 1702.36pt x 555.07375pt>
+<figures/hardware_cost.png, id=355, 1702.36pt x 555.07375pt>
 File: figures/hardware_cost.png Graphic file (type png)
 
 <use figures/hardware_cost.png>
@@ -708,8 +764,9 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 83--84
  [][] 
  []
 
-) (./related_work.tex [6 <./figures/simulation.png> <./figures/simulation_param
-eters.png> <./figures/graph500_dataset.png> <./figures/dual_core_perf.png>]
+) (./related_work.tex [7 <./figures/dual_core_perf.png> <./figures/single_core_
+perf.png> <./figures/no_opts_perf.png> <./figures/memory_stalls.png> <./figures
+/hardware_cost.png>]
 Overfull \hbox (6.76724pt too wide) in paragraph at lines 3--4
 []\T1/ptm/m/n/10 In this sec-tion, we dis-cuss prior works re-lated to this pro
 ject. 
@@ -740,12 +797,11 @@ Overfull \hbox (4.84738pt too wide) in paragraph at lines 7--8
 
 
 Overfull \hbox (1.04736pt too wide) in paragraph at lines 7--8
-\T1/ptm/m/n/10 DCSC [[]24[]] ma-trix for-mat for stor-age and com-pute ef-fi-ci
+\T1/ptm/m/n/10 DCSC [[]27[]] ma-trix for-mat for stor-age and com-pute ef-fi-ci
 ency.
  []
 
-[7 <./figures/single_core_perf.png> <./figures/no_opts_perf.png> <./figures/mem
-ory_stalls.png> <./figures/hardware_cost.png>]) (./conclusion.tex
+) (./conclusion.tex
 Overfull \hbox (6.63763pt too wide) in paragraph at lines 15--1
 \T1/ptm/m/n/10 mem-ory en-coded us-ing a pro-posed locality-optimized scheme.
  []
@@ -757,11 +813,11 @@ ce
  []
 
 ) (./acknowledgment.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 3--81
+Underfull \hbox (badness 10000) in paragraph at lines 3--83
 
  []
 
-(./main.bbl
+(./main.bbl [8]
 LaTeX Font Info:    Try loading font information for T1+aett on input line 19.
  (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aett.fd
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
@@ -770,28 +826,29 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 19.
- [8])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 89.
 
-[9
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 89.
- (./main.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 89.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 89.
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 91.
+ [9]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 91.
+
+(./main.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 91.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 91.
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 02C3C5A74D099FA95A27C3BD81130148;2206.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 89.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 91.
  ) 
 Here is how much of TeX's memory you used:
- 8609 strings out of 494985
- 121515 string characters out of 6180356
- 322886 words of memory out of 5000000
- 11515 multiletter control sequences out of 15000+600000
+ 9691 strings out of 494985
+ 141459 string characters out of 6180356
+ 329058 words of memory out of 5000000
+ 12582 multiletter control sequences out of 15000+600000
  76320 words of font info for 106 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 41i,11n,60p,2940b,1196s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,11n,60p,2940b,1184s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
@@ -803,10 +860,10 @@ pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 480358 bytes).
+Output written on main.pdf (9 pages, 505485 bytes).
 PDF statistics:
- 448 PDF objects out of 1000 (max. 8388607)
- 396 compressed objects within 4 object streams
- 124 named destinations out of 1000 (max. 500000)
- 340 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 465 PDF objects out of 1000 (max. 8388607)
+ 408 compressed objects within 5 object streams
+ 128 named destinations out of 1000 (max. 500000)
+ 350 words of extra memory for PDF output out of 10000 (max. 10000000)
 
