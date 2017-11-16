@@ -108,6 +108,18 @@ L.~Page, S.~Brin, R.~Motwani, and T.~Winograd, ``The pagerank citation ranking:
 wikipedia, ``Shortest path problem.''
   \url{https://en.wikipedia.org/wiki/Shortest_path_problem}.
 
+\bibitem{CAPI}
+J.~Stuecheli, B.~Blaner, C.~R. Johns, and M.~S. Siegel, ``Capi: A coherent
+  accelerator processor interface,'' {\em IBM Journal of Research and
+  Development}, vol.~59, pp.~7:1--7:7, Jan 2015.
+
+\bibitem{CCI}
+N.~Oliver, R.~R. Sharma, S.~Chang, B.~Chitlur, E.~Garcia, J.~Grecco, A.~Grier,
+  N.~Ijih, Y.~Liu, P.~Marolia, H.~Mitchel, S.~Subhaschandra, A.~Sheiman,
+  T.~Whisonant, and P.~Gupta, ``A reconfigurable computing system based on a
+  cache-coherent fabric,'' in {\em 2011 International Conference on
+  Reconfigurable Computing and FPGAs}, pp.~80--85, Nov 2011.
+
 \bibitem{DCSC}
 A.~Buluc and J.~R. Gilbert, ``On the representation and multiplication of
   hypersparse matrices,'' in {\em 2008 IEEE International Symposium on Parallel
@@ -120,12 +132,5 @@ wikipedia, ``Sparse matrix.''
 \bibitem{QPI}
 wikipedia, ``Intel quickpath interconnect.''
   \url{https://en.wikipedia.org/wiki/Intel_QuickPath_Interconnect}.
-
-\bibitem{CCI}
-N.~Oliver, R.~R. Sharma, S.~Chang, B.~Chitlur, E.~Garcia, J.~Grecco, A.~Grier,
-  N.~Ijih, Y.~Liu, P.~Marolia, H.~Mitchel, S.~Subhaschandra, A.~Sheiman,
-  T.~Whisonant, and P.~Gupta, ``A reconfigurable computing system based on a
-  cache-coherent fabric,'' in {\em 2011 International Conference on
-  Reconfigurable Computing and FPGAs}, pp.~80--85, Nov 2011.
 
 \end{thebibliography}
