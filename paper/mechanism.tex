@@ -6,7 +6,7 @@ In this section, we provide the background and motivation for this work.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.4\textwidth]{figures/sample_graph}
+\includegraphics[width=0.5\textwidth]{figures/sample_graph}
 \caption{Sample Graph Representation}
 \label{fig:sample_graph}
 \end{figure}
@@ -25,24 +25,33 @@ In this section, we provide the background and motivation for this work.
 \label{fig:sample_algorithm}
 \end{figure} 
 
-\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=GraphMath Processing Model]
+\begin{lstlisting}[emph={Assign, Process, Apply}, emphstyle=\color{blue}, numbers=none, escapechar=\%, language=Python, caption=Graph Vertex Processing Model]
 GraphProgram(%\textit{G}%, %\textit{P}%, %\textit{N}%) :
   for %\textit{N}% iterations :
     x := Assign(%\textit{P}%)
   	y := Process(%\textit{G}%,x)
-  	%\textit{P}% := Apply(y)	  
+  	%\textit{P}% := Apply(%\textit{P}%,y)	  
   
 e.g. FindIncomingEdges(%\textit{G}%=A, %\textit{P}%=%\textit{\textbf{I}}%, %\textit{N}%=1) :
        Assign(%\textit{P}%)    := %\textit{P}%
   with Process(%\textit{G}%,x) := %\textit{G}% * x
-       Apply(y)     := y
+       Apply(%\textit{P}%,y)   := y
 \end{lstlisting}
 
-A large variety of programming models have been proposed for describing Graph algorithms, expressing computation using vertex operations on matrices \cite{GraphMat} \cite{GraphLab}, \cite{Pregel}, \cite{MapGraph} \cite{GraphX} task-based models \cite{Galois} or domain-specific languages \cite{GreenMarl}. The vertex programming model has show great adoption for its ease of abstraction for describing algorithms using linear algebra and its efficient computation on commodity multi-core processors. Figure \ref{fig:sample_graph} shows a simple 3 vertices graph example with its corresponding 3x3 matrix representation. For every edge between a source and destination vertex, the corresponding row and column entry in the matrix is activate.  
- 
- deal  FlexGraph's architecture is based on GraphMat \cite{GraphMat}'s vertex computing paradigm where a graph algorithm is described as a set of linear algebra operations on vectors and matrices. Figure \ref{fig:graph_vertex_programming} shows an example where graph (a) is represented as a matrix (b), allowing us to execute vertex multiplication on the matrix transpose (c). The above linear algebra operation (c) generates the number of incoming edges for each vertex in the graph. All GraphMat algorithms, Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, etc.. are expressed in this fashion such that computation can be efficiently accelerated in hardware. In FlexGraph, we accelerate the matrix vertex computation on the FPGA, instead of executing it on the multi-core host processor.
+A large variety of programming models have been proposed for describing Graph algorithms, expressing computation using vertex operations on matrices \cite{GraphMat} \cite{GraphLab}, \cite{Pregel}, \cite{MapGraph} \cite{GraphX} task-based models \cite{Galois} or domain-specific languages \cite{GreenMarl}. The vertex programming model has show great adoption for its ease of abstraction for describing algorithms using Linear Algebra and its efficient computation on commodity multi-core processors.
+
+Figure \ref{fig:sample_graph} shows a simple 3 vertices graph example with its corresponding 3x3 matrix representation. For every edge between a source and destination vertex, the corresponding row and column entry in the matrix is activate. For instance, the matrix entry in row 0 and column 1 represents the edge between source \textit{v0} and destination \textit{v1}. using the matrix representation, we can apply an algorithm on the graph to calculate the total number of incoming edges at each vertex. This algorithm can be expressed using a simple matrix-vector operation as shown in equations (1) and (2) in Figure \ref{fig:sample_algorithm}. Several graph algorithms, including Breadth First Search (BFS) \cite{BFS}, PageRank \cite{PageRank}, Single Source Shortest-Path (SSSP) \cite{SSSP}, can be described similarly using the vertex programming model \cite{GraphMat}.
+
+Listing 1 shows the three stages of a generalized graph vertex processing model - \textit{Assign}, \textit{Process} and \textit{Apply}, given a graph \textit{G}, some vertex properties \textit{P} and an iteration count \textit{N}. The \textit{Assign} stage generates an input vector \textit{x} using the vertex properties \textit{P}. The \textit{Process} stage applies the input vector \textit{x} to the graph \textit{G} and generates an output vector \textit{y}. The\textit{ Apply} gather the resulting output vector to update the vertex properties for the next iteration. The graph program executes the three stages for several iterations until it converges. A direct mapping of our incoming edges algorithm to this processing model is also provided in Listing 1, where the identity vector is used for the vector properties. The \textit{Assign} and \textit{Apply} stages of this program are simple identity operators, while the \textit{Process} stage perform a matrix-vector multiplication. The input graph can be represented as a sparse matrix and the computation done using a Sparse Matrix-Sparse Vector Multiplication (SpMSpV) kernel which can be accelerated on multi-core CPUs \cite{GraphMat} or on GPUs \cite{MapGraph}. FlexGraph's objective is to provide a more energy efficient graph processing backend using a FPGA for hardware acceleration \cite{Catapult}.
 
 \subsection{Intel Heterogeneous CPU-FPGA Platform}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/harp_arch}
+\caption{Intel HARP Architecture}
+\label{fig:harp_arch}
+\end{figure}
 
 \subsection{Collaborative CPU-FPGA Computation}
 
