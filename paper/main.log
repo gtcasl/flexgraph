@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  16 NOV 2017 17:32
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.8.24)  16 NOV 2017 21:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -429,7 +429,29 @@ Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
-) (./main.aux)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/lstaddons/lstlinebgrd.sty
+Package: lstlinebgrd 2012/05/03 v0.1 Provides 'listings' options to color the b
+ackground of lines
+
+(/usr/share/texmf/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+LaTeX Info: Redefining \color on input line 702.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+)) (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
@@ -632,6 +654,28 @@ Overfull \hbox (11.22787pt too wide) in paragraph at lines 92--93
 y
  []
 
+
+Overfull \hbox (4.29716pt too wide) in paragraph at lines 96--97
+[]\T1/ptm/m/n/10 FlexGraph micro-architecture im-ple-ments a Sparse Matrix-
+ []
+
+
+Overfull \hbox (1.22783pt too wide) in paragraph at lines 96--97
+\T1/ptm/m/n/10 This ker-nel di-verges from con-ven-tional Sparse Matrix-Vector
+ []
+
+
+Overfull \hbox (2.17647pt too wide) in paragraph at lines 96--97
+\T1/ptm/m/n/10 Mul-ti-pli-ca-tion (SpMV) im-ple-men-ta-tions in two ways - firs
+tly,
+ []
+
+
+Overfull \hbox (10.6568pt too wide) in paragraph at lines 96--97
+\T1/ptm/m/n/10 of the SpM-SpV ker-nel. Given the start/end ad-dresses (col_star
+t,
+ []
+
 [3 <./figures/offload_model.png> <./figures/collaborative_model.png> <./figures
 /DCSC_matrix_format.png>]
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -650,18 +694,18 @@ File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 File: figures/microarchitecture.png Graphic file (type png)
 
 <use figures/microarchitecture.png>
-Package pdftex.def Info: figures/microarchitecture.png used on input line 132.
+Package pdftex.def Info: figures/microarchitecture.png used on input line 140.
 (pdftex.def)             Requested size: 201.59692pt x 159.23296pt.
 
 <figures/matrix_partitioning.png, id=271, 485.815pt x 228.855pt>
 File: figures/matrix_partitioning.png Graphic file (type png)
 
 <use figures/matrix_partitioning.png>
-Package pdftex.def Info: figures/matrix_partitioning.png used on input line 148
+Package pdftex.def Info: figures/matrix_partitioning.png used on input line 156
 .
 (pdftex.def)             Requested size: 201.59692pt x 94.96606pt.
 
-Overfull \hbox (2.9477pt too wide) in paragraph at lines 153--154
+Overfull \hbox (2.9477pt too wide) in paragraph at lines 161--162
 []\T1/ptm/m/n/10 To en-able the par-al-leliza-tion of Flex-Graph tasks, the DCS
 C
  []
@@ -672,25 +716,25 @@ File: figures/write_masks_synchronization.png Graphic file (type png)
 
 <use figures/write_masks_synchronization.png>
 Package pdftex.def Info: figures/write_masks_synchronization.png used on input 
-line 159.
+line 167.
 (pdftex.def)             Requested size: 176.40308pt x 124.97368pt.
 
 <figures/stream_buffers.png, id=307, 565.11125pt x 83.31125pt>
 File: figures/stream_buffers.png Graphic file (type png)
 
 <use figures/stream_buffers.png>
-Package pdftex.def Info: figures/stream_buffers.png used on input line 172.
+Package pdftex.def Info: figures/stream_buffers.png used on input line 180.
 (pdftex.def)             Requested size: 201.59692pt x 29.71997pt.
  [5 <./figures/matrix_partitioning.png> <./figures/write_masks_synchronization.
 png> <./figures/stream_buffers.png>])
-(./evaluation.tex <figures/simulation.png, id=322, 404.51125pt x 394.47375pt>
+(./evaluation.tex <figures/simulation.png, id=323, 404.51125pt x 394.47375pt>
 File: figures/simulation.png Graphic file (type png)
 
 <use figures/simulation.png>
 Package pdftex.def Info: figures/simulation.png used on input line 7.
 (pdftex.def)             Requested size: 151.20154pt x 147.45177pt.
 
-<figures/simulation_parameters.png, id=323, 1085.05376pt x 582.175pt>
+<figures/simulation_parameters.png, id=324, 1085.05376pt x 582.175pt>
 File: figures/simulation_parameters.png Graphic file (type png)
 
 <use figures/simulation_parameters.png>
@@ -703,14 +747,14 @@ Overfull \hbox (2.28665pt too wide) in paragraph at lines 24--25
 ints,
  []
 
-<figures/graph500_dataset.png, id=329, 523.9575pt x 99.37125pt>
+<figures/graph500_dataset.png, id=330, 523.9575pt x 99.37125pt>
 File: figures/graph500_dataset.png Graphic file (type png)
 
 <use figures/graph500_dataset.png>
 Package pdftex.def Info: figures/graph500_dataset.png used on input line 28.
 (pdftex.def)             Requested size: 201.59692pt x 38.23302pt.
 
-<figures/dual_core_perf.png, id=330, 241.40187pt x 124.96687pt>
+<figures/dual_core_perf.png, id=331, 241.40187pt x 124.96687pt>
 File: figures/dual_core_perf.png Graphic file (type png)
 
 <use figures/dual_core_perf.png>
@@ -723,7 +767,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 41--42
 
 [6 <./figures/simulation.png> <./figures/simulation_parameters.png> <./figures/
 graph500_dataset.png>]
-<figures/single_core_perf.png, id=347, 543.53062pt x 260.47313pt>
+<figures/single_core_perf.png, id=348, 543.53062pt x 260.47313pt>
 File: figures/single_core_perf.png Graphic file (type png)
 
 <use figures/single_core_perf.png>
@@ -740,7 +784,7 @@ Overfull \hbox (3.77754pt too wide) in paragraph at lines 63--64
  mem-
  []
 
-<figures/no_opts_perf.png, id=349, 543.53062pt x 262.73157pt>
+<figures/no_opts_perf.png, id=350, 543.53062pt x 262.73157pt>
 File: figures/no_opts_perf.png Graphic file (type png)
 
 <use figures/no_opts_perf.png>
@@ -751,7 +795,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 67--68
  [][] 
  []
 
-<figures/memory_stalls.png, id=350, 978.65625pt x 229.60782pt>
+<figures/memory_stalls.png, id=351, 978.65625pt x 229.60782pt>
 File: figures/memory_stalls.png Graphic file (type png)
 
 <use figures/memory_stalls.png>
@@ -762,7 +806,7 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 76--77
  [][] 
  []
 
-<figures/hardware_cost.png, id=351, 1702.36pt x 555.07375pt>
+<figures/hardware_cost.png, id=352, 1702.36pt x 555.07375pt>
 File: figures/hardware_cost.png Graphic file (type png)
 
 <use figures/hardware_cost.png>
@@ -847,17 +891,17 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 91.
 Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 91.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 91.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 800F10434825AE627BDB64154F14E7E3;2154.
+(rerunfilecheck)             Checksum: 304B003E6F330F6409E6E88487B4351B;2158.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 91.
  ) 
 Here is how much of TeX's memory you used:
- 9689 strings out of 494985
- 141437 string characters out of 6180356
- 329162 words of memory out of 5000000
- 12581 multiletter control sequences out of 15000+600000
+ 10124 strings out of 494985
+ 146648 string characters out of 6180356
+ 319451 words of memory out of 5000000
+ 13005 multiletter control sequences out of 15000+600000
  76320 words of font info for 106 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 42i,11n,60p,2940b,1184s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,11n,60p,2940b,1198s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
@@ -869,10 +913,10 @@ pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 505382 bytes).
+Output written on main.pdf (9 pages, 505470 bytes).
 PDF statistics:
- 461 PDF objects out of 1000 (max. 8388607)
- 404 compressed objects within 5 object streams
- 127 named destinations out of 1000 (max. 500000)
+ 462 PDF objects out of 1000 (max. 8388607)
+ 405 compressed objects within 5 object streams
+ 128 named destinations out of 1000 (max. 500000)
  342 words of extra memory for PDF output out of 10000 (max. 10000000)
 

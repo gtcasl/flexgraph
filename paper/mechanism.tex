@@ -89,30 +89,38 @@ In this section, we describes the overall architecture of the FlexGraph Accelera
 \label{fig:DCSC_matrix_format}
 \end{figure}
 
-FlexGraph uses the Doubly Compressed Sparse Column (DCSC) \cite{DCSC} format as underlying graph data structure. The format allows minimal traversal into the sparse matrix structure, saving necessary memory bandwidth when fetching empty columns. Figure \ref{fig:DCSC_matrix_format} shows a sample matrix A = \{(0,5,a), (0,7,b), (6,3,c), (7,1,d)\} with four non-zero edges (src, dst, weight) encoded using DCSC versus the conventional CSC \cite{CSC} format. The traversal over CSC requires accessing all consecutive column ranges \textit{(cols[i+2] - cols[i])} even though most of the distances are empty. DCSC saves on bandwidth by using an additional indirection  buffer inside its structure to only encode non-zero columns. It is important to note that this indirection can introduce additional storage overhead and access latency if the matrix is too small or not sparse enough. However, Graph Analytics datasets are generally very large and hyper-sparse which eliminate the DCSC format overhead.
+FlexGraph uses the Doubly Compressed Sparse Column (DCSC) \cite{DCSC} format as underlying graph data structure. The format allows minimal traversal into the sparse matrix structure, saving necessary memory bandwidth when fetching empty columns. Figure \ref{fig:DCSC_matrix_format} shows a sample matrix A = \{(0,5,a), (0,7,b), (6,3,c), (7,1,d)\} with four non-zero edges (src, dst, weight) encoded using DCSC versus the conventional CSC \cite{CSC} format. The traversal over CSC requires accessing all consecutive column ranges \textit{(cols[i+2] - cols[i])} even though most of the distances are empty. DCSC saves on bandwidth by using an additional indirection  buffer inside its structure to only encode non-zero columns. It is important to note that this indirection can introduce additional storage overhead and access latency if the matrix is too small or not sparse enough. However, Graph Analytics datasets are generally very large and hyper-sparse which eliminate the DCSC format overhead. In addition to a sparse matrix, FlexGraph also uses a sparse vector to provide property data as well as edge selection during computation. A bitmask is used to encode the non-zero entries in the input vector.
 
-\subsection{Sparse Matrix-Sparse Vector Multiplication Kernel}
+\subsection{The Sparse Matrix-Sparse Vector Multiplication Kernel}
 
-FlexGraph architecture implements a custom Sparse Matrix Vertex Multiplication (SPMV) kernel. Its architecture diverges from conventional implementations in two ways: First, it uses the dirty masks from  the input vertices to select the edges to process and return a new dirty masks capturing the intersection of the active input vertices and the non-zero edges actually visited. Second, it matrix data structure (DCSC) contains an additional indirection buffer for accessing the matrix columns. These two properties present unique performance challenges when designing the accelerator. Listing 1 shows the pseudo-code of the SPMV kernel. The program iterates through each column and fetch the corresponding input vertex active mask to check if the column should be process, then access all the non-zero rows of the matrix for that column to evaluate each edge. In the code's comments on the right are highlighted the different types performance hogs present; semi-random memory accesses (*), fully-random memory accesses (!) and control branches (?). The memory accesses for the columns and rows data (lines 4 and 9) are semi-random because only the access cannot be predicted and after that the address is simply incremented. FlexGraph's architecture attempts to address some of those performance hogs using several optimizations detailed in section 4.
+FlexGraph micro-architecture implements a Sparse Matrix-Sparse Vertex Multiplication (SpMSpV) kernel in FPGA. This kernel diverges from conventional Sparse Matrix-Vector Multiplication (SpMV) implementations in two ways - firstly, it uses a sparse data structure as input and output vector during computation - secondly, it uses a doubly-compressed sparse matrix (DCSC) format with additional memory indirection buffer when accessing the matrix columns. These two properties present unique performance challenges when designing the accelerator. Listing 1 shows the pseudo-code of the SpMSpV kernel. Given the start/end addresses (col\_start, col\_end) into the matrix columns buffer (coldata), for The program iterates through each column entry and fetches the corresponding column index (col) and rows buffer address (row\_start, row\_end). It then checks if the current column index (col) is active using the vertex bitmask, only then it proceeds with rows traversal loop where the matrix row\_data is accessed to retrieve corresponding row index and matrix value for computation. A Multiply-Accumulate (MAC) operation is then performed on the matrix and vertex data and output bitmask is updated. Lines 6 and 8 show the code region where external memory is randomly accessed to obtain the vertex data and active state. Lines 5 and 10 show the code region where external memory is accessed semi-random because only the first access cannot be predicted and after that the address is simply incremented. FlexGraph's architecture attempts to address some of those performance hogs using several optimizations detailed in section 4.
 
-\begin{lstlisting}[language=Python, caption=Pseudo-code for SPMV kernel]
-def SPMV_kernel(x_values, x_activemask) :
-  y_values = {0}, y_activemask = {0}
-    for col in (c_start, c_end) :            	
-      (a_x, r_start, r_end) = coldata[col]   # *
-      x_value  = x_values[a_x]               # !
-      x_active = x_activemask[a_x]           # !
-      if (x_active):                         # ?
-        for row in (r_start, r_end):         
-          (a_y, a_value) = rowdata[row]      # *
-          y_values[a_y] += a_value * x_value # !
-          x_activemask[a_y] = true           # !
-  return (y_values, y_activemask)
+\begin{lstlisting}[
+	linebackgroundcolor={
+	\ifnum\value{lstnumber}=6\color{red!10}\fi
+	\ifnum\value{lstnumber}=8\color{red!10}\fi
+	\ifnum\value{lstnumber}=5\color{orange!10}\fi
+	\ifnum\value{lstnumber}=10\color{orange!10}\fi}, 
+        escapechar=\%, 
+        emph={col_start, col_end, coldata, rowdata, values, active}, emphstyle=\color{blue}, language=Python, caption=Pseudo-code for SpMSpV kernel]
+def SpMSpV_kernel(a, x):
+  y_values[] = {0}
+  y_bitmask[] = {false}
+  for i in (a.col_start, a.col_end):            	
+    (col, row_start, row_end) = a.coldata[i]
+    x_active = x.bitmask[col]          
+    if (x_active) :                            
+      x_value  = x.values[col]              
+      for j in (row_start, row_end): 
+        (row, a_value) = a.rowdata[j]
+        y_values[row] += a_value * x_value
+        y_bitmask[row] = true          
+  return (y_values, y_bitmask)
 \end{lstlisting}
 
 \subsection{FlexGraph Microarchitecture}
 
-Externally, FlexGraph input and output signals implement an Accelerator Functional Unit (AFU) interface defined by Intel's Accelerator Abstraction Layer (AAL) \cite{Intel-FPGA}. AFUs implementing the interface are able to bind with the FPGA's board support package (BSP) and seamlessly communicate with the AAL software runnign on the host processor. Listing 2 shows AAL device interface implementation using Cocoh's API. Our FlexGraph Accelerator's class in Cocoh simply derives from this interface and override the \textit{initialize()} function to provide its implementation and Cocoh takes care of generating the corresponding verilog module. It implements three input signals \textit{(start, qpi\_in, ctx)} and two output signals \textit{(qpi\_out, done)}. The AFU starts execution when the \textit{start} signal is asserted and communicate completion by asserting the \textit{done} signal. The \textit{ctx} signal provides application's specific data like constants and buffers address in the case of FlexGraph. The \textit{qpi} in/out signals implement Intel Quick Path Interconnect (QPI) interface \cite{QPI}, providing single channel read/write ports for accessing external shared memory. The FPGA socket hosts a 64-byte cache coherent interface (CCI) \cite{CCI} that connects to the host processor's last level cache (LLC) via QPI.     
+Externally, FlexGraph input and output signals implement an Accelerator Functional Unit (AFU) interface defined by Intel's Accelerator Abstraction Layer (AAL) \cite{Intel-FPGA}. AFUs implementing the interface are able to bind with the FPGA's board support package (BSP) and seamlessly communicate with the AAL software running on the host processor. Listing 2 shows AAL device interface implementation using Cocoh's API. Our FlexGraph Accelerator's class in Cocoh simply derives from this interface and override the \textit{initialize()} function to provide its implementation and Cocoh takes care of generating the corresponding verilog module. It implements three input signals \textit{(start, qpi\_in, ctx)} and two output signals \textit{(qpi\_out, done)}. The AFU starts execution when the \textit{start} signal is asserted and communicate completion by asserting the \textit{done} signal. The \textit{ctx} signal provides application's specific data like constants and buffers address in the case of FlexGraph. The \textit{qpi} in/out signals implement Intel Quick Path Interconnect (QPI) interface \cite{QPI}, providing single channel read/write ports for accessing external shared memory. The FPGA socket hosts a 64-byte cache coherent interface (CCI) \cite{CCI} that connects to the host processor's last level cache (LLC) via QPI.     
 
 \begin{lstlisting}[language=C++, caption=AAL Device Interface in Cocoh C++]
 class aal_device {
