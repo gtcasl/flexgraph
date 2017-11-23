@@ -8,7 +8,7 @@ __enum (ch_ctrl_state, 3, (
   get_partition,
   wait_for_execute,
   flush_buffers,
-  write_hwcntrs,
+  write_stats,
   wait_for_writes
 ));
 
@@ -29,7 +29,7 @@ spmv_device::~spmv_device() {
 
 void spmv_device::describe() {  
   //--
-  numparts_ = io.ctx.a.numparts.slice<ch_bitwidth_v<ch_ptr>>();
+  num_parts_ = io.ctx.a.num_parts.slice<ch_bitwidth_v<ch_ptr>>();
 
   // timer
   ch_seq<ch_bit64> timer;
@@ -52,39 +52,43 @@ void spmv_device::main_thread() {
   auto done = io.done.asSeq();
 
   //--
-  pbuf_.io.enq.data = lsu_.io.ctrl.rd_rsp.data.data;
-  pbuf_.io.enq.valid = lsu_.io.ctrl.rd_rsp.valid && (lsu_.io.ctrl.rd_rsp.data.type == ch_rd_request::a_partition);
+  pbuf_.io.enq.data  = lsu_.io.ctrl.rd_rsp.data.data;
+  pbuf_.io.enq.valid = lsu_.io.ctrl.rd_rsp.valid
+                   && (lsu_.io.ctrl.rd_rsp.data.type == ch_rd_request::a_colptr);
 
   //--
   pbuf_pending_size_.next = pbuf_pending_size_ +
-      ch_zext<32>(lsu_.io.ctrl.rd_req.valid && lsu_.io.ctrl.rd_req.ready && (lsu_.io.ctrl.rd_req.data.type == ch_rd_request::a_partition)) -
+      ch_zext<32>(lsu_.io.ctrl.rd_req.valid
+               && lsu_.io.ctrl.rd_req.ready
+               && (lsu_.io.ctrl.rd_req.data.type == ch_rd_request::a_colptr)) -
       ch_zext<32>(pbuf_.io.deq.ready);
 
   //--
   ch_bool all_PEs_ready = walkers_[0].io.ctrl.start.ready && PEs_[0].io.is_idle;
   for (int i = 1; i < PE_COUNT; ++i) {
-    all_PEs_ready = ch_clone(all_PEs_ready) && walkers_[i].io.ctrl.start.ready && PEs_[i].io.is_idle;
+    all_PEs_ready = ch_clone(all_PEs_ready)
+                 && walkers_[i].io.ctrl.start.ready
+                 && PEs_[i].io.is_idle;
   }
       
   //--
   __switch (state) (
   __case (ch_ctrl_state::ready) ( 
     __if (io.start) (
-      __if (io.ctx.a.numparts != 0) (
+      __if (io.ctx.a.num_parts != 0) (
         part_blk_curr_.next = 0;
-        part_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.numparts+1).slice<ch_bitwidth_v<ch_ptr>>();
+        part_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1).slice<ch_bitwidth_v<ch_ptr>>();
         done.next = false; // clear done signal
         // request partition block
         state.next = ch_ctrl_state::get_partition;
-      )
-      __else (
+      )__else (
         // no work to do!
         done.next = true; // set done signal
       );
     );
   )
   __case (ch_ctrl_state::get_partition) (
-      lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_partition;
+      lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_colptr;
       lsu_.io.ctrl.rd_req.data.addr = 0;
     __if (pbuf_pending_size_ != PBUF_SIZE) (
       lsu_.io.ctrl.rd_req.valid = true;
@@ -95,20 +99,18 @@ void spmv_device::main_thread() {
           // go wait for execution to complete
           state.next = ch_ctrl_state::wait_for_execute;
         );
-      )
-      __else (
+      )__else (
         // profiling
-        a_partitions_stalls_.next = a_partitions_stalls_ + 1;
+        stats_.next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
       );
-    )
-    __else (
+    )__else (
       // profiling
-      a_partitions_stalls_.next = a_partitions_stalls_ + 1;
+      stats_.next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
     );
   )
   __case (ch_ctrl_state::wait_for_execute) (
     // wait for the execution to complete
-    __if (part_curr_ == numparts_ && all_PEs_ready) (
+    __if (part_curr_ == num_parts_ && all_PEs_ready) (
       // flush LSU write buffers      
       state.next = ch_ctrl_state::flush_buffers;  
     );
@@ -120,19 +122,19 @@ void spmv_device::main_thread() {
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) (
       // write hardware counters      
-      state.next = ch_ctrl_state::write_hwcntrs;
+      state.next = ch_ctrl_state::write_stats;
     );
   )
-  __case (ch_ctrl_state::write_hwcntrs) (
+  __case (ch_ctrl_state::write_stats) (
     // write ctrl counters
-    lsu_.io.ctrl.wr_req.data.type = ch_wr_request::hwcntrs;
-    lsu_.io.ctrl.wr_req.data.addr = ch_zext<ch_bitwidth_v<ch_blk_addr>>(hwcntrs_addr_);
-    lsu_.io.ctrl.wr_req.data.data = this->get_hwnctrs(hwcntrs_addr_);
-    lsu_.io.ctrl.wr_req.valid = true;
+    lsu_.io.ctrl.wr_req.data.type = ch_wr_request::stats;
+    lsu_.io.ctrl.wr_req.data.addr = ch_zext<ch_bitwidth_v<ch_blk_addr>>(stats_addr_);
+    lsu_.io.ctrl.wr_req.data.data = this->get_stats(stats_addr_);
+    lsu_.io.ctrl.wr_req.valid     = true;
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) (
-      hwcntrs_addr_.next = hwcntrs_addr_ + 1;
-      __if (hwcntrs_addr_ == PE_COUNT) (
+      stats_addr_.next = stats_addr_ + 1;
+      __if (stats_addr_ == PE_COUNT) (
         // got wait for writes to complete
         state.next = ch_ctrl_state::wait_for_writes;
       );
@@ -148,14 +150,14 @@ void spmv_device::main_thread() {
   __default (
     //--
     lsu_.io.ctrl.rd_req.data.addr = 0;
-    lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_partition;
-    lsu_.io.ctrl.rd_req.valid = false;
+    lsu_.io.ctrl.rd_req.data.type = ch_rd_request::a_colptr;
+    lsu_.io.ctrl.rd_req.valid     = false;
 
     //--
     lsu_.io.ctrl.wr_req.data.addr = 0;
     lsu_.io.ctrl.wr_req.data.type = ch_wr_request::y_values;
     lsu_.io.ctrl.wr_req.data.data = 0;
-    lsu_.io.ctrl.wr_req.valid = false;
+    lsu_.io.ctrl.wr_req.valid     = false;
   ));
     
   //--
@@ -180,8 +182,7 @@ void spmv_device::dispatch_thread() {
         // get whole partition block
         part_buf_.next.slice<ch_bitwidth_v<ch_block>>(0) = pbuf_.io.deq.data;
         part_buf_size_.next = PARTITIONS_PER_BLOCK;
-      )
-      __else (
+      )__else (
         // append partition block
         part_buf_.next.slice<ch_bitwidth_v<ch_block>>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
         part_buf_size_.next = 1 + PARTITIONS_PER_BLOCK ;
@@ -206,12 +207,11 @@ void spmv_device::dispatch_thread() {
 
         // check if we can pop another partition from current block
         // we need at least two entries to proceed
-        __if (part_curr_.next != numparts_
+        __if (part_curr_.next != num_parts_
            && part_buf_size_.next != 1) (
           // goto next PE
           state.next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
-        )
-        __else (
+        )__else (
           state.next = 0;
         );
       )__else (
@@ -237,15 +237,17 @@ void spmv_device::dispatch_thread() {
            walkers_[0].io.ctrl.start.data.part.asBits());
 }
 
-ch_block spmv_device::get_hwnctrs(const ch_hwcntr_addr& addr) {
+ch_block spmv_device::get_stats(const ch_stats_addr& addr) {
   //--
-  ch_ctrl_hwcntrs_t ctrl_hwcntrs(0);
-  ctrl_hwcntrs.a_partitions_stalls = a_partitions_stalls_;
-
-  //--
-  auto cs = ch_case(addr, 0, ch_zext<ch_bitwidth_v<ch_block>>(ctrl_hwcntrs.asBits()));
+  auto cs = ch_case(addr, 0, ch_zext<ch_bitwidth_v<ch_block>>(stats_.asBits()));
   for (int i = 1; i < PE_COUNT; ++i) {
-    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(walkers_[i-1].io.ctrl.hwcntrs.asBits()));
+    ch_stats_t stats;
+    stats.walker = walkers_[i-1].io.ctrl.stats;
+    stats.pe = PEs_[i-1].io.stats;
+    cs(i, ch_zext<ch_bitwidth_v<ch_block>>(stats.asBits()));
   }
-  return cs(ch_zext<ch_bitwidth_v<ch_block>>(walkers_[PE_COUNT-1].io.ctrl.hwcntrs.asBits()));
+  ch_stats_t stats;
+  stats.walker = walkers_[PE_COUNT-1].io.ctrl.stats;
+  stats.pe = PEs_[PE_COUNT-1].io.stats;
+  return cs(ch_zext<ch_bitwidth_v<ch_block>>(stats.asBits()));
 }

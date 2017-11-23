@@ -21,10 +21,10 @@ enum {
 };
 
 __enum (ch_rd_request, 3, (
-  a_partition,
-  a_xindices,
-  a_startys,
-  a_yindices,
+  a_colptr,
+  a_colind,
+  a_rowptr,
+  a_rowind,
   a_values,
   x_values,
   x_masks
@@ -33,7 +33,7 @@ __enum (ch_rd_request, 3, (
 __enum (ch_wr_request, 2, (
   y_values,
   y_masks,
-  hwcntrs
+  stats
 ));
 
 __struct(ch_rd_mdata_t, (
@@ -67,14 +67,14 @@ __struct (ch_lsu_wr_rsp_t, (
 ));
 
 __inout (ch_ctrl_lsu_io, (
-  (ch_deq_io<ch_lsu_rd_req_t>) rd_req,
-  (ch_deq_io<ch_lsu_wr_req_t>) wr_req,
+  (ch_deq_io<ch_lsu_rd_req_t>)   rd_req,
+  (ch_deq_io<ch_lsu_wr_req_t>)   wr_req,
   (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp,
-  __out(ch_bit32) outstanding_writes
+  __out(ch_bit32)                outstanding_writes
 ));
 
 __inout (ch_walker_lsu_io, (
-  (ch_deq_io<ch_lsu_rd_req_t>) rd_req,
+  (ch_deq_io<ch_lsu_rd_req_t>)   rd_req,
   (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp
 ));
 

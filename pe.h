@@ -7,14 +7,14 @@ namespace spmv {
 namespace accelerator {
 
 __struct (ch_pe_req_t, (
-  (ch_ptr)     a_yindex,
+  (ch_ptr)     a_rowind,
   (ch_float32) a_value,
   (ch_float32) x_value,
   (ch_bool)    is_end
 ));
 
 __struct (ch_pipe_data_t, (
-  (ch_ptr)  a_yindex,
+  (ch_ptr)  a_rowind,
   (ch_bool) is_end
 ));
 
@@ -24,6 +24,7 @@ public:
   __io(
     (ch_deq_io<ch_pe_req_t>) req,
     (ch_flip_t<ch_pe_lsu_io>) lsu,
+    __out(ch_pe_stats_t) stats,
     __out(ch_bool) is_idle
   );
   
@@ -56,6 +57,8 @@ private:
   ch_bit1     y_wenable_;
 
   ch_seq<ch_ptr>   y0_;  
+
+  ch_seq<ch_pe_stats_t> stats_;
 };
 
 }

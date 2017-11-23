@@ -4,22 +4,22 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_walk_state, 4, (
-  (get_partition, 0),
-  (get_a_xindex, 1),
-  (get_a_starty, 2),
-  (wait_for_a_starty, 3),
-  (get_a_endy, 4),
-  (wait_for_a_endy, 5),
-  (check_x_mask, 6),
-  (get_x_mask, 7),
-  (wait_for_x_mask, 8),
-  (get_x_value, 9),
-  (get_a_yindex, 0xA),
-  (get_a_value, 0xB),
-  (wait_for_data, 0xC),
-  (execute, 0xD),
-  (next_column, 0xE),
-  (end_partition, 0xF)
+  ready,
+  get_a_colidx,
+  get_a_rstart,
+  wait_for_a_rstart,
+  get_a_rend,
+  wait_for_a_rend,
+  check_x_mask,
+  get_x_mask,
+  wait_for_x_mask,
+  get_x_value,
+  get_a_rowidx,
+  get_a_value,
+  wait_for_data,
+  execute,
+  next_column,
+  end_partition
 ));
 
 spmv_dcsc_walk::spmv_dcsc_walk()
@@ -31,7 +31,7 @@ spmv_dcsc_walk::spmv_dcsc_walk()
   id_ = s_ids++;
 
   //--
-  io.ctrl.hwcntrs = hwcntrs_;
+  io.ctrl.stats = stats_;
 
   //--
   axbuf_.io.enq.data = io.lsu.rd_rsp.data.data;
@@ -42,9 +42,9 @@ spmv_dcsc_walk::spmv_dcsc_walk()
   xmbuf_.io.enq.data = io.lsu.rd_rsp.data.data;
 
   //--
-  axbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_xindices);
-  asbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_startys);
-  aybuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_yindices);
+  axbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_colind);
+  asbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_rowptr);
+  aybuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_rowind);
   avbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::a_values);
   xvbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::x_values);
   xmbuf_.io.enq.valid = io.lsu.rd_rsp.valid && (io.lsu.rd_rsp.data.type == ch_rd_request::x_masks);
@@ -62,90 +62,83 @@ void spmv_dcsc_walk::describe() {
                           && io.lsu.rd_req.ready
                           && (io.lsu.rd_req.data.type == type)) - ch_zext<32>(q.io.deq.ready);
   };
-  emit_pending_size(axbuf_pending_size_, axbuf_, ch_rd_request::a_xindices);
-  emit_pending_size(asbuf_pending_size_, asbuf_, ch_rd_request::a_startys);
-  emit_pending_size(aybuf_pending_size_, aybuf_, ch_rd_request::a_yindices);
+  emit_pending_size(axbuf_pending_size_, axbuf_, ch_rd_request::a_colind);
+  emit_pending_size(asbuf_pending_size_, asbuf_, ch_rd_request::a_rowptr);
+  emit_pending_size(aybuf_pending_size_, aybuf_, ch_rd_request::a_rowind);
   emit_pending_size(avbuf_pending_size_, avbuf_, ch_rd_request::a_values);
   emit_pending_size(xvbuf_pending_size_, xvbuf_, ch_rd_request::x_values);
   emit_pending_size(xmbuf_pending_size_, xmbuf_, ch_rd_request::x_masks);
 
   //--
-  io.ctrl.start.ready = (state == ch_walk_state::get_partition);
+  io.ctrl.start.ready = (state == ch_walk_state::ready);
 
   //--
   /*if (id_ == 0) {
     ch_print(fstring("{0}: *** Walker%d: state={1}, axbuf.enq.val={2}, axbuf.deq.val={3}, asbuf.enq.val={4}, asbuf.deq.val={5}, asbuf_psz={6}, #p={7}", id_),
              ch_getTick(), state, axbuf_.io.enq.valid, axbuf_.io.deq.valid,
-             asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_, hwcntrs_.num_partitions);
+             asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_, stats_.num_parts);
   }
   */
 
   // ch_walk_state FSM
   __switch (state) (
-  __case (ch_walk_state::get_partition) (
+  __case (ch_walk_state::ready) (
     // wait for partition data
     __if (io.ctrl.start.valid) (
       // get partition columns data
-      auto& part = io.ctrl.start.data.part;// profiling
-          ch_bit32 runtime = (io.ctrl.timer - prof_start_).slice<32>();
-          hwcntrs_.next.min_latency    = ch_select(hwcntrs_.min_latency == 0, runtime, ch_min(hwcntrs_.min_latency, runtime));
-          hwcntrs_.next.max_latency    = ch_max(hwcntrs_.min_latency, runtime);
-          hwcntrs_.next.total_latency  = hwcntrs_.total_latency + runtime;
-          hwcntrs_.next.num_partitions = hwcntrs_.num_partitions + 1;
-          // advance to the next partition
-          state.next = ch_walk_state::get_partition;
+      auto& part = io.ctrl.start.data.part;
       col_curr_.next = part.start.slice<ch_bitwidth_v<ch_ptr>>();
       col_end_.next = part.end.slice<ch_bitwidth_v<ch_ptr>>();
       __if (col_curr_.next != col_end_.next) (
         // profiling
         prof_start_.next = io.ctrl.timer;
-        state.next = ch_walk_state::get_a_xindex;
+        state.next = ch_walk_state::get_a_colidx;
       );
     );
   )
-  __case (ch_walk_state::get_a_xindex) (
-    // request a_xindex
-    io.lsu.rd_req.data.type = ch_rd_request::a_xindices;
+  __case (ch_walk_state::get_a_colidx) (
+    // request a_colind
+    io.lsu.rd_req.data.type = ch_rd_request::a_colind;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_);
     __if (axbuf_pending_size_ != AXBUF_SIZE) (
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) (
-        state.next = ch_walk_state::get_a_starty;
+        state.next = ch_walk_state::get_a_rstart;
       )__else (
         // profiling
-        hwcntrs_.next.a_xindices_stalls = hwcntrs_.a_xindices_stalls + 1;
+        stats_.next.a_colind_stalls = stats_.a_colind_stalls + 1;
       );
     )__else (
       // profiling
-      hwcntrs_.next.a_xindices_stalls = hwcntrs_.a_xindices_stalls + 1;
+      stats_.next.a_colind_stalls = stats_.a_colind_stalls + 1;
     );
   )
-  __case (ch_walk_state::get_a_starty) (
-    // request a_starty
-    io.lsu.rd_req.data.type = ch_rd_request::a_startys;
+  __case (ch_walk_state::get_a_rstart) (
+    // request a_rowptr
+    io.lsu.rd_req.data.type = ch_rd_request::a_rowptr;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_);
     __if (asbuf_pending_size_ != ASBUF_SIZE) (
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) (
         // go wait for data
-        state.next = ch_walk_state::wait_for_a_starty;
+        state.next = ch_walk_state::wait_for_a_rstart;
       )__else (
         // profiling
-        hwcntrs_.next.a_startys_stalls = hwcntrs_.a_startys_stalls + 1;
+        stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
       );
     )__else (
       // profiling
-      hwcntrs_.next.a_startys_stalls = hwcntrs_.a_startys_stalls + 1;
+      stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     );
   )
-  __case (ch_walk_state::wait_for_a_starty) (
+  __case (ch_walk_state::wait_for_a_rstart) (
     // wait for all requested blocks to arrive
     __if (axbuf_.io.deq.valid && asbuf_.io.deq.valid) (
       //--
       axblock_.next = axbuf_.io.deq.data;
-      a_xindex_.next = (axblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
+      a_colidx_.next = (axblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
       axbuf_.io.deq.ready = true;
 
       //--
@@ -160,13 +153,13 @@ void spmv_dcsc_walk::describe() {
         state.next = ch_walk_state::check_x_mask;
       )__else (
         // need to get row_end from next block
-        state.next = ch_walk_state::get_a_endy;
+        state.next = ch_walk_state::get_a_rend;
       );
     );
   )
-  __case (ch_walk_state::get_a_endy) (
-    // request a_endy
-    io.lsu.rd_req.data.type = ch_rd_request::a_startys;
+  __case (ch_walk_state::get_a_rend) (
+    // request a_rowptr
+    io.lsu.rd_req.data.type = ch_rd_request::a_rowptr;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_ + 1);
     // wait for pending asbuf blocks to arrive
     __if (asbuf_pending_size_ != ASBUF_SIZE) (
@@ -174,19 +167,17 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) (
         // go wait for data
-        state.next = ch_walk_state::wait_for_a_endy;
-      )
-      __else (
+        state.next = ch_walk_state::wait_for_a_rend;
+      )__else (
         // profiling
-        hwcntrs_.next.a_startys_stalls = hwcntrs_.a_startys_stalls + 1;
+        stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
       );
-    )
-    __else (
+    )__else (
       // profiling
-      hwcntrs_.next.a_startys_stalls = hwcntrs_.a_startys_stalls + 1;
+      stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     );
   )
-  __case (ch_walk_state::wait_for_a_endy) (
+  __case (ch_walk_state::wait_for_a_rend) (
     // wait for requested block to arrive
     __if (asbuf_.io.deq.valid) (
       // get the returned block
@@ -197,40 +188,37 @@ void spmv_dcsc_walk::describe() {
       state.next = ch_walk_state::check_x_mask;
     )__else (
       // profiling
-      hwcntrs_.next.a_startys_stalls = hwcntrs_.a_startys_stalls + 1;
+      stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     );
   )
   __case (ch_walk_state::check_x_mask) (
     // check if the current mask block is valid
-    ch_ptr x_mask_index = a_xindex_ >> 5; // divide by 32 bitmask
+    ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
     ch_ptr x_mask_addr = INT32_TO_BLOCK_ADDR(x_mask_index);
     __if (x_mask_addr == xmblock_addr_) (
       // check if the index is valid
       ch_bit32 mask = (xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
-      __if ((mask & (1_b32 << (a_xindex_ & 0x1f))) != 0) (
+      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) (
         // check if the current value block is valid
-        ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_xindex_);
+        ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
         __if (x_value_addr == xvblock_addr_) (
-          // calculate yindices prefetch iterators
+          // calculate rows prefetch iterators
           row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
           row_blk_end_.next  = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
           row_blk_cnt_.next  = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
-          // request a_yindex
-          state.next = ch_walk_state::get_a_yindex;
-        )
-        __else (
+          // request a_rowind
+          state.next = ch_walk_state::get_a_rowidx;
+        )__else (
           // save block addr
           xvblock_addr_.next = x_value_addr;
           // request x_value
           state.next = ch_walk_state::get_x_value;
         );
-      )
-      __else (
+      )__else (
         // go to next column
         state.next = ch_walk_state::next_column;
       );
-    )
-    __else (
+    )__else (
       // save block addr
       xmblock_addr_.next = x_mask_addr;
       // request x_mask value
@@ -247,11 +235,13 @@ void spmv_dcsc_walk::describe() {
       __if (io.lsu.rd_req.ready) (
         // wait for data
         state.next = ch_walk_state::wait_for_x_mask;
+      )__else (
+        // profiling
+        stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
       );
-    )
-    __else (
+    )__else (
       // profiling
-      hwcntrs_.next.x_masks_stalls = hwcntrs_.x_masks_stalls + 1;
+      stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
     );
   )
   __case (ch_walk_state::wait_for_x_mask) (
@@ -261,56 +251,59 @@ void spmv_dcsc_walk::describe() {
       xmblock_.next = xmbuf_.io.deq.data;
       xmbuf_.io.deq.ready = true;
       // check if the index is valid
-      ch_ptr x_mask_index = a_xindex_ >> 5; // divide by 32 bitmask
+      ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = (xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
-      __if ((mask & (1_b32 << (a_xindex_ & 0x1f))) != 0) (
+      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) (
         // check if the current value block is valid
-        ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_xindex_);
+        ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
         __if (x_value_addr == xvblock_addr_) (
-          // calculate yindices prefetch iterators
+          // calculate rows prefetch iterators
           row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
           row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
           row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
-          // request a_yindex
-          state.next = ch_walk_state::get_a_yindex;
-        )
-        __else (
+          // request a_rowind
+          state.next = ch_walk_state::get_a_rowidx;
+        )__else (
           // save block addr
           xvblock_addr_.next = x_value_addr;
           // request x_value
           state.next = ch_walk_state::get_x_value;
         );
-      )
-      __else (
+      )__else (
         // go to next column
         state.next = ch_walk_state::next_column;
       );
-    )
-    __else (
+    )__else (
       // profiling
-      hwcntrs_.next.x_masks_stalls = hwcntrs_.x_masks_stalls + 1;
+      stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
     );
   )
   __case (ch_walk_state::get_x_value) (
     // request a_value
     io.lsu.rd_req.data.type = ch_rd_request::x_values;
-    io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(a_xindex_);
+    io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(a_colidx_);
     __if (xvbuf_pending_size_ != XVBUF_SIZE) (
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) (
-        // calculate yindices prefetch iterators
+        // calculate rows prefetch iterators
         row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
-        row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
-        row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
-        // request a_yindex
-        state.next = ch_walk_state::get_a_yindex;
+        row_blk_end_.next  = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
+        row_blk_cnt_.next  = (row_blk_end_.next - row_blk_curr_.next).slice<6>();
+        // request a_rowind
+        state.next = ch_walk_state::get_a_rowidx;
+      )__else (
+        // profiling
+        stats_.next.x_values_stalls = stats_.x_values_stalls + 1;
       );
+    )__else (
+      // profiling
+      stats_.next.x_values_stalls = stats_.x_values_stalls + 1;
     );
   )
-  __case (ch_walk_state::get_a_yindex) (
-    // request a_yindex
-    io.lsu.rd_req.data.type = ch_rd_request::a_yindices;
+  __case (ch_walk_state::get_a_rowidx) (
+    // request a_rowind
+    io.lsu.rd_req.data.type = ch_rd_request::a_rowind;
     io.lsu.rd_req.data.addr = row_blk_curr_;
     __if (aybuf_pending_size_ != AYBUF_SIZE) (
       io.lsu.rd_req.valid = true;
@@ -318,11 +311,17 @@ void spmv_dcsc_walk::describe() {
       __if (io.lsu.rd_req.ready) (
         // request a_value
         state.next = ch_walk_state::get_a_value;
+      )__else (
+        // profiling
+        stats_.next.a_rowind_stalls = stats_.a_rowind_stalls + 1;
       );
+    )__else (
+      // profiling
+      stats_.next.a_rowind_stalls = stats_.a_rowind_stalls + 1;
     );
   )
   __case (ch_walk_state::get_a_value) (
-    // request a_value
+    // request a_values
     io.lsu.rd_req.data.type = ch_rd_request::a_values;
     io.lsu.rd_req.data.addr = row_blk_curr_;
     __if (avbuf_pending_size_ != AVBUF_SIZE) (
@@ -331,18 +330,23 @@ void spmv_dcsc_walk::describe() {
       __if (io.lsu.rd_req.ready) (
         row_blk_curr_.next = row_blk_curr_ + 1;
         __if (row_blk_curr_.next != row_blk_end_) (
-          // request next a_yindex
-          state.next = ch_walk_state::get_a_yindex;
-        )
-        __else (
+          // request next a_rowind
+          state.next = ch_walk_state::get_a_rowidx;
+        )__else (
           // goto wait for all data to return
           state.next = ch_walk_state::wait_for_data;
         );
+      )__else (
+        // profiling
+        stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
       );
+    )__else (
+      // profiling
+      stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
     );
   )
   __case (ch_walk_state::wait_for_data) (
-    // wait for all a_yindex and a_value blocks to arrive
+    // wait for all a_rowind and a_value blocks to arrive
     // read requests are returned in order, so
     // we only need to wait on the requested last buffer
     __if (avbuf_.io.size == row_blk_cnt_) (
@@ -350,28 +354,26 @@ void spmv_dcsc_walk::describe() {
         // fetch x_value block
         xvblock_.next = xvbuf_.io.deq.data;
         xvbuf_.io.deq.ready = true;
-        x_value_.next = (xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_xindex_)).slice<32>().as<ch_float32>();
-      )
-      __else (
+        x_value_.next = (xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
+      )__else (
         // get x_value from local storage
-        x_value_.next = (xvblock_ >> INT32_TO_BLOCK_BITSHIFT(a_xindex_)).slice<32>().as<ch_float32>();
+        x_value_.next = (xvblock_ >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
       );
-      // fetch first (a_yindex, a_value) blocks
+      // fetch first (a_rowind, a_value) blocks
       ayblock_.next = aybuf_.io.deq.data;
       avblock_.next = avbuf_.io.deq.data;
       aybuf_.io.deq.ready = true;
       avbuf_.io.deq.ready = true;
       // proceed to execution
       state.next = ch_walk_state::execute;
-    )
-    __else (
+    )__else (
       // profiling
-      hwcntrs_.next.a_values_stalls = hwcntrs_.a_values_stalls + 1;
+      stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
     );
   )
   __case (ch_walk_state::execute) (
     // push data to PE
-    io.pe.data.a_yindex = (ayblock_ >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
+    io.pe.data.a_rowind = (ayblock_ >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
     io.pe.data.a_value  = (avblock_ >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
     io.pe.data.x_value  = x_value_.as<ch_float32>();
     io.pe.data.is_end   = false;
@@ -385,20 +387,19 @@ void spmv_dcsc_walk::describe() {
       __if (row_curr_.next != row_end_) (
         // check if last entry in block
         __if ((row_curr_ & 0xf) == 0xf) (
-          // fetch the next (a_yindex, a_value) blocks
+          // fetch the next (a_rowind, a_value) blocks
           ayblock_.next = aybuf_.io.deq.data;
           avblock_.next = avbuf_.io.deq.data;
           aybuf_.io.deq.ready = true;
           avbuf_.io.deq.ready = true;
         );
-      )
-      __else (
+      )__else (
         // go to next column
         state.next = ch_walk_state::next_column;
       );
     )__else (
       // profiling
-      hwcntrs_.next.execute_stalls = hwcntrs_.execute_stalls + 1;
+      stats_.next.execute_stalls = stats_.execute_stalls + 1;
     );
   )
   __case (ch_walk_state::next_column) (
@@ -409,7 +410,7 @@ void spmv_dcsc_walk::describe() {
       // check if not last entry in block
       __if ((col_curr_ & 0xf) != 0xf) (
         // get the next a_index
-        a_xindex_.next = (axblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_bitwidth_v<ch_ptr>>();
+        a_colidx_.next = (axblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_bitwidth_v<ch_ptr>>();
         // get the next row_curr
         row_curr_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_bitwidth_v<ch_ptr>>();
         // get the next row_end
@@ -417,25 +418,22 @@ void spmv_dcsc_walk::describe() {
           row_end_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1)).slice<ch_bitwidth_v<ch_ptr>>();
           // check the vertex mask
           state.next = ch_walk_state::check_x_mask;
-        )
-        __else (
+        )__else (
           // need to get row_end from next block
-          state.next = ch_walk_state::get_a_endy;
+          state.next = ch_walk_state::get_a_rend;
         );
-      )
-      __else (
+      )__else (
         // get the next axblock
-        state.next = ch_walk_state::get_a_xindex;
+        state.next = ch_walk_state::get_a_colidx;
       );
-    )
-    __else (
+    )__else (
       // end the partition
       state.next = ch_walk_state::end_partition;
     );
   )
   __case (ch_walk_state::end_partition) (
     // send end-of-partition signal to PE
-    io.pe.data.a_yindex = 0;
+    io.pe.data.a_rowind = 0;
     io.pe.data.a_value  = 0;
     io.pe.data.x_value  = 0;
     io.pe.data.is_end   = true;
@@ -445,17 +443,20 @@ void spmv_dcsc_walk::describe() {
     __if (io.pe.ready) (
       // profiling
       ch_bit32 runtime = (io.ctrl.timer - prof_start_).slice<32>();
-      hwcntrs_.next.min_latency    = ch_select(hwcntrs_.min_latency == 0, runtime, ch_min(hwcntrs_.min_latency, runtime));
-      hwcntrs_.next.max_latency    = ch_max(hwcntrs_.min_latency, runtime);
-      hwcntrs_.next.total_latency  = hwcntrs_.total_latency + runtime;
-      hwcntrs_.next.num_partitions = hwcntrs_.num_partitions + 1;
+      stats_.next.min_latency   = ch_select(stats_.min_latency == 0, runtime, ch_min(stats_.min_latency, runtime));
+      stats_.next.max_latency   = ch_max(stats_.min_latency, runtime);
+      stats_.next.total_latency = stats_.total_latency + runtime;
+      stats_.next.num_parts     = stats_.num_parts + 1;
       // advance to the next partition
-      state.next = ch_walk_state::get_partition;
+      state.next = ch_walk_state::ready;
+    )__else (
+      // profiling
+      stats_.next.execute_stalls = stats_.execute_stalls + 1;
     );
   )
   __default (
     //--
-    io.lsu.rd_req.data.type = ch_rd_request::a_partition;
+    io.lsu.rd_req.data.type = ch_rd_request::a_colptr;
     io.lsu.rd_req.data.addr = 0;
     io.lsu.rd_req.valid     = false;
 
@@ -468,7 +469,7 @@ void spmv_dcsc_walk::describe() {
     xmbuf_.io.deq.ready = false;
 
     //--
-    io.pe.data.a_yindex = 0;
+    io.pe.data.a_rowind = 0;
     io.pe.data.a_value  = 0;
     io.pe.data.x_value  = 0;
     io.pe.data.is_end   = false;
@@ -483,8 +484,8 @@ void spmv_dcsc_walk::describe() {
                      "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}", id_),
       ch_getTick(), state, io.lsu.rd_req.valid, io.lsu.rd_req.data.type, io.lsu.rd_req.data.addr,
       io.lsu.rd_rsp.valid, io.lsu.rd_rsp.data.type,
-      col_curr_, col_end_, a_xindex_, x_value_, row_curr_, row_end_,
-      io.pe.data.a_yindex, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid
+      col_curr_, col_end_, a_colidx_, x_value_, row_curr_, row_end_,
+      io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid
     );
   }*/
 }

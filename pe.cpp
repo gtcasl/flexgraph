@@ -17,6 +17,9 @@ spmv_pe::spmv_pe() {
   id_ = s_ids++;
 
   //--
+  io.stats = stats_;
+
+  //--
   __if (y_wenable_) (
     y_values_[y_waddr_] = y_value_;    
   );
@@ -52,7 +55,7 @@ void spmv_pe::describe() {
       ch_select(0 != (y_mask_ & y_raddr_mask), y_values_[y_raddr_], 0);
 
   // Multiply pipeline
-  mult_pipe_.io.enq.data.a_yindex = io.req.data.a_yindex;
+  mult_pipe_.io.enq.data.a_rowind = io.req.data.a_rowind;
   mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
   mult_pipe_.io.enq.valid = io.req.valid && io.req.ready;
   mult_pipe_.io.deq.ready = mult_enable;
@@ -60,11 +63,11 @@ void spmv_pe::describe() {
         io.req.data.a_value, io.req.data.x_value, mult_enable);
 
   // Adder pipeline
-  add_pipe_.io.enq.data.a_yindex = mult_pipe_.io.deq.data.a_yindex;
+  add_pipe_.io.enq.data.a_rowind = mult_pipe_.io.deq.data.a_rowind;
   add_pipe_.io.enq.data.is_end = mult_pipe_.io.deq.data.is_end;
   add_pipe_.io.enq.valid = mult_pipe_.io.deq.valid && mult_enable;
   add_pipe_.io.deq.ready = add_enable;
-  y_raddr_ = (mult_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();  
+  y_raddr_ = (mult_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();  
   ch_float32 add_value = ch_fadd<ALTFP_SP_ADD_SUB>(
         mult_value, prev_y_value, add_enable);
 
@@ -73,8 +76,7 @@ void spmv_pe::describe() {
   auto pe_commit = (ch_pe_state::ready == state) && add_pipe_.io.deq.valid;
   __if (pe_issue && !pe_commit) (
     pending_reqs_.next = pending_reqs_ + 1;
-  )
-  __else (
+  )__else (
     __if (!pe_issue && pe_commit) (
       pending_reqs_.next = pending_reqs_ - 1;
     );
@@ -98,7 +100,7 @@ void spmv_pe::describe() {
 
   //--
   __if (adder_commit) (
-    y0_.next = add_pipe_.io.deq.data.a_yindex & ~0x1f_h20;
+    y0_.next = add_pipe_.io.deq.data.a_rowind & ~0x1f_h20;
   );
 
   //--
@@ -106,7 +108,7 @@ void spmv_pe::describe() {
   __case (ch_pe_state::ready) (
     //--
     y_wenable_ = add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end;
-    y_waddr_   = (add_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();
+    y_waddr_   = (add_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();
     y_value_   = add_value;
 
     //--
@@ -136,9 +138,9 @@ void spmv_pe::describe() {
     __if (io.lsu.wr_req.ready) (
       // go write second y_value block
       state.next = ch_pe_state::write_value1;
-    )
-    __else (
+    )__else (
       // profiling
+      stats_.next.write_value_stalls = stats_.write_value_stalls + 1;
     );
   )
   __case (ch_pe_state::write_value1) (
@@ -155,9 +157,9 @@ void spmv_pe::describe() {
     __if (io.lsu.wr_req.ready) (
       // go write mask value
       state.next = ch_pe_state::write_mask;
-    )
-    __else (
+    )__else (
       // profiling
+      stats_.next.write_value_stalls = stats_.write_value_stalls + 1;
     );
   )
   __case (ch_pe_state::write_mask) (
@@ -170,9 +172,9 @@ void spmv_pe::describe() {
     __if (io.lsu.wr_req.ready) (
       // return
       state.next = ch_pe_state::ready;
-    )
-    __else (
+    )__else (
       // profiling
+      stats_.next.write_mask_stalls = stats_.write_mask_stalls + 1;
     );
   )
   __default (
@@ -189,19 +191,19 @@ void spmv_pe::describe() {
   ));
 
   //--
-  if (id_ == 0) (
+  if (id_ == 0) {
     ch_print(fstring("{0}: PE%d: state={1}, rq_val={2}, rq_ar={3}, rq_av={4}, rq_xv={5}, "
                      "mp_val={6}, mp_ar={7}, mp_dat={8}, "
                      "ap_val={9}, ap_ar={10}, ap_dat={11}, ap_old={12}, "
                      "rq_rdy={13}, idle={14}, "
                      "wq_val={15}, wq_typ={16}, wq_adr={17}, wq_dat={18}, "
-                     "flight={19}, pending={20}, wen={21}, y[0]={22}, m_en={23}, a_en={24}", id_),
-      ch_getTick(), state, io.req.valid, io.req.data.a_yindex, io.req.data.a_value, io.req.data.x_value,
-      mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_yindex, mult_value,
-      add_pipe_.io.deq.valid, add_pipe_.io.deq.data.a_yindex, add_value, prev_y_value,
+                     "flight={19}, pending={20}, wen={21}, m_en={22}, a_en={23}", id_),
+      ch_getTick(), state, io.req.valid, io.req.data.a_rowind, io.req.data.a_value, io.req.data.x_value,
+      mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_rowind, mult_value,
+      add_pipe_.io.deq.valid, add_pipe_.io.deq.data.a_rowind, add_value, prev_y_value,
       io.req.ready, io.is_idle,
       io.lsu.wr_req.valid, io.lsu.wr_req.data.type, io.lsu.wr_req.data.addr, io.lsu.wr_req.data.data,
-      inflight_mask_, pending_reqs_, y_wenable_, y_values_[0], mult_enable, add_enable
+      inflight_mask_, pending_reqs_, y_wenable_, mult_enable, add_enable
     );
-  );
+  }
 }

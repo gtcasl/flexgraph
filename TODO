@@ -1,6 +1,6 @@
 TODO:
 
-- Optimize SPMV by send mem requests for all xindces/ystarts blocks in the partition until fifos are full
+- Optimize SPMV by send mem requests for all row_ind/row_ptr blocks in the partition until fifos are full
 - Implement vertexcaches inside the LSU to keep data for reuse until replacement
 -
 -
@@ -40,8 +40,8 @@ PE0 average latency = 2250 ticks
 PE0 minimum latency = 13 ticks
 PE0 maximum latency = 2736 ticks
 PE0 execution latency = 2834 ticks
-PE0 matrix xindices stalls = 1
-PE0 matrix ystarts stalls = 299
+PE0 matrix col_ind stalls = 1
+PE0 matrix row_ptr stalls = 299
 PE0 matrix values stalls = 3604
 PE0 vertex masks stalls = 7
 PE0 matrix write values stalls = 0
@@ -51,8 +51,8 @@ PE1 average latency = 2048 ticks
 PE1 minimum latency = 14 ticks
 PE1 maximum latency = 3649 ticks
 PE1 execution latency = 2833 ticks
-PE1 matrix xindices stalls = 1
-PE1 matrix ystarts stalls = 275
+PE1 matrix col_ind stalls = 1
+PE1 matrix row_ptr stalls = 275
 PE1 matrix values stalls = 3446
 PE1 vertex masks stalls = 11
 PE1 matrix write values stalls = 0

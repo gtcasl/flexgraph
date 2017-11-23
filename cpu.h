@@ -140,7 +140,9 @@ private:
   
   void check_result(ch_tick t);
   
-  void check_output(const float* values, const uint32_t* masks, bool debug);
+  void check_output(const float* values,
+                    const uint32_t* masks,
+                    bool debug);
   
   ch_device<accelerator::spmv_device> accelerator_;
 

@@ -77,15 +77,15 @@ void cpu_device::init(const char* mtx_file) {
   offset = matrix_->copy(shared_mem_, offset, SHARE_MEM_SIZE, accelerator_.io.ctx.a);
   offset = vertex_->copy(shared_mem_, offset, SHARE_MEM_SIZE, accelerator_.io.ctx.x);
   offset = vertex_->copy(nullptr, offset, SHARE_MEM_SIZE, accelerator_.io.ctx.y);
-  accelerator_.io.ctx.hwcntrs = (offset / BLOCK_SIZE);
+  accelerator_.io.ctx.stats = (offset / BLOCK_SIZE);
   offset += (1 + PE_COUNT) * BLOCK_SIZE;
   assert(offset <= SHARE_MEM_SIZE);
   
-  /*printf("*** partitions=0x%x, a_xindices=0x%x, a_startys=0x%x, a_yindices=0x%x, a_values=0x%x, x_values=x0%x, x_masks=0x%x\n",
-         (uint32_t)m_afu_ctx.a.partitions,
-         (uint32_t)m_afu_ctx.a.xindices,
-         (uint32_t)m_afu_ctx.a.ystarts,
-         (uint32_t)m_afu_ctx.a.yindices,
+  /*printf("*** a_colptr=0x%x, a_colind=0x%x, a_rowptr=0x%x, a_rowind=0x%x, a_values=0x%x, x_values=x0%x, x_masks=0x%x\n",
+         (uint32_t)m_afu_ctx.a.col_ptr,
+         (uint32_t)m_afu_ctx.a.col_ind,
+         (uint32_t)m_afu_ctx.a.row_ptr,
+         (uint32_t)m_afu_ctx.a.row_ind,
          (uint32_t)m_afu_ctx.a.values,
          (uint32_t)m_afu_ctx.x.values,
          (uint32_t)m_afu_ctx.x.masks);*/
@@ -95,15 +95,17 @@ void cpu_device::init(const char* mtx_file) {
   //this->check_output(nullptr, nullptr, true);
 }
 
-void cpu_device::check_output(const float* values, const uint32_t* masks, bool debug) {
+void cpu_device::check_output(const float* values,
+                              const uint32_t* masks,
+                              bool debug) {
   float y_values[32];
-  int   y_rows[32];
+  int   y_rowind[32];
   uint32_t y_mask;
   uint32_t y0;
   
   uint64_t errors = 0;
   
-  for (int p = 0, numparts = matrix_->numparts; p < numparts; ++p) {
+  for (int p = 0, num_parts = matrix_->num_parts; p < num_parts; ++p) {
     if (debug) 
       printf("begin partition: %d\n", p);
     
@@ -112,30 +114,30 @@ void cpu_device::check_output(const float* values, const uint32_t* masks, bool d
     y_mask = 0;
     
     // iterate thru all columns in current partition
-    for (int col = matrix_->partitions[p],
-         col_end = matrix_->partitions[p+1]; col != col_end; ++col) {
-      int a_x = matrix_->xindices[col];
-      uint32_t x_mask = vertex_->masks[a_x >> 5];
-      if (x_mask & (1 << (a_x & 0x1f))) {
-         float x_value = *(float*)&vertex_->values[a_x * 4];
+    for (int col = matrix_->col_ptr[p],
+         col_end = matrix_->col_ptr[p+1]; col != col_end; ++col) {
+      int col_idx = matrix_->col_ind[col];
+      uint32_t x_mask = vertex_->masks[col_idx >> 5];
+      if (x_mask & (1 << (col_idx & 0x1f))) {
+         float x_value = *(float*)&vertex_->values[col_idx * 4];
          
          // iterate thru all rows in current column
-         for (int row = matrix_->ystarts[col],
-              row_end = matrix_->ystarts[col+1]; row != row_end; ++row) {
-           int a_y = matrix_->yindices[row];
+         for (int row = matrix_->row_ptr[col],
+              row_end = matrix_->row_ptr[col+1]; row != row_end; ++row) {
+           int row_idx = matrix_->row_ind[row];
            float a_value = *(float*)&matrix_->values[row * 4];
            // compute y += ax
-           float y_value = a_value * x_value + y_values[a_y & 0x1f];
-           y_values[a_y & 0x1f] = y_value;
-           y_rows[a_y & 0x1f] = a_y;
+           float y_value = a_value * x_value + y_values[row_idx & 0x1f];
+           y_values[row_idx & 0x1f] = y_value;
+           y_rowind[row_idx & 0x1f] = row_idx;
            // compute output mask
-           y_mask |= 1 << (a_y & 0x1f);
-           y0 = a_y & ~0x1f;
+           y_mask |= 1 << (row_idx & 0x1f);
+           y0 = row_idx & ~0x1f;
            
            // dump output
            if (debug) {
-             printf("col=0x%x, row=0x%x, a_x=x0%x, a_y=0x%x, x_mask=0x%x, x_val=%.2f, a_val=%.2f, y_val=%.2f, y_mask=0x%x\n", 
-                  col, row, a_x, a_y, x_mask, x_value, a_value, y_value, y_mask);
+             printf("col=0x%x, row=0x%x, a_x=x0%x, a_y=0x%x, a_val=%.2f, x_mask=0x%x, x_val=%.2f, y_val=%.2f, y_mask=0x%x\n",
+                  col, row, col_idx, row_idx, a_value, x_mask, x_value, y_value, y_mask);
            }
          }
       }
@@ -160,7 +162,7 @@ void cpu_device::check_output(const float* values, const uint32_t* masks, bool d
           float value = values[y0 + i];
           float value_ref = y_values[i];
           if (value != value_ref) {
-            printf("*** value mismatch in partition%d, lane=%d: row=%d, actual=%f, expected=%f\n", p, i, y_rows[i], value, value_ref);
+            printf("*** value mismatch in partition%d, row=%d: row_idx=%d, actual=%f, expected=%f\n", p, i, y_rowind[i], value, value_ref);
             ++errors;
           } else {
             if (debug) {
@@ -219,7 +221,7 @@ bool cpu_device::tick(ch_tick t) {
 void cpu_device::clear_pulse_signals(ch_tick t) {
   if (accelerator_.io.qpi.rd_rsp.valid) {
     accelerator_.io.qpi.rd_rsp.valid = false;
-    accelerator_.io.qpi.rd_rsp.data = 0;
+    accelerator_.io.qpi.rd_rsp.data  = 0;
     accelerator_.io.qpi.rd_rsp.mdata = 0;
   }
     
@@ -347,7 +349,7 @@ void cpu_device::check_result(ch_tick t) {
 }
 
 void cpu_device::dump_stats(ch_tick t) {  
-
+  //--
   auto avg_rd_latency = qpi_rd_stats_.get_sum() / qpi_rd_stats_.get_count();
   auto avg_wr_latency = qpi_wr_stats_.get_sum() / qpi_wr_stats_.get_count();
 
@@ -360,35 +362,43 @@ void cpu_device::dump_stats(ch_tick t) {
            qpi_wr_stats_.get_min()/2, qpi_wr_stats_.get_max()/2, avg_wr_latency/2);
   DbgPrint(0, "QPI read bandwidth: %f GB/s\n", 1e-9 * (64.0f * CLOCK_RATE) / (avg_rd_latency/2));
 
-  auto hwcntrs_base = (uint32_t)accelerator_.io.ctx.hwcntrs;
+  //--
+  auto stats_base = (uint32_t)accelerator_.io.ctx.stats;
 
   {
-    ch_scalar_t<ch_ctrl_hwcntrs_t> hwcntrs;
+    ch_scalar_t<ch_ctrl_stats_t> stats;
 
-    // fetch hwcntrs from memory
-    hwcntrs.asScalar().write(0, shared_mem_ + hwcntrs_base * BLOCK_SIZE, BLOCK_SIZE);
+    //--
+    stats.asScalar().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
 
-    // dump stats
-    DbgPrint(0, "total partitions stalls = %d\n", (uint32_t)hwcntrs.a_partitions_stalls);
+    //--
+    DbgPrint(0, "total colptr stalls = %d\n", (uint32_t)stats.a_colptr_stalls);
   }
 
   for (int i = 0; i < PE_COUNT; ++i) {
-    ch_scalar_t<ch_pe_hwcntrs_t> hwcntrs;
+    ch_scalar_t<ch_stats_t> stats;
 
-    // fetch hwcntrs from memory
-    hwcntrs.asScalar().write(0, shared_mem_ + (hwcntrs_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
+    //--
+    stats.asScalar().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
 
-    // dump stats
-    DbgPrint(0, "PE%d total partitions executed = %d\n", i, (uint32_t)hwcntrs.num_partitions);
-    DbgPrint(0, "PE%d average latency = %d ticks\n", i, __safediv((uint32_t)hwcntrs.total_latency, (uint32_t)hwcntrs.num_partitions));
-    DbgPrint(0, "PE%d minimum latency = %d ticks\n", i, (uint32_t)hwcntrs.min_latency);
-    DbgPrint(0, "PE%d maximum latency = %d ticks\n", i, (uint32_t)hwcntrs.max_latency);
-    DbgPrint(0, "PE%d execution latency = %d ticks\n", i, (uint32_t)hwcntrs.execute_stalls);
-    DbgPrint(0, "PE%d matrix xindices stalls = %d\n", i, (uint32_t)hwcntrs.a_xindices_stalls);
-    DbgPrint(0, "PE%d matrix ystarts stalls = %d\n", i, (uint32_t)hwcntrs.a_startys_stalls);
-    DbgPrint(0, "PE%d matrix values stalls = %d\n", i, (uint32_t)hwcntrs.a_values_stalls);
-    DbgPrint(0, "PE%d vertex masks stalls = %d\n", i, (uint32_t)hwcntrs.x_masks_stalls);
-    DbgPrint(0, "PE%d matrix write values stalls = %d\n", i, (uint32_t)hwcntrs.write_value_stalls);
-    DbgPrint(0, "PE%d matrix write masks stalls = %d\n", i, (uint32_t)hwcntrs.write_mask_stalls);
+    //--
+    auto avg_stats = [&](const ch_scalar<32>& stat) {
+      return __safediv((uint32_t)stat, (uint32_t)stats.walker.num_parts);
+    };
+
+    //--
+    DbgPrint(0, "PE%d total partitions executed = %d\n", i, (uint32_t)stats.walker.num_parts);
+    DbgPrint(0, "PE%d minimum latency = %d cycles\n", i, (uint32_t)stats.walker.min_latency);
+    DbgPrint(0, "PE%d maximum latency = %d cycles\n", i, (uint32_t)stats.walker.max_latency);
+    DbgPrint(0, "PE%d average latency = %d cycles\n", i, avg_stats(stats.walker.total_latency));
+    DbgPrint(0, "PE%d matrix col_ind stalls = %d\n", i, avg_stats(stats.walker.a_colind_stalls));
+    DbgPrint(0, "PE%d matrix row_ptr stalls = %d\n", i, avg_stats(stats.walker.a_rowptr_stalls));
+    DbgPrint(0, "PE%d matrix row_ind stalls = %d\n", i, avg_stats(stats.walker.a_rowind_stalls));
+    DbgPrint(0, "PE%d matrix values stalls = %d\n", i, avg_stats(stats.walker.a_values_stalls));
+    DbgPrint(0, "PE%d vertex values stalls = %d\n", i, avg_stats(stats.walker.x_values_stalls));
+    DbgPrint(0, "PE%d vertex masks stalls = %d\n", i, avg_stats(stats.walker.x_masks_stalls));
+    DbgPrint(0, "PE%d execute stalls = %d\n", i, avg_stats(stats.walker.execute_stalls));
+    DbgPrint(0, "PE%d matrix write values stalls = %d\n", i, avg_stats(stats.pe.write_value_stalls));
+    DbgPrint(0, "PE%d matrix write masks stalls = %d\n", i, avg_stats(stats.pe.write_mask_stalls));
   }
 }

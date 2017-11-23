@@ -101,8 +101,7 @@ void spmv_lsu::write_req_thread() {
         qpi_wr_req_mdata.next = ch_zext<qpi::mdata_width>(mdata.asBits());
         // go to write
         qw_state.next = ch_qpi_write_state::write;
-      )
-      __else (
+      )__else (
         __if (wr_cache_.io.evict.valid) (
           // get the data
           auto owner = ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
@@ -198,8 +197,8 @@ void spmv_lsu::write_req_thread() {
       wr_cache_.io.enq.data.owner = 0;
       wr_cache_.io.enq.data.tag   = 0;
       wr_cache_.io.enq.data.data  = 0;
-      wr_cache_.io.enq.valid = false;
-      wr_cache_.io.flush = false;
+      wr_cache_.io.enq.valid      = false;
+      wr_cache_.io.flush          = false;
       //--
       lsu_write_valid = false;
     ));
@@ -248,13 +247,13 @@ void spmv_lsu::write_rsp1_thread() {
 ch_blk_addr spmv_lsu::get_baseaddr(const ch_rd_request& rq_type) {
   ch_blk_addr addr;
   __switch (rq_type) (
-  __case (ch_rd_request::a_partition) (addr = io.ctx.a.partitions;)
-  __case (ch_rd_request::a_xindices)  (addr = io.ctx.a.xindices;)
-  __case (ch_rd_request::a_startys)   (addr = io.ctx.a.ystarts;)
-  __case (ch_rd_request::a_yindices)  (addr = io.ctx.a.yindices;)
-  __case (ch_rd_request::a_values)    (addr = io.ctx.a.values;)
-  __case (ch_rd_request::x_values)    (addr = io.ctx.x.values;)
-  __default                           (addr = io.ctx.x.masks;)
+  __case (ch_rd_request::a_colptr) (addr = io.ctx.a.col_ptr;)
+  __case (ch_rd_request::a_colind) (addr = io.ctx.a.col_ind;)
+  __case (ch_rd_request::a_rowptr) (addr = io.ctx.a.row_ptr;)
+  __case (ch_rd_request::a_rowind) (addr = io.ctx.a.row_ind;)
+  __case (ch_rd_request::a_values) (addr = io.ctx.a.values;)
+  __case (ch_rd_request::x_values) (addr = io.ctx.x.values;)
+  __default                        (addr = io.ctx.x.masks;)
   );
   return addr;
 }
@@ -264,7 +263,7 @@ ch_blk_addr spmv_lsu::get_baseaddr(const ch_wr_request& rq_type) {
   __switch (rq_type) (
   __case (ch_wr_request::y_values)   (addr = io.ctx.y.values;)
   __case (ch_wr_request::y_masks)    (addr = io.ctx.y.masks;)
-  __default                          (addr = io.ctx.hwcntrs;)
+  __default                          (addr = io.ctx.stats;)
   );
   return addr;
 }

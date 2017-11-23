@@ -10,47 +10,50 @@ struct __attribute__((aligned(16))) edge_t {
 };
 
 // sort by partition (pid), then cols (dst), then rows (src)
-static bool compare_edges_dcsc(const edge_t& a, const edge_t& b) {
-  if (a.pid < b.pid)
+static bool compare_edges_dcsc(const edge_t& lhs, const edge_t& rhs) {
+  if (lhs.pid < rhs.pid)
     return true;
-  else if (a.pid > b.pid)
+  else if (lhs.pid > rhs.pid)
     return false;
-  if (a.dst < b.dst)
+  if (lhs.dst < rhs.dst)
     return true;
-  else if (a.dst > b.dst)
+  else if (lhs.dst > rhs.dst)
     return false;
-  if (a.src < b.src)
+  if (lhs.src < rhs.src)
     return true;
-  else if (a.src > b.src)
+  else if (lhs.src > rhs.src)
     return false;
   return false;
 }
 
-static uint32_t static_partition(uint32_t *partitions, uint32_t num_elements, uint32_t num_partitions, uint32_t alignment) {
+static uint32_t generate_partition(uint32_t *partitions,
+                                   uint32_t num_elements,
+                                   uint32_t num_parts,
+                                   uint32_t alignment) {
   partitions[0] = 0;
   uint32_t p = 1;
   uint32_t nnz = 1;
   uint32_t aligned_size = __div_ceil(num_elements, alignment) * alignment;
-  uint32_t partition_size = __div_ceil(aligned_size, num_partitions);
-  partition_size = __div_ceil(partition_size, alignment) * alignment;
-  for (uint32_t n = partition_size; n < aligned_size; n += partition_size) {
+  uint32_t part_size = __div_ceil(aligned_size, num_parts);
+  part_size = __div_ceil(part_size, alignment) * alignment;
+  for (uint32_t n = part_size; n < aligned_size; n += part_size) {
     partitions[p++] = n;
     ++nnz;
   }
   do {
     partitions[p++] = aligned_size;
-  } while (p <= num_partitions);
+  } while (p <= num_parts);
   return nnz;
 }
 
-static void set_edge_pointers(uint32_t *edge_pointers,
-                              const uint32_t *row_pointers,
-                              uint32_t num_partitions,
-                              const edge_t* edges,
-                              uint32_t nnz) {
+static void set_edge_ptr(uint32_t *edge_ptr,
+                         const uint32_t *row_ptr,
+                         uint32_t num_parts,
+                         const edge_t* edges,
+                         uint32_t nnz) {
 #ifdef SET_EDGE_POINTERS_BINARY_SEARCH
 #pragma omp parallel for num_threads(nthreads)
-  for (uint32_t p = 0; p < num_partitions; ++p) {
+  for (uint32_t p = 0; p < num_parts; ++p) {
     // binary search
     uint32_t e1 = 0;
     uint32_t e2 = nnz;
@@ -60,134 +63,139 @@ static void set_edge_pointers(uint32_t *edge_pointers,
       if (eh == 0) {
         break;
       }
-      if ((edges[eh - 1].src < row_pointers[p]) &&
-          edges[eh].src >= row_pointers[p]) {
+      if ((edges[eh - 1].src < row_ptr[p]) &&
+          edges[eh].src >= row_ptr[p]) {
         break;
-      } else if (edges[eh].src >= row_pointers[p]) {
+      } else if (edges[eh].src >= row_ptr[p]) {
         e2 = eh - 1;
       } else {
         e1 = eh + 1;
       }
     }
-    edge_pointers[p] = eh;
+    edge_ptr[p] = eh;
   }
-  edge_pointers[num_partitions] = nnz;
+  edge_ptr[num_parts] = nnz;
 #ifdef CHECK_EDGE_POINTERS
   uint32_t p = 0;
   for (uint32_t i = 0; i < nnz; ++i) {
-    while (edges[i].src >= row_pointers[p]) {
-      assert(edge_pointers[p] == i);
+    while (edges[i].src >= row_ptr[p]) {
+      assert(edge_ptr[p] == i);
       ++p;
     }
   }
-  assert(edge_pointers[p] == nnz);
-  for (p = p + 1; p < num_partitions + 1; ++p) {
-    assert(edge_pointers[p] == nnz);
+  assert(edge_ptr[p] == nnz);
+  for (p = p + 1; p < num_parts + 1; ++p) {
+    assert(edge_ptr[p] == nnz);
   }
 #endif
 #else
   uint32_t p = 0;
   for (uint32_t i = 0; i < nnz; ++i) {
-    while (edges[i].src >= row_pointers[p]) {
-      edge_pointers[p] = i;
+    while (edges[i].src >= row_ptr[p]) {
+      edge_ptr[p] = i;
       ++p;
     }
   }
-  edge_pointers[p] = nnz;
-  for (p = p + 1; p < num_partitions + 1; ++p) {
-    edge_pointers[p] = nnz;
+  edge_ptr[p] = nnz;
+  for (p = p + 1; p < num_parts + 1; ++p) {
+    edge_ptr[p] = nnz;
   }
 #endif
 }
 
 static void build(mdcsc_t* matrix,
-                  const uint32_t* edge_pointers,
-                  uint32_t num_partitions,
+                  const uint32_t* edge_ptr,
+                  uint32_t num_parts,
                   const mtx_header_t& header,
                   const edge_t* edges,
                   const byte_t* weights) {
   //--
-  uint32_t element_size = mxt_format_size(header.fmt);
+  uint32_t data_size = mxt_format_size(header.fmt);
 
   //
   // compute non-zero partitions and max nzx
   //
 
-  uint32_t nnz_partitions = 0;
+  uint32_t nnz_parts = 0;
   uint32_t total_nnz = 0;
   uint32_t total_nzx = 0;
   uint32_t total_nzy = 0;
 
-  for (uint32_t p = 0; p < num_partitions; ++p) {
-    uint32_t edge_start = edge_pointers[p];
-    uint32_t edge_end = edge_pointers[p + 1];
-    uint32_t nnz_part = edge_end - edge_start;
-    if (nnz_part > 0) {
-      uint32_t nzx_part = 0;
-      uint32_t nzy_part = 0;
+  for (uint32_t p = 0; p < num_parts; ++p) {
+    uint32_t edge_start = edge_ptr[p];
+    uint32_t edge_end   = edge_ptr[p + 1];
+    uint32_t nnz        = edge_end - edge_start;
+    if (nnz       > 0) {
+      uint32_t nzx = 0;
+      uint32_t nzy = 0;
       for (uint32_t i = edge_start, col = -1; i < edge_end; ++i) {
         if (col == -1 || edges[i].dst > col) {          
           col = edges[i].dst;          
-          ++nzx_part;
+          ++nzx;
         }
-        ++nzy_part;
+        ++nzy;
       }
-      total_nnz += nnz_part;
-      total_nzx += nzx_part;
-      total_nzy += __div_rnd(nzy_part, nzx_part);
-      ++nnz_partitions;
+      total_nnz += nnz;
+      total_nzx += nzx;
+      total_nzy += __div_rnd(nzy, nzx);
+      ++nnz_parts;
     }
   }
 
 #ifndef NDEBUG
-  std::cout << "Tiled matrix description: " << header.rows << " rows, " << num_partitions << " partitions (" << nnz_partitions << " non-empty)" << std::endl;
-  std::cout << "Average nnz entries per partition: " << __div_rnd(total_nnz, nnz_partitions) << "." << std::endl;
-  std::cout << "Average nzx entries per partition: " << __div_rnd(total_nzx, nnz_partitions) << "." << std::endl;
-  std::cout << "Average nzy entries per partition: " << __div_rnd(total_nzy, nnz_partitions) << "." << std::endl;
+  std::cout << "Tiled matrix description: " << header.rows << " rows, " << num_parts << " partitions (" << nnz_parts << " non-empty)" << std::endl;
+  std::cout << "Average nnz entries per partition: " << __div_rnd(total_nnz, nnz_parts) << "." << std::endl;
+  std::cout << "Average nzx entries per partition: " << __div_rnd(total_nzx, nnz_parts) << "." << std::endl;
+  std::cout << "Average nzy entries per partition: " << __div_rnd(total_nzy, nnz_parts) << "." << std::endl;
 #endif
   
-  matrix->init(header.cols, header.rows, header.nnz, total_nzx, num_partitions, element_size);
+  matrix->init(header.cols,
+               header.rows,
+               header.nnz,
+               total_nzx,
+               num_parts,
+               data_size);
   
-  uint32_t* const partitions= matrix->partitions;
-  uint32_t* const x_indices = matrix->xindices;
-  uint32_t* const y_starts  = matrix->ystarts;
-  uint32_t* const y_indices = matrix->yindices;
-  byte_t*   const values    = matrix->values;
+  uint32_t* const col_ptr = matrix->col_ptr;
+  uint32_t* const col_ind = matrix->col_ind;
+  uint32_t* const row_ptr = matrix->row_ptr;
+  uint32_t* const row_ind = matrix->row_ind;
+  byte_t*   const values  = matrix->values;
 
-  partitions[0] = 0;
+  col_ptr[0] = 0;
   uint32_t q = 1;
   uint32_t col_idx = 0;
 
-  for (uint32_t p = 1; p <= num_partitions; ++p) {
-    uint32_t edge_start = edge_pointers[p-1];
-    uint32_t edge_end = edge_pointers[p];
-    uint32_t nnz_part = edge_end - edge_start;
-    if (nnz_part > 0) {
+  for (uint32_t p = 1; p <= num_parts; ++p) {
+    uint32_t edge_start = edge_ptr[p-1];
+    uint32_t edge_end   = edge_ptr[p];
+    uint32_t nnz_parts  = edge_end - edge_start;
+    if (nnz_parts > 0) {
       uint32_t col = -1;
       for (uint32_t i = edge_start; i < edge_end; ++i) {
         if (col == -1 || col < edges[i].dst) {
           col = edges[i].dst;
-          x_indices[col_idx] = col;
-          y_starts[col_idx] = i;
+          col_ind[col_idx] = col;
+          row_ptr[col_idx] = i;
           ++col_idx;
         }        
-        y_indices[i] = edges[i].src;
+        row_ind[i] = edges[i].src;
         if (weights) {
-          memcpy(values + i * element_size,
-                 weights + edges[i].vid * element_size,
-                 element_size);
+          memcpy(values + i * data_size,
+                 weights + edges[i].vid * data_size,
+                 data_size);
         } else {
-          mtx_format_cast(values + i * element_size, header.fmt, 1);
+          mtx_format_cast(values + i * data_size, header.fmt, 1);
         }
       }
-      partitions[q++] = col_idx;
-      x_indices[col_idx] = col + 1;
-      y_starts[col_idx] = edge_end;
+      col_ptr[q++]     = col_idx;
+      col_ind[col_idx] = col + 1;
+      row_ptr[col_idx] = edge_end;
     }
   }
 
-  while (q <= num_partitions) {
-    partitions[q++] = col_idx;
+  while (q <= num_parts) {
+    col_ptr[q++] = col_idx;
   }  
 }
 
@@ -195,7 +203,7 @@ static void load_mtx(mdcsc_t* matrix,
                      const mtx_header_t& header,
                      const mtx_edge_t* mtx_edges,
                      const byte_t* weights,
-                     uint32_t partition_size) {
+                     uint32_t part_size) {
 #ifdef __DTIMING
   struct timeval start, end;
   gettimeofday(&start, 0);
@@ -208,17 +216,17 @@ static void load_mtx(mdcsc_t* matrix,
     edges[i].vid = i;
   }
 
-  uint32_t num_partitions = __div_ceil(header.rows, partition_size);  
-  uint32_t* row_pointers  = new uint32_t[num_partitions + 1];
-  uint32_t* edge_pointers = new uint32_t[num_partitions + 1];
+  uint32_t num_parts = __div_ceil(header.rows, part_size);
+  uint32_t* row_ptr  = new uint32_t[num_parts + 1];
+  uint32_t* edge_ptr = new uint32_t[num_parts + 1];
 
   //
   // do rows partitioning
   // generate table containing a max row index for each partition
   //
-  uint32_t nnz_parts = static_partition(row_pointers, header.rows, num_partitions, partition_size);
+  uint32_t nnz_parts = generate_partition(row_ptr, header.rows, num_parts, part_size);
 #ifndef NDEBUG
-  std::cout << "Partitioned " << header.rows << " matrix rows into " << num_partitions << " chunks (" << nnz_parts << " non-empty)" << std::endl;
+  std::cout << "Partitioned " << header.rows << " matrix rows into " << num_parts << " chunks (" << nnz_parts << " non-empty)" << std::endl;
 #endif
 
 #ifdef __DTIMING
@@ -236,13 +244,13 @@ static void load_mtx(mdcsc_t* matrix,
 #ifdef SET_PARTITION_IDS_BINARY_SEARCH
     uint32_t key = edges[i].src;
     uint32_t min_p = 0;
-    uint32_t max_p = num_partitions - 1;
+    uint32_t max_p = num_parts - 1;
     uint32_t h_p;
     while (max_p >= min_p) {
       h_p = max_p - ((max_p - min_p) / 2);
-      if (key >= row_pointers[h_p] && key < row_pointers[h_p + 1]) {
+      if (key >= row_ptr[h_p] && key < row_ptr[h_p + 1]) {
         break;
-      } else if (key >= row_pointers[h_p]) {
+      } else if (key >= row_ptr[h_p]) {
         min_p = h_p + 1;
       } else {
         max_p = h_p - 1;
@@ -250,17 +258,17 @@ static void load_mtx(mdcsc_t* matrix,
     }
     edges[i].pid = h_p;
 #ifdef CHECK_PARTITION_IDS
-    for (uint32_t p = 0; p < num_partitions; ++p) {
-      if (edges[i].src >= row_pointers[p] &&
-          edges[i].src < row_pointers[p + 1]) {
+    for (uint32_t p = 0; p < num_parts; ++p) {
+      if (edges[i].src >= row_ptr[p] &&
+          edges[i].src < row_ptr[p + 1]) {
         assert(edges[i].pid == p);
       }
     }
 #endif
 #else
-    for (uint32_t p = 0; p < num_partitions; ++p) {
-      if (edges[i].src >= row_pointers[p] &&
-          edges[i].src < row_pointers[p + 1]) {
+    for (uint32_t p = 0; p < num_parts; ++p) {
+      if (edges[i].src >= row_ptr[p] &&
+          edges[i].src < row_ptr[p + 1]) {
         edges[i].pid = p;
       }
     }
@@ -295,7 +303,7 @@ static void load_mtx(mdcsc_t* matrix,
   gettimeofday(&start, nullptr);
 #endif
 
-  set_edge_pointers(edge_pointers, row_pointers, num_partitions, edges, header.nnz);
+  set_edge_ptr(edge_ptr, row_ptr, num_parts, edges, header.nnz);
 
 #ifdef __DTIMING
   gettimeofday(&end, nullptr);
@@ -310,15 +318,15 @@ static void load_mtx(mdcsc_t* matrix,
   gettimeofday(&start, nullptr);
 #endif
 
-  build(matrix, edge_pointers, num_partitions, header, edges, weights);
+  build(matrix, edge_ptr, num_parts, header, edges, weights);
 
 #ifdef __DTIMING
   gettimeofday(&end, nullptr);
   std::cout << "Finished build_dcsc, time: " << elapsed_time(start, end) << " ms" << std::endl;
 #endif
 
-  delete[] row_pointers;
-  delete[] edge_pointers;  
+  delete[] row_ptr;
+  delete[] edge_ptr;
   delete[] edges;
 
 #ifdef __DTIMING
@@ -327,7 +335,7 @@ static void load_mtx(mdcsc_t* matrix,
 #endif
 }
 
-static void load_mtx(mdcsc_t* matrix, const char *filename, mtx_format edge_type, uint32_t partition_size) {
+static void load_mtx(mdcsc_t* matrix, const char *filename, mtx_format edge_type, uint32_t part_size) {
 #ifdef __DTIMING
   struct timeval start, end;
   gettimeofday(&start, 0);
@@ -350,8 +358,8 @@ static void load_mtx(mdcsc_t* matrix, const char *filename, mtx_format edge_type
       exit(1);
     }
 
-    uint32_t weight_size = mxt_format_size(header.fmt);
-    uint32_t edges_size = header.nnz * sizeof(mtx_edge_t);
+    uint32_t weight_size  = mxt_format_size(header.fmt);
+    uint32_t edges_size   = header.nnz * sizeof(mtx_edge_t);
     uint32_t weights_size = header.nnz * weight_size;
 
     if (header.fmt != mtx_format::None
@@ -383,7 +391,7 @@ static void load_mtx(mdcsc_t* matrix, const char *filename, mtx_format edge_type
     header.fmt = edge_type;
   }
 
-  load_mtx(matrix, header, edges, weights, partition_size);
+  load_mtx(matrix, header, edges, weights, part_size);
 
   delete [] edges;
   delete [] weights;
@@ -398,16 +406,16 @@ mdcsc_t::mdcsc_t() {
   memset(this, 0, sizeof(mdcsc_t));
 }
 
-mdcsc_t::mdcsc_t(const char* mtx_file, mtx_format edge_type, uint32_t partition_size) {
+mdcsc_t::mdcsc_t(const char* mtx_file, mtx_format edge_type, uint32_t part_size) {
   memset(this, 0, sizeof(mdcsc_t));
-  load_mtx(this, mtx_file, edge_type, partition_size);
+  load_mtx(this, mtx_file, edge_type, part_size);
 }
 
 mdcsc_t::~mdcsc_t() {
-  delete[] partitions;
-  delete[] xindices;
-  delete[] ystarts;
-  delete[] yindices;  
+  delete[] col_ptr;
+  delete[] col_ind;
+  delete[] row_ptr;
+  delete[] row_ind;
   delete[] values;    
 }
 
@@ -416,23 +424,26 @@ void mdcsc_t::init(
     uint32_t rows_,
     uint32_t nnz_,
     uint32_t nzx_,
-    uint32_t numparts_,
-    uint32_t element_size_) {
+    uint32_t num_parts_,
+    uint32_t data_size_) {
   cols = cols_;
   rows = rows_;
   nnz  = nnz_;
   nzx  = nzx_;
-  numparts = numparts_;
-  element_size = element_size_;
-  partitions = new uint32_t[numparts_ + 1];    
-  xindices   = new uint32_t[nzx_ + 1];
-  ystarts    = new uint32_t[nzx_ + 1];
-  yindices   = new uint32_t[nnz_];
-  values     = new byte_t[nnz_ * element_size_];  
+  num_parts = num_parts_;
+  data_size = data_size_;
+  col_ptr = new uint32_t[num_parts_ + 1];
+  col_ind = new uint32_t[nzx_ + 1];
+  row_ptr = new uint32_t[nzx_ + 1];
+  row_ind = new uint32_t[nnz_];
+  values  = new byte_t[nnz_ * data_size_];
 }
 
-size_t mdcsc_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_matrix_dcsc_t>& desc) {
-  desc.numparts = numparts;
+size_t mdcsc_t::copy(byte_t* dest,
+                     size_t offset,
+                     size_t size,
+                     ch_scalar_t<ch_matrix_dcsc_t>& desc) {
+  desc.num_parts = num_parts;
   
 #define  __copy_data(s, S) \
   assert((offset & BLOCK_SIZE_MASK) == 0); \
@@ -442,11 +453,11 @@ size_t mdcsc_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_ma
   if (dest) memcpy(dest + offset, s, S); \
   offset += __align(S, BLOCK_SIZE);  
   
-  __copy_data(partitions, sizeof(uint32_t) * (numparts + 1));
-  __copy_data(xindices, sizeof(uint32_t) * (nzx + 1));
-  __copy_data(ystarts, sizeof(uint32_t) * (nzx + 1));
-  __copy_data(yindices, sizeof(uint32_t) * nnz);
-  __copy_data(values, nnz * element_size);  
+  __copy_data(col_ptr, sizeof(uint32_t) * (num_parts + 1));
+  __copy_data(col_ind, sizeof(uint32_t) * (nzx + 1));
+  __copy_data(row_ptr, sizeof(uint32_t) * (nzx + 1));
+  __copy_data(row_ind, sizeof(uint32_t) * nnz);
+  __copy_data(values,  nnz * data_size);
   
 #undef __copy_data  
   
@@ -459,10 +470,10 @@ vertex_t::vertex_t() {
   memset(this, 0, sizeof(vertex_t));
 }
 
-vertex_t::vertex_t(uint32_t size_, uint32_t element_size_) 
+vertex_t::vertex_t(uint32_t size_, uint32_t data_size_)
   : size(size_)
-  , element_size(element_size_) {
-  values = new byte_t[size * element_size_];
+  , data_size(data_size_) {
+  values = new byte_t[size * data_size_];
   
   uint32_t num_masks = __div_ceil(size, 32);
   masks = new uint32_t[num_masks];
@@ -474,7 +485,10 @@ vertex_t::~vertex_t() {
   delete[] masks;
 }
 
-size_t vertex_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_vertex_t>& desc) {
+size_t vertex_t::copy(byte_t* dest,
+                      size_t offset,
+                      size_t size,
+                      ch_scalar_t<ch_vertex_t>& desc) {
 
 #define  __copy_data(s, S) \
   assert((offset & BLOCK_SIZE_MASK) == 0); \
@@ -484,7 +498,7 @@ size_t vertex_t::copy(byte_t* dest, size_t offset, size_t size, ch_scalar_t<ch_v
   if (dest) memcpy(dest + offset, s, S); \
   offset += __align(S, BLOCK_SIZE);  
   
-  __copy_data(values, this->size * element_size);
+  __copy_data(values, this->size * data_size);
   __copy_data(masks, sizeof(uint32_t) * __div_ceil(this->size, 32)); 
   
 #undef __copy_data  

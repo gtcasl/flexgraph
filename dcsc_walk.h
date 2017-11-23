@@ -31,7 +31,7 @@ __struct (ch_pe_start_req_t, (
 __inout (ch_ctrl_pe_io, (
   (ch_deq_io<ch_pe_start_req_t>) start,
   __in(ch_bit64) timer,
-  __out(ch_pe_hwcntrs_t) hwcntrs
+  __out(ch_walker_stats_t) stats
 ));
 
 class spmv_dcsc_walk {
@@ -55,7 +55,7 @@ private:
   ch_seq<ch_ptr> col_curr_;
   ch_seq<ch_ptr> col_end_;
 
-  ch_seq<ch_ptr> a_xindex_;
+  ch_seq<ch_ptr> a_colidx_;
 
   ch_seq<ch_ptr> row_curr_;
   ch_seq<ch_ptr> row_end_;
@@ -91,7 +91,7 @@ private:
   ch_seq<ch_block> xvblock_;
 
   ch_seq<ch_bit64> prof_start_;
-  ch_seq<ch_pe_hwcntrs_t> hwcntrs_;
+  ch_seq<ch_walker_stats_t> stats_;
 };
 
 }
