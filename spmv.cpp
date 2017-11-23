@@ -13,14 +13,6 @@ __enum (ch_ctrl_state, 3, (
 ));
 
 spmv_device::spmv_device() {
-  // create the PEs
-  PEs_.reserve(PE_COUNT);
-  walkers_.reserve(PE_COUNT);
-  for (int i = 0; i < PE_COUNT; ++i) {
-    PEs_.emplace_back(i);
-    walkers_.emplace_back(i);
-  }
-
   // bind modules
   for (int i = 0; i < PE_COUNT; ++i) {
     PEs_[i].io.req(walkers_[i].io.pe);
@@ -209,6 +201,9 @@ void spmv_device::dispatch_thread() {
         part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
         part_curr_.next = part_curr_ + 1; // advance partition
         part_buf_size_.next = part_buf_size_ - 1;
+
+        //ch_print(fstring("{0}: *** assigned partition{1} to PE%d", i), ch_getTick(), part_curr_);
+
         // check if we can pop another partition from current block
         // we need at least two entries to proceed
         __if (part_curr_.next != numparts_

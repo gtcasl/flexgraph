@@ -27,14 +27,15 @@ public:
     __out(ch_bool) is_idle
   );
   
-  spmv_pe(uint32_t id);
+  spmv_pe();
   ~spmv_pe();
   
   void describe();
 
 private:
 
-  using ch_bit480 = ch_bit<480>;
+  using ch_pvBits = ch_bit<PARTITION_SIZE>;
+  using ch_paBits = ch_bit<LOG2_PARTITION_SIZE>;
   
   uint32_t  id_;
 
@@ -42,21 +43,19 @@ private:
   ch_module<ch_pipe<ch_pipe_data_t, ALTFP_SP_ADD_SUB>> add_pipe_;
 
   ch_ram<ch_float32, PARTITION_SIZE> y_values_;
-  ch_seq<ch_bit32> y_mask_;
+  ch_seq<ch_pvBits> y_mask_;
+  ch_seq<ch_pvBits> y_mask_cpy_;
 
-  ch_seq<ch_bit32> inflight_mask_;
+  ch_seq<ch_pvBits> inflight_mask_;
 
   ch_seq<ch_bit32> pending_reqs_;
 
-  ch_float32       y_value_;
-  ch_bit<5>        y_waddr_;
-  ch_bit1          y_wenable_;
+  ch_float32  y_value_;
+  ch_paBits   y_raddr_;
+  ch_paBits   y_waddr_;
+  ch_bit1     y_wenable_;
 
-  ch_bit32         mask_value_;
-
-  ch_seq<ch_ptr>   y0_;
-
-  ch_seq<ch_bit<LOG2_PARTITION_SIZE>> y_clr_cntr_;
+  ch_seq<ch_ptr>   y0_;  
 };
 
 }

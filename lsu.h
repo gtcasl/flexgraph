@@ -90,7 +90,7 @@ public:
 
   __io (
     (spmv_aal_device::qpi_io) qpi,
-    (ch_ctx_io) ctx,
+    __in(spmv_ctx_t) ctx,
     (ch_ctrl_lsu_io) ctrl,
     (ch_vec<ch_walker_lsu_io, PE_COUNT>) walkers,
     (ch_vec<ch_pe_lsu_io, PE_COUNT>) PEs

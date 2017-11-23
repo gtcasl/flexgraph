@@ -4,19 +4,21 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-__enum (ch_pe_state, 3, (
+__enum (ch_pe_state, 2, (
   ready,
   write_value0,
   write_value1,
-  write_mask,
-  clear
+  write_mask
 ));
 
-spmv_pe::spmv_pe(uint32_t id) : id_(id) {
+spmv_pe::spmv_pe() {
+  //--
+  static uint32_t s_ids = 0;
+  id_ = s_ids++;
+
   //--
   __if (y_wenable_) (
-    y_values_[y_waddr_] = y_value_;
-    y_mask_.next = mask_value_;
+    y_values_[y_waddr_] = y_value_;    
   );
 }
 
@@ -27,56 +29,75 @@ void spmv_pe::describe() {
   ch_seq<ch_pe_state> state;
 
   //--
-  ch_bool do_enq = io.req.valid && io.req.ready;
+  auto y_raddr_mask = ch_pvBits(1) << y_raddr_;
+  auto y_waddr_mask = ch_pvBits(1) << y_waddr_;
 
   //--
-  auto mult_value = ch_fmult<ALTFP_SP_MULT>(io.req.data.a_value, io.req.data.x_value);
-  mult_pipe_.io.enq.data.a_yindex = io.req.data.a_yindex;
-  mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
-  mult_pipe_.io.enq.valid = do_enq;
+  ch_bool add_enable = (ch_pe_state::ready == state)
+                     || !add_pipe_.io.deq.valid; // discard non-valid heads
 
   //--
-  auto y_raddr = (mult_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();
-  auto add_value = ch_fadd<ALTFP_SP_ADD_SUB>(mult_value, y_values_[y_raddr]);
-  add_pipe_.io.enq.data.a_yindex = mult_pipe_.io.deq.data.a_yindex;
-  add_pipe_.io.enq.data.is_end = mult_pipe_.io.deq.data.is_end;
-  add_pipe_.io.enq.valid = mult_pipe_.io.deq.valid;
+  ch_bool mult_enable = (add_enable && 0 == (inflight_mask_ & y_raddr_mask))
+                     || !mult_pipe_.io.deq.valid; // discard non-valid heads
 
   //--
-  auto y_raddr_mask = 1_b32 << y_raddr;
-  auto y_waddr_mask = 1_b32 << y_waddr_;
-
-  //--
-  __if (do_enq && !add_pipe_.io.deq.valid) (
-    pending_reqs_.next = pending_reqs_ + 1;
-  )
-  __elif (!do_enq && add_pipe_.io.deq.valid) (
-    pending_reqs_.next = pending_reqs_ - 1;
-  );
-
-  //--
-  __if (mult_pipe_.io.deq.valid && !mult_pipe_.io.deq.data.is_end
-     && add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end) (
-    inflight_mask_.next = (inflight_mask_ & ~y_waddr_mask) | y_raddr_mask;
-  )
-  __elif (mult_pipe_.io.deq.valid && !mult_pipe_.io.deq.data.is_end) (
-    inflight_mask_.next = inflight_mask_ | y_raddr_mask;
-  )
-  __elif (add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end) (
-    inflight_mask_.next = inflight_mask_ & ~y_waddr_mask;
-  );
-
-  //--
-  io.req.ready = (state == ch_pe_state::ready)
-              && (0 == (inflight_mask_ & y_raddr_mask));
+  io.req.ready = mult_pipe_.io.enq.ready;
 
   //--
   io.is_idle = (state == ch_pe_state::ready)
             && (0 == pending_reqs_);
 
+  // select previous y_value if dirty
+  ch_float32 prev_y_value =
+      ch_select(0 != (y_mask_ & y_raddr_mask), y_values_[y_raddr_], 0);
+
+  // Multiply pipeline
+  mult_pipe_.io.enq.data.a_yindex = io.req.data.a_yindex;
+  mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
+  mult_pipe_.io.enq.valid = io.req.valid && io.req.ready;
+  mult_pipe_.io.deq.ready = mult_enable;
+  ch_float32 mult_value = ch_fmult<ALTFP_SP_MULT>(
+        io.req.data.a_value, io.req.data.x_value, mult_enable);
+
+  // Adder pipeline
+  add_pipe_.io.enq.data.a_yindex = mult_pipe_.io.deq.data.a_yindex;
+  add_pipe_.io.enq.data.is_end = mult_pipe_.io.deq.data.is_end;
+  add_pipe_.io.enq.valid = mult_pipe_.io.deq.valid && mult_enable;
+  add_pipe_.io.deq.ready = add_enable;
+  y_raddr_ = (mult_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();  
+  ch_float32 add_value = ch_fadd<ALTFP_SP_ADD_SUB>(
+        mult_value, prev_y_value, add_enable);
+
+  // track outstanding requests
+  auto pe_issue = mult_pipe_.io.enq.valid;
+  auto pe_commit = (ch_pe_state::ready == state) && add_pipe_.io.deq.valid;
+  __if (pe_issue && !pe_commit) (
+    pending_reqs_.next = pending_reqs_ + 1;
+  )
+  __else (
+    __if (!pe_issue && pe_commit) (
+      pending_reqs_.next = pending_reqs_ - 1;
+    );
+  );
+
+  // in-flight controller:
+  // flag rows as they enter/exit the Adder pipeline
+  auto adder_issue = add_pipe_.io.enq.valid && !add_pipe_.io.enq.data.is_end;
+  auto adder_commit = pe_commit && !add_pipe_.io.deq.data.is_end;
+  __if (adder_commit) (
+    __if (adder_issue && (y_raddr_mask != y_waddr_mask)) (
+      inflight_mask_.next = (inflight_mask_ & ~y_waddr_mask) | y_raddr_mask;
+    )__else (
+      inflight_mask_.next = inflight_mask_ & ~y_waddr_mask;
+    );
+  )__else (
+    __if (adder_issue) (
+      inflight_mask_.next = inflight_mask_ | y_raddr_mask;
+    );
+  );
+
   //--
-  __if (add_pipe_.io.deq.valid
-     && !add_pipe_.io.deq.data.is_end) (
+  __if (adder_commit) (
     y0_.next = add_pipe_.io.deq.data.a_yindex & ~0x1f_h20;
   );
 
@@ -84,14 +105,20 @@ void spmv_pe::describe() {
   __switch (state) (
   __case (ch_pe_state::ready) (
     //--
-    y_wenable_  = add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end;
-    y_waddr_    = (add_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();
-    y_value_    = add_value;
-    mask_value_ = y_mask_ | y_waddr_mask;
+    y_wenable_ = add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end;
+    y_waddr_   = (add_pipe_.io.deq.data.a_yindex & 0x1f).slice<5>();
+    y_value_   = add_value;
+
+    //--
+    __if (y_wenable_) (
+      y_mask_.next = y_mask_ | y_waddr_mask;
+    );
 
     //--
     __if (add_pipe_.io.deq.valid
        && add_pipe_.io.deq.data.is_end) (
+      y_mask_cpy_.next = y_mask_;
+      y_mask_.next = 0;
       state.next = ch_pe_state::write_value0;
     );
   )
@@ -137,27 +164,15 @@ void spmv_pe::describe() {
     // submit write mask
     io.lsu.wr_req.data.type = ch_wr_request::y_masks;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_ >> 5); // divide by 32
-    io.lsu.wr_req.data.data = ch_zext<512>(y_mask_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
-    io.lsu.wr_req.valid = true;
+    io.lsu.wr_req.data.data = ch_zext<512>(y_mask_cpy_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
+    io.lsu.wr_req.valid     = true;
    // wait for LSU ack
     __if (io.lsu.wr_req.ready) (
-      state.next = ch_pe_state::clear;
+      // return
+      state.next = ch_pe_state::ready;
     )
     __else (
       // profiling
-    );
-  )
-  __case (ch_pe_state::clear) (
-    // clear write buffer
-    y_wenable_  = true;
-    y_waddr_    = y_clr_cntr_;
-    y_value_    = 0.0f;
-    mask_value_ = 0;
-
-    // advance buffer address
-    y_clr_cntr_.next = y_clr_cntr_ + 1;
-    __if (y_clr_cntr_.next == 0) (
-      state.next = ch_pe_state::ready;
     );
   )
   __default (
@@ -165,21 +180,28 @@ void spmv_pe::describe() {
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = 0;
     io.lsu.wr_req.data.data = 0;
-    io.lsu.wr_req.valid = false;
+    io.lsu.wr_req.valid     = false;
 
     //--
-    y_wenable_  = false;
-    y_value_    = 0.0f;
-    y_waddr_    = 0;
-    mask_value_ = 0;
+    y_wenable_ = false;
+    y_value_   = 0.0f;
+    y_waddr_   = 0;
   ));
 
   //--
-  if (id_ == 0) {
-    ch_print(fstring("{0}: PE%d: state={1}, mp_val={2}, mult={3}, ap_val={4}, add={5}, rq_rdy={6}, idle={7}, "
-                     "wq_val={8}, wq_typ={9}, wq_adr={10}, wq_dat={11}, flight={12}, pending={13}", id_),
-      ch_getTick(), state, mult_pipe_.io.deq.valid, mult_value, add_pipe_.io.deq.valid, add_value, io.req.ready, io.is_idle,
-      io.lsu.wr_req.valid, io.lsu.wr_req.data.type, io.lsu.wr_req.data.addr, io.lsu.wr_req.data.data, inflight_mask_, pending_reqs_
+  if (id_ == 0) (
+    ch_print(fstring("{0}: PE%d: state={1}, rq_val={2}, rq_ar={3}, rq_av={4}, rq_xv={5}, "
+                     "mp_val={6}, mp_ar={7}, mp_dat={8}, "
+                     "ap_val={9}, ap_ar={10}, ap_dat={11}, ap_old={12}, "
+                     "rq_rdy={13}, idle={14}, "
+                     "wq_val={15}, wq_typ={16}, wq_adr={17}, wq_dat={18}, "
+                     "flight={19}, pending={20}, wen={21}, y[0]={22}, m_en={23}, a_en={24}", id_),
+      ch_getTick(), state, io.req.valid, io.req.data.a_yindex, io.req.data.a_value, io.req.data.x_value,
+      mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_yindex, mult_value,
+      add_pipe_.io.deq.valid, add_pipe_.io.deq.data.a_yindex, add_value, prev_y_value,
+      io.req.ready, io.is_idle,
+      io.lsu.wr_req.valid, io.lsu.wr_req.data.type, io.lsu.wr_req.data.addr, io.lsu.wr_req.data.data,
+      inflight_mask_, pending_reqs_, y_wenable_, y_values_[0], mult_enable, add_enable
     );
-  }
+  );
 }

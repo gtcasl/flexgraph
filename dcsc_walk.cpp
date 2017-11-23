@@ -22,11 +22,14 @@ __enum (ch_walk_state, 4, (
   (end_partition, 0xF)
 ));
 
-spmv_dcsc_walk::spmv_dcsc_walk(uint32_t id)
-  : id_(id)
-  , xmblock_addr_(PTR_MAX_VALUE) // default initialize to max
+spmv_dcsc_walk::spmv_dcsc_walk()
+  : xmblock_addr_(PTR_MAX_VALUE) // default initialize to max
   , xvblock_addr_(PTR_MAX_VALUE) // default initialize to max{
 {
+  //--
+  static uint32_t s_ids = 0;
+  id_ = s_ids++;
+
   //--
   io.ctrl.hwcntrs = hwcntrs_;
 
@@ -70,11 +73,13 @@ void spmv_dcsc_walk::describe() {
   io.ctrl.start.ready = (state == ch_walk_state::get_partition);
 
   //--
-  if (id_ == 0) {
+  /*if (id_ == 0) {
     ch_print(fstring("{0}: *** Walker%d: state={1}, axbuf.enq.val={2}, axbuf.deq.val={3}, asbuf.enq.val={4}, asbuf.deq.val={5}, asbuf_psz={6}, #p={7}", id_),
              ch_getTick(), state, axbuf_.io.enq.valid, axbuf_.io.deq.valid,
              asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_, hwcntrs_.num_partitions);
   }
+  */
+
   // ch_walk_state FSM
   __switch (state) (
   __case (ch_walk_state::get_partition) (
@@ -470,7 +475,7 @@ void spmv_dcsc_walk::describe() {
     io.pe.valid         = false;
   ));
 
-  //--
+  /*//--
   if (id_ == 0) {
     ch_print(fstring("{0}: Walker%d: state={1}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
                      "rr_val={5}, rr_typ={6}, "
@@ -481,5 +486,5 @@ void spmv_dcsc_walk::describe() {
       col_curr_, col_end_, a_xindex_, x_value_, row_curr_, row_end_,
       io.pe.data.a_yindex, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid
     );
-  }
+  }*/
 }

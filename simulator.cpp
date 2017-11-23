@@ -15,24 +15,24 @@ static double elapsed_time(uint64_t start, uint64_t end) {
 }
 
 simulator::simulator(const char* mtx_file)
-  : m_vcd_file("spmv.vcd") {
+  : vcd_file_("spmv.vcd") {
   // initialize random seed
   srand(0);
     
   //--
-  m_cpu = new host::cpu_device(mtx_file);  
-  m_tracer = new ch_vcdtracer(m_vcd_file, m_cpu->get_accelerator());
+  cpu_ = new host::cpu_device(mtx_file);
+  tracer_ = new ch_vcdtracer(vcd_file_, cpu_->get_accelerator());
 }
 
 simulator::~simulator() {   
   // release resources
-  delete m_tracer;
-  delete m_cpu;
+  delete tracer_;
+  delete cpu_;
 }
 
 void simulator::run(ch_tick run_ticks) {
   // reset native simulator
-  ch_tick t = m_tracer->reset(0);
+  ch_tick t = tracer_->reset(0);
 
   uint64_t start = __rdtsc();
 
@@ -40,11 +40,11 @@ void simulator::run(ch_tick run_ticks) {
   for (;t < run_ticks;) {
     
     // tick the cpu device
-    if (!m_cpu->tick(t))
+    if (!cpu_->tick(t))
       break;
     
     // advance native simulation
-    t = m_tracer->step(t);
+    t = tracer_->step(t);
   }
 
   uint64_t end = __rdtsc();
@@ -61,5 +61,5 @@ void simulator::trace(ch_tick t) {
 
 void simulator::dump_stats(ch_tick t) {
   //--
-  m_cpu->dump_stats(t);
+  cpu_->dump_stats(t);
 }

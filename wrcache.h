@@ -123,9 +123,11 @@ public:
             enq_data.next = io.enq.data;
             state.next = ch_state::lookup;
           );
-        )__elif (io.flush) (
-          counter_.next = 0;
-          state.next = ch_state::flush;
+        )__else (
+          __if (io.flush) (
+            counter_.next = 0;
+            state.next = ch_state::flush;
+          );
         );
       )
       __case (ch_state::lookup) (

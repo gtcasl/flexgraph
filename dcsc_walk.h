@@ -43,7 +43,7 @@ public:
     (ch_enq_io<ch_pe_req_t>) pe
   );
 
-  spmv_dcsc_walk(uint32_t id);
+  spmv_dcsc_walk();
   ~spmv_dcsc_walk();
 
   void describe();

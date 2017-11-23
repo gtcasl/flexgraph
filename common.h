@@ -32,18 +32,20 @@ using namespace ch::sim;
 
 namespace spmv {
 
-using ch_block = ch_bit<aal::aal_qpi0::cdata_width>;
+using qpi = aal::aal_qpi0;
 
-using ch_blk_addr = ch_bit<aal::aal_qpi0::addr_wdith>;
+using ch_block = ch_bit<qpi::cdata_width>;
 
-using ch_ptr = ch_bit<aal::aal_qpi0::addr_wdith>;
+using ch_blk_addr = ch_bit<qpi::addr_wdith>;
+
+using ch_ptr = ch_bit<qpi::addr_wdith>;
 
 enum {
   PE_COUNT       = 2,
   LOG2_PE_COUNT  = log2ceil(PE_COUNT),
   RQ_OWNER_BITS  = log2ceil(PE_COUNT+1),
 
-  PTR_MAX_VALUE  = (1 << aal::aal_qpi0::addr_wdith)-1,
+  PTR_MAX_VALUE  = (1 << qpi::addr_wdith)-1,
 
   PARTITION_SIZE = 32,
   LOG2_PARTITION_SIZE = 5,
@@ -108,31 +110,31 @@ __struct (ch_ctrl_hwcntrs_t, (
   (ch_bit32) vcache_stalls
 ));
 
-__inout (ch_matrix_dcsc_t, (
-  __in(ch_bit32) numparts,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) partitions,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) xindices,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) ystarts,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) yindices,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) values
+__struct (ch_matrix_dcsc_t, (
+  (ch_bit32) numparts,
+  (ch_bit<qpi::addr_wdith>) partitions,
+  (ch_bit<qpi::addr_wdith>) xindices,
+  (ch_bit<qpi::addr_wdith>) ystarts,
+  (ch_bit<qpi::addr_wdith>) yindices,
+  (ch_bit<qpi::addr_wdith>) values
 ));
 
-__inout (ch_vertex_t, (
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) values,
-  __in(ch_bit<aal::aal_qpi0::addr_wdith>) masks
+__struct (ch_vertex_t, (
+  (ch_bit<qpi::addr_wdith>) values,
+  (ch_bit<qpi::addr_wdith>) masks
 ));
 
-using hwcntrs_addr_t = ch_bit<aal::aal_qpi0::addr_wdith>;
+using hwcntrs_addr_t = ch_bit<qpi::addr_wdith>;
 
-__inout (ch_ctx_io, (
+__struct (spmv_ctx_t, (
   (ch_matrix_dcsc_t) a,
   (ch_vertex_t) x,
   (ch_vertex_t) y,
-  __in(hwcntrs_addr_t) hwcntrs,
-  __in(ch_bit<280>) __reserved__
+  (hwcntrs_addr_t) hwcntrs,
+  (ch_bit<280>) __reserved__
 ));
 
-using spmv_aal_device = aal::aal_device0<ch_ctx_io>;
+using spmv_aal_device = aal::aal_device<spmv_ctx_t, qpi>;
 
 __struct (ch_dcsc_part_t, (
   (ch_bit32) start,

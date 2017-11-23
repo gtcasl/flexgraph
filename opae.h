@@ -2,7 +2,7 @@
 
 #include <cash.h>
 
-namespace aal {
+namespace opae {
 
 //
 // Description:
@@ -14,7 +14,7 @@ namespace aal {
 using namespace ch::core;
 
 template <unsigned ADDR, unsigned MDATA, unsigned CDATA>
-struct aal_qpi {
+struct opae_qpi {
   static constexpr unsigned addr_wdith  = ADDR;
   static constexpr unsigned mdata_width = MDATA;
   static constexpr unsigned cdata_width = CDATA;
@@ -54,27 +54,29 @@ struct aal_qpi {
   ));
 };
 
-using aal_qpi0 = aal_qpi<20, 14, 512>;
+using opae_qpi0 = opae_qpi<20, 14, 512>;
 
-using aal_qpi1 = aal_qpi<42, 16, 512>;
-
-template <typename Context, typename Qpi = aal_qpi0>
-class aal_device {
+template <typename Context, typename Qpi = opae_qpi0>
+class opae_device {
 public:
   using qpi_io = typename Qpi::io;
   static_assert(ch_bitwidth_v<Context> == Qpi::cdata_width, "invalid context size");
+  static_assert(ch_direction_v<Context> == ch_direction::in, "invalid context direction");
 
   __io (
     (qpi_io)          qpi,
-    __in(Context)     ctx,
+    (Context)         ctx,
     (ch_in<ch_bit1>)  start,
     (ch_out<ch_bit1>) done
   );
 
-  aal_device() {}
-  virtual ~aal_device() {}
-  
+  opae_device() {}
+  virtual ~opae_device() {}
+
   virtual void describe() = 0;
 };
+
+template <typename Context>
+using opae_device0 = opae_device<Context>;
 
 }

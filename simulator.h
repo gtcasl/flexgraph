@@ -18,9 +18,9 @@ protected:
   
   void dump_stats(ch_tick t);
   
-  host::cpu_device* m_cpu;
-  ch_vcdtracer* m_tracer;
-  std::ofstream m_vcd_file;
+  host::cpu_device* cpu_;
+  ch_vcdtracer* tracer_;
+  std::ofstream vcd_file_;
 };
 
 }
