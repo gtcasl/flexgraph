@@ -402,6 +402,27 @@ static void load_mtx(mdcsc_t* matrix, const char *filename, mtx_format edge_type
 #endif
 }
 
+template <typename F, typename T>
+size_t copy_data (byte_t* dst_buf,
+                  F& field_offset,
+                  const T* src_buf,
+                  size_t size,
+                  size_t dst_offset,
+                  size_t dst_size) {
+  auto start = dst_offset;
+  auto end = start + __align(size, BLOCK_SIZE);
+  assert(0 == (start & BLOCK_SIZE_MASK));
+  assert(end <= dst_size);
+  if (dst_buf) {
+    memcpy(dst_buf + start, src_buf, size);
+    memset(dst_buf + end, 0, end - start - size);
+  }
+  field_offset = (start >> LOG2_BLOCK_SIZE);
+  return end;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 mdcsc_t::mdcsc_t() {
   memset(this, 0, sizeof(mdcsc_t));
 }
@@ -444,22 +465,12 @@ size_t mdcsc_t::copy(byte_t* dest,
                      size_t size,
                      ch_scalar_t<ch_matrix_dcsc_t>& desc) {
   desc.num_parts = num_parts;
-  
-#define  __copy_data(s, S) \
-  assert((offset & BLOCK_SIZE_MASK) == 0); \
-  assert(offset + __align(S, BLOCK_SIZE) <= size); \
-  assert((offset >> LOG2_BLOCK_SIZE) < 0x100000); \
-  desc.s = (offset >> LOG2_BLOCK_SIZE); \
-  if (dest) memcpy(dest + offset, s, S); \
-  offset += __align(S, BLOCK_SIZE);  
-  
-  __copy_data(col_ptr, sizeof(uint32_t) * (num_parts + 1));
-  __copy_data(col_ind, sizeof(uint32_t) * (nzx + 1));
-  __copy_data(row_ptr, sizeof(uint32_t) * (nzx + 1));
-  __copy_data(row_ind, sizeof(uint32_t) * nnz);
-  __copy_data(values,  nnz * data_size);
-  
-#undef __copy_data  
+
+  offset = copy_data(dest, desc.col_ptr, col_ptr, sizeof(uint32_t) * (num_parts + 1), offset, size);
+  offset = copy_data(dest, desc.col_ind, col_ind, sizeof(uint32_t) * (nzx + 1), offset, size);
+  offset = copy_data(dest, desc.row_ptr, row_ptr, sizeof(uint32_t) * (nzx + 1), offset, size);
+  offset = copy_data(dest, desc.row_ind, row_ind, sizeof(uint32_t) * nnz, offset, size);
+  offset = copy_data(dest, desc.values,  values, nnz * data_size, offset, size);
   
   return offset;
 }
@@ -489,20 +500,8 @@ size_t vertex_t::copy(byte_t* dest,
                       size_t offset,
                       size_t size,
                       ch_scalar_t<ch_vertex_t>& desc) {
-
-#define  __copy_data(s, S) \
-  assert((offset & BLOCK_SIZE_MASK) == 0); \
-  assert(offset + __align(S, BLOCK_SIZE) <= size); \
-  assert((offset >> LOG2_BLOCK_SIZE) < 0x100000); \
-  desc.s = (offset >> LOG2_BLOCK_SIZE); \
-  if (dest) memcpy(dest + offset, s, S); \
-  offset += __align(S, BLOCK_SIZE);  
-  
-  __copy_data(values, this->size * data_size);
-  __copy_data(masks, sizeof(uint32_t) * __div_ceil(this->size, 32)); 
-  
-#undef __copy_data  
-  
+  offset = copy_data(dest, desc.values, values, this->size * data_size, offset, size);
+  offset = copy_data(dest, desc.masks, masks, sizeof(uint32_t) * __div_ceil(this->size, 32), offset, size);
   return offset;
 }
 

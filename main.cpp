@@ -8,12 +8,11 @@ using namespace spmv;
 
 #define CPU_FREQ (2.3e9)
 
-int verbose = 0;
 int run_ticks = 1000000;
 const char* mtx_file = "sample.mtx";
 
 namespace spmv {
-bool g_singlecore = false; 
+int verbose = 0;
 };
 
 void spmv::DbgPrint(int level, const char *format, ...) {
@@ -42,10 +41,7 @@ static void parse_args(int argc, char **argv) {
   while ((c = getopt(argc, argv, "sm:v:t:i:h?")) != -1) {
     switch (c) {
     case 'v':
-      verbose = atoi(optarg);
-      break;
-    case 's':
-      spmv::g_singlecore = true;
+      spmv::verbose = atoi(optarg);
       break;
     case 'm':
       mtx_file = optarg;

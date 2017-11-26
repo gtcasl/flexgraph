@@ -55,12 +55,14 @@ void spmv_lsu::read_req_thread() {
         ch_rd_mdata_t(rd_req_arb_.io.out.grant, rd_req_arb_.io.out.data.type).asBits());
     
   //--
-  ch_print("{0}: lsu_rd_req: valid={1}, grant={2}, type={3}, addr={4}",
+  if (verbose) {
+    ch_print("{0}: lsu_rd_req: valid={1}, grant={2}, type={3}, addr={4}",
            ch_getTick(),
            rd_req_arb_.io.out.valid,
            rd_req_arb_.io.out.grant,
            rd_req_arb_.io.out.data.type,
            rd_req_arb_.io.out.data.addr);
+  }
 } 
 
 void spmv_lsu::write_req_thread() {
@@ -127,13 +129,15 @@ void spmv_lsu::write_req_thread() {
     ));
 
     //--
-    ch_print("{0}: qpi_wr: state={1}, valid={2}, addr={3}, data={4}, mdata={5}",
+    if (verbose) {
+      ch_print("{0}: qpi_wr: state={1}, valid={2}, addr={3}, data={4}, mdata={5}",
              ch_getTick(),
              qw_state,
              io.qpi.wr_req.valid,
              io.qpi.wr_req.addr,
              io.qpi.wr_req.data,
              io.qpi.wr_req.mdata);
+    }
   }
 
   // control thread
@@ -205,7 +209,8 @@ void spmv_lsu::write_req_thread() {
   }
     
   //--
-  ch_print("{0}: lsu_wr_req: state={1}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
+  if (verbose) {
+    ch_print("{0}: lsu_wr_req: state={1}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
            ch_getTick(),
            state,
            wr_req_arb_.io.out.valid,
@@ -213,6 +218,7 @@ void spmv_lsu::write_req_thread() {
            wr_req_arb_.io.out.data.type,
            wr_req_arb_.io.out.data.addr,
            wr_req_arb_.io.out.data.data);
+  }
 }
 
 void spmv_lsu::read_rsp_thread() {
@@ -232,8 +238,10 @@ void spmv_lsu::read_rsp_thread() {
   }
 
   //--
-  ch_print("{0}: lsu_rd_rsp: valid={1}, grant={2}, type={3}, data={4}",
+  if (verbose) {
+    ch_print("{0}: lsu_rd_rsp: valid={1}, grant={2}, type={3}, data={4}",
            ch_getTick(), io.qpi.rd_rsp.valid, mdata.owner, mdata.type, io.qpi.rd_rsp.data);
+  }
 }
 
 void spmv_lsu::write_rsp0_thread() {

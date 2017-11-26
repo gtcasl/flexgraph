@@ -64,12 +64,16 @@ cpu_device::~cpu_device() {
 void cpu_device::init(const char* mtx_file) {
   // allocate shared memory
   shared_mem_ = new byte_t[SHARE_MEM_SIZE];
+  assert(shared_mem_);
   
   // create the matrix
   matrix_ = new mdcsc_t(mtx_file, mtx_format::Float, PARTITION_SIZE);
+  assert(matrix_);
   
   // create the input vertex
   vertex_ = new vertex_t(matrix_->cols, sizeof(float));
+  assert(vertex_);
+
   init_vertex(vertex_);
     
   // copy data to shared memory and update context info with block offsets
@@ -383,7 +387,10 @@ void cpu_device::dump_stats(ch_tick t) {
 
     //--
     auto avg_stats = [&](const ch_scalar<32>& stat) {
-      return __safediv((uint32_t)stat, (uint32_t)stats.walker.num_parts);
+      int n = (int)stats.walker.num_parts;
+      if (0 == n)
+        return 0;
+      return __div_ceil((int)stat, n);
     };
 
     //--

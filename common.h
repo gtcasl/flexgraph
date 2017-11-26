@@ -41,14 +41,13 @@ using ch_blk_addr = ch_bit<qpi::addr_wdith>;
 using ch_ptr = ch_bit<qpi::addr_wdith>;
 
 enum {
-  PE_COUNT       = 2,
+  PE_COUNT       = 4,
   LOG2_PE_COUNT  = log2ceil(PE_COUNT),
-  RQ_OWNER_BITS  = log2ceil(PE_COUNT+1),
 
   PTR_MAX_VALUE  = (1 << qpi::addr_wdith)-1,
 
   PARTITION_SIZE = 32,
-  LOG2_PARTITION_SIZE = 5,
+  LOG2_PARTITION_SIZE = log2ceil(PARTITION_SIZE),
 
   PARTITION_VALUE_BITS = 32,
   PARTITIONS_PER_BLOCK = ch_bitwidth_v<ch_block> / PARTITION_VALUE_BITS,
@@ -59,7 +58,7 @@ enum {
 
 #define PE_ID(x) (1 << x)
 
-extern bool g_singlecore; 
+extern int verbose;
 
 using byte_t = uint8_t;
 

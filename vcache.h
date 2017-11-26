@@ -107,7 +107,6 @@ public:
           port0_ = last_used_idx_;
           __if (io.enq.data.tag == last_used_tag_
              && tags_[port0_].valid) (
-            ch_print("@ fast hit!");
             data_wenable_ = true;
             data_value_ = io.enq.data.data;
           )__else (
@@ -123,7 +122,6 @@ public:
           port1_ = match_block_idx;
           __if (tags_[port1_].valid
             &&  tags_[port1_].tag == enq_data.tag) (
-            ch_print("@ lookup match!");
             // append data to matching block
             data_wenable_ = true;
             port0_        = match_block_idx;
@@ -142,7 +140,6 @@ public:
               state.next = ch_state::ready;
             );
           )__else (
-            ch_print("@ new entry!");
             // add data to existing free block
             data_wenable_ = true;
             tag_wenable_  = true;
@@ -212,16 +209,18 @@ public:
       ));
     }
 
-    ch_print("{0}: state={1}, enq_val={2}, enq_tag={3}, enq_own={4}, enq_dat={5}, "
+    if (verbose) {
+      ch_print("{0}: state={1}, enq_val={2}, enq_tag={3}, enq_own={4}, enq_dat={5}, "
              "l_val={6}, mb_idx={7}, ob_idx={8}, fb_idx={9}, lu_idx={10}, "
              "flush={11}, evt_val={12}, evt_rdy={13}, evt_dat={14}, evt_cntr={15}",
              ch_getTick(), state, io.enq.valid, io.enq.data.tag, io.enq.data.owner, io.enq.data.data,
              lookup_valid, match_block_idx, owned_block_idx, free_block_idx, last_used_idx_,
              io.flush, io.evict.valid, io.evict.ready, io.evict.data.data, counter_);
 
-    ch_print("{0}: *** data[0]={1}, data[1]={2}, data[2]={3}, data[3]={4}, tags[0]={5}, tags[1]={6}",
-             ch_getTick(), data_[0], data_[1], data_[2], data_[3], tags_[0], tags_[1]);
-    ch_print("");
+      ch_print("{0}: *** data[0]={1}, data[1]={2}, data[2]={3}, data[3]={4}, tags[0]={5}, tags[1]={6}",
+               ch_getTick(), data_[0], data_[1], data_[2], data_[3], tags_[0], tags_[1]);
+      ch_print("");
+    }
   }
 };
 

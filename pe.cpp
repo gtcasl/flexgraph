@@ -76,10 +76,9 @@ void spmv_pe::describe() {
   auto pe_commit = (ch_pe_state::ready == state) && add_pipe_.io.deq.valid;
   __if (pe_issue && !pe_commit) (
     pending_reqs_.next = pending_reqs_ + 1;
-  )__else (
-    __if (!pe_issue && pe_commit) (
-      pending_reqs_.next = pending_reqs_ - 1;
-    );
+  )
+  __elif (!pe_issue && pe_commit) (
+    pending_reqs_.next = pending_reqs_ - 1;
   );
 
   // in-flight controller:
@@ -190,8 +189,8 @@ void spmv_pe::describe() {
     y_waddr_   = 0;
   ));
 
-  //--
-  if (id_ == 0) {
+  /*//--
+  if (verbose) {
     ch_print(fstring("{0}: PE%d: state={1}, rq_val={2}, rq_ar={3}, rq_av={4}, rq_xv={5}, "
                      "mp_val={6}, mp_ar={7}, mp_dat={8}, "
                      "ap_val={9}, ap_ar={10}, ap_dat={11}, ap_old={12}, "
@@ -205,5 +204,5 @@ void spmv_pe::describe() {
       io.lsu.wr_req.valid, io.lsu.wr_req.data.type, io.lsu.wr_req.data.addr, io.lsu.wr_req.data.data,
       inflight_mask_, pending_reqs_, y_wenable_, mult_enable, add_enable
     );
-  }
+  }*/
 }
