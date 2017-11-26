@@ -36,7 +36,7 @@ cpu_device::cpu_device(const char* mtx_file)
   ch_dumpStats(std::cout, accelerator_);
 
   // dump verilog
-  ch_toVerilog("spmv.v", accelerator_);
+  ch_toVerilog("flexgraph.v", accelerator_);
 }
 
 cpu_device::~cpu_device() {
@@ -359,7 +359,7 @@ void cpu_device::dump_stats(ch_tick t) {
 
   DbgPrint(0, "Simulation Summary Report:\n");
   DbgPrint(0, "Total exection time = %ld cycles\n", (t/2));
-  DbgPrint(0, "Average throughput = %f Gflops\n", 1e-9 * (2.0f * CLOCK_RATE) / (t/2));
+  DbgPrint(0, "Average throughput = %f Gflops\n", (2.0f * matrix_->nnz * 1e-9 * CLOCK_RATE) / (t/2));
   DbgPrint(0, "QPI read latency: min=%ld, max=%ld, avg=%ld cycles\n",
            qpi_rd_stats_.get_min()/2, qpi_rd_stats_.get_max()/2, avg_rd_latency/2);
   DbgPrint(0, "QPI write latency: min=%ld, max=%ld, avg=%ld cycles\n",

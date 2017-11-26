@@ -41,7 +41,10 @@ using ch_blk_addr = ch_bit<qpi::addr_wdith>;
 using ch_ptr = ch_bit<qpi::addr_wdith>;
 
 enum {
-  PE_COUNT       = 4,
+  FP_MULT_LATENCY = 3, // Aria 10
+  FP_ADD_LATENCY  = 3,
+
+  PE_COUNT       = 2,
   LOG2_PE_COUNT  = log2ceil(PE_COUNT),
 
   PTR_MAX_VALUE  = (1 << qpi::addr_wdith)-1,

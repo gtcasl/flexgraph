@@ -40,8 +40,8 @@ private:
   
   uint32_t  id_;
 
-  ch_module<ch_pipe<ch_pipe_data_t, ALTFP_SP_MULT>> mult_pipe_;
-  ch_module<ch_pipe<ch_pipe_data_t, ALTFP_SP_ADD_SUB>> add_pipe_;
+  ch_module<ch_pipe<ch_pipe_data_t, FP_MULT_LATENCY>> mult_pipe_;
+  ch_module<ch_pipe<ch_pipe_data_t, FP_ADD_LATENCY>> add_pipe_;
 
   ch_ram<ch_float32, PARTITION_SIZE> y_values_;
   ch_seq<ch_pvBits> y_mask_;
