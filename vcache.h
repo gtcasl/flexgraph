@@ -12,12 +12,12 @@ private:
   using ch_idx = ch_bit<log2ceil(N)>;
   using ch_tag = ch_bit<TagBits>;
 
-  __enum (ch_state, 3, (
-    ready,
-    lookup,
-    check_evict,
-    evict,
-    flush
+  __enum (ch_state, (
+    (ready,       1<<0),
+    (lookup,      1<<1),
+    (check_evict, 1<<2),
+    (evict,       1<<3),
+    (flush,       1<<4)
   ));
 
   __struct (entry_t, (
@@ -66,7 +66,7 @@ public:
 
   void describe() {
     //--
-    ch_seq<ch_state> state;
+    ch_seq<ch_state> state(ch_state::ready);
     ch_seq<T> enq_data;
 
     //--

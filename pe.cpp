@@ -4,11 +4,11 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-__enum (ch_pe_state, 2, (
-  ready,
-  write_value0,
-  write_value1,
-  write_mask
+__enum (ch_pe_state, (
+  (ready,         1<<0),
+  (write_value0,  1<<1),
+  (write_value1,  1<<2),
+  (write_mask,    1<<3)
 ));
 
 spmv_pe::spmv_pe() {
@@ -29,7 +29,7 @@ spmv_pe::~spmv_pe() {}
 
 void spmv_pe::describe() {
   //--
-  ch_seq<ch_pe_state> state;
+  ch_seq<ch_pe_state> state(ch_pe_state::ready);
 
   //--
   auto y_raddr_mask = ch_pvBits(1) << y_raddr_;

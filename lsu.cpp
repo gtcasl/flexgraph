@@ -3,17 +3,17 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-__enum (ch_wr_req_state, 3, (
-  ready,
-  write_value,
-  write_mask,
-  flush,
-  wait_for_flush
+__enum (ch_wr_req_state, (
+  (ready,           1<<0),
+  (write_value,     1<<1),
+  (write_mask,      1<<2),
+  (flush,           1<<3),
+  (wait_for_flush,  1<<4)
 ));
 
-__enum (ch_qpi_write_state, 1, (
-  ready,
-  write
+__enum (ch_qpi_write_state, (
+  (ready, 1<<0),
+  (write, 1<<1)
 ));
 
 spmv_lsu::spmv_lsu() {
@@ -67,8 +67,8 @@ void spmv_lsu::read_req_thread() {
 
 void spmv_lsu::write_req_thread() {
   //--
-  ch_seq<ch_wr_req_state> state;
-  ch_seq<ch_qpi_write_state> qw_state;
+  ch_seq<ch_wr_req_state> state(ch_wr_req_state::ready);
+  ch_seq<ch_qpi_write_state> qw_state(ch_qpi_write_state::ready);
 
   //--
   ch_bool lsu_write_valid;

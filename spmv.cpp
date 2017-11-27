@@ -3,13 +3,13 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-__enum (ch_ctrl_state, 3, (
-  ready,            
-  get_partition,
-  wait_for_execute,
-  flush_buffers,
-  write_stats,
-  wait_for_writes
+__enum (ch_ctrl_state, (
+  (ready,             1<<0),
+  (get_partition,     1<<1),
+  (wait_for_execute,  1<<2),
+  (flush_buffers,     1<<3),
+  (write_stats,       1<<4),
+  (wait_for_writes,   1<<5)
 ));
 
 spmv_device::spmv_device() {
@@ -46,7 +46,7 @@ void spmv_device::describe() {
 }
 
 void spmv_device::main_thread() {
-  ch_seq<ch_ctrl_state> state;
+  ch_seq<ch_ctrl_state> state(ch_ctrl_state::ready);
 
   //--
   auto done = io.done.asSeq();

@@ -20,7 +20,7 @@ enum {
   WR_REQ_INPUTS = PE_COUNT + 1,
 };
 
-__enum (ch_rd_request, 3, (
+__enum (ch_rd_request, (
   a_colptr,
   a_colind,
   a_rowptr,
@@ -30,7 +30,7 @@ __enum (ch_rd_request, 3, (
   x_masks
 ));
 
-__enum (ch_wr_request, 2, (
+__enum (ch_wr_request, (
   y_values,
   y_masks,
   stats

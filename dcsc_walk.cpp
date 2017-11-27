@@ -3,23 +3,23 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-__enum (ch_walk_state, 4, (
-  (ready, 0),
-  (get_a_colidx, 1),
-  (get_a_rstart, 2),
-  (wait_for_a_rstart, 3),
-  (get_a_rend, 4),
-  (wait_for_a_rend, 5),
-  (check_x_mask, 6),
-  (get_x_mask, 7),
-  (wait_for_x_mask, 8),
-  (get_x_value, 9),
-  (get_a_rowidx, 0xA),
-  (get_a_value, 0xB),
-  (wait_for_data, 0xC),
-  (execute, 0xD),
-  (next_column, 0xE),
-  (end_partition, 0xF)
+__enum (ch_walk_state, (
+  (ready,             1<<0),
+  (get_a_colidx,      1<<1),
+  (get_a_rstart,      1<<2),
+  (wait_for_a_rstart, 1<<3),
+  (get_a_rend,        1<<4),
+  (wait_for_a_rend,   1<<5),
+  (check_x_mask,      1<<6),
+  (get_x_mask,        1<<7),
+  (wait_for_x_mask,   1<<8),
+  (get_x_value,       1<<9),
+  (get_a_rowidx,      1<<10),
+  (get_a_value,       1<<11),
+  (wait_for_data,     1<<12),
+  (execute,           1<<13),
+  (next_column,       1<<14),
+  (end_partition,     1<<15)
 ));
 
 spmv_dcsc_walk::spmv_dcsc_walk()
@@ -54,7 +54,7 @@ spmv_dcsc_walk::~spmv_dcsc_walk() {}
 
 void spmv_dcsc_walk::describe() {
   //--
-  ch_seq<ch_walk_state> state;
+  ch_seq<ch_walk_state> state(ch_walk_state::ready);
 
   //--
   io.ctrl.start.ready = (state == ch_walk_state::ready);
