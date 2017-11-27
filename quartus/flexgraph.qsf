@@ -43,7 +43,7 @@ set_global_assignment -name ORIGINAL_QUARTUS_VERSION 17.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "13:12:15  NOVEMBER 23, 2017"
 set_global_assignment -name LAST_QUARTUS_VERSION "17.1.0 Pro Edition"
 set_global_assignment -name SEARCH_PATH /home/blaise/dev/cash/cash/verilog
-set_global_assignment -name VERILOG_FILE ../spmv.v
+set_global_assignment -name VERILOG_FILE ../flexgraph.v
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
