@@ -84,7 +84,7 @@ In this section, we describes the overall architecture of the FlexGraph Accelera
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.5\textwidth]{figures/DCSC_matrix_format}
+\includegraphics[width=0.5\textwidth]{figures/dcsc_format}
 \caption{DCSC hyperspace matrix format}
 \label{fig:DCSC_matrix_format}
 \end{figure}
@@ -137,9 +137,30 @@ public:
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.4\textwidth]{figures/microarchitecture}
+\includegraphics[width=0.5\textwidth]{figures/microarchitecture}
 \caption{FlexGraph Microarchitecture}
 \label{fig:microarchitecture}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/micro_walker}
+\caption{DCSC Walker}
+\label{fig:micro_walker}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/micro_pe}
+\caption{Processing Element}
+\label{fig:micro_pe}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/micro_writer}
+\caption{Stream Writer}
+\label{fig:micro_writer}
 \end{figure}
 
 Figure \ref{fig:microarchitecture} illustrates FlexGraph accelerator microarchitecture. It is comprised of four main module types, a controller, processing elements (PEs), a load store unit (LSU) and vertex caches. The main controller is responsible for starting the accelerator, scheduling tasks for execution, reporting hardware counters and terminating the execution. The processing elements execute partition tasks assigned to them by the controller and communicate with the LSU to access the matrix and vertex data for their partition. They are also responsible for sending their final output result back to memory. The LSU is the module responsible for managing external communication between the accelerator and memory via the QPI interface. It directly binds to the QPI ports defined in listing 2.
