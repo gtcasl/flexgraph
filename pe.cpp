@@ -91,10 +91,9 @@ void spmv_pe::describe() {
     )__else (
       inflight_mask_.next = inflight_mask_ & ~y_waddr_mask;
     );
-  )__else (
-    __if (adder_issue) (
-      inflight_mask_.next = inflight_mask_ | y_raddr_mask;
-    );
+  )
+  __elif (adder_issue) (
+    inflight_mask_.next = inflight_mask_ | y_raddr_mask;
   );
 
   //--
