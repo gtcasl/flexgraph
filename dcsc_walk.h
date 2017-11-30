@@ -85,8 +85,6 @@ private:
 
   ch_seq<ch_block> acblock_;
   ch_seq<ch_block> asblock_;
-  ch_seq<ch_block> arblock_;
-  ch_seq<ch_block> avblock_;
   ch_seq<ch_block> xmblock_;
   ch_seq<ch_block> xvblock_;
 

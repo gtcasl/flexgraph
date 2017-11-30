@@ -373,12 +373,7 @@ void spmv_dcsc_walk::describe() {
         // get x_value from local storage
         x_value_.next = (xvblock_ >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
       );
-      // fetch first (a_rowind, a_value) blocks
-      arblock_.next = arbuf_.io.deq.data;
-      avblock_.next = avbuf_.io.deq.data;
-      arbuf_.io.deq.ready = true;
-      avbuf_.io.deq.ready = true;
-      // proceed to execution
+      // go to execute
       state.next = ch_walk_state::execute;
     )__else (
       // profiling
@@ -387,8 +382,8 @@ void spmv_dcsc_walk::describe() {
   )
   __case (ch_walk_state::execute) (
     // push data to PE
-    io.pe.data.a_rowind = (arblock_ >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
-    io.pe.data.a_value  = (avblock_ >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
+    io.pe.data.a_rowind = (arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_bitwidth_v<ch_ptr>>();
+    io.pe.data.a_value  = (avbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
     io.pe.data.x_value  = x_value_.as<ch_float32>();
     io.pe.data.is_end   = false;
     io.pe.valid         = true;
@@ -401,13 +396,14 @@ void spmv_dcsc_walk::describe() {
       __if (row_curr_.next != row_end_) (
         // check if last entry in block
         __if ((row_curr_ & 0xf) == 0xf) (
-          // fetch the next (a_rowind, a_value) blocks
-          arblock_.next = arbuf_.io.deq.data;
-          avblock_.next = avbuf_.io.deq.data;
+          // pop fifo
           arbuf_.io.deq.ready = true;
           avbuf_.io.deq.ready = true;
         );
       )__else (
+        // pop fifo
+        arbuf_.io.deq.ready = true;
+        avbuf_.io.deq.ready = true;
         // go to next column
         state.next = ch_walk_state::next_column;
       );
