@@ -7,7 +7,7 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-int main(int argc, char **argv) {
+int main() {
 
   ch_device<spmv_write_cache<ch_bit4, 8, 8, 2>> device;
   ch_simulator sim(device);

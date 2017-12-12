@@ -1,6 +1,7 @@
-#CXXFLAGS += -std=c++17 -O3 -DNDEBUG
-CXXFLAGS += -std=c++17 -O0 -g -fmax-errors=5
-LDFLAGS += -lcash
+#CXX = clang-5.0
+#CXXFLAGS += -std=c++17 -O3 -DNDEBUG -pedantic -Wall -Wextra
+CXXFLAGS += -std=c++17 -O0 -g -pedantic -Wall -Wextra
+LDFLAGS += -lcash -lstdc++
 
 PROJECT_SRCS = lsu.cpp dcsc_walk.cpp pe.cpp spmv.cpp mtx.cpp graph.cpp cpu.cpp simulator.cpp main.cpp
 

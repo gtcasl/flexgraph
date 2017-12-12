@@ -18,7 +18,6 @@ static void init_vertex(vertex_t* vertex) {
   for (uint32_t i = 0; i < size; ++i) {
     float value = sample[ random_select(0, __countof(sample)-1, 1.0) ];
     values[i] = value;
-    uint32_t ivalue = *(uint32_t*)&value;
     if (value != 0.0) {
       set_bitvector(masks, i);
     }
@@ -222,7 +221,7 @@ bool cpu_device::tick(ch_tick t) {
   return true;
 }
 
-void cpu_device::clear_pulse_signals(ch_tick t) {
+void cpu_device::clear_pulse_signals(ch_tick) {
   if (accelerator_.io.qpi.rd_rsp.valid) {
     accelerator_.io.qpi.rd_rsp.valid = false;
     accelerator_.io.qpi.rd_rsp.data  = 0;
@@ -343,7 +342,7 @@ void cpu_device::process_wr_rsp(ch_tick t) {
   }
 }
 
-void cpu_device::check_result(ch_tick t) {
+void cpu_device::check_result(ch_tick) {
   //--
   auto y_values_base = (uint32_t)accelerator_.io.ctx.y.values;
   auto y_masks_base = (uint32_t)accelerator_.io.ctx.y.masks;

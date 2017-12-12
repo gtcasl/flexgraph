@@ -62,7 +62,7 @@ template <typename Context, typename Qpi = aal_qpi0>
 class aal_device {
 public:
   using qpi_io = typename Qpi::io;
-  static_assert(ch_bitwidth_v<Context> == Qpi::cdata_width, "invalid context size");
+  static_assert(ch_width_v<Context> == Qpi::cdata_width, "invalid context size");
 
   __io (
     (qpi_io)          qpi,

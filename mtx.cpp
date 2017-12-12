@@ -36,8 +36,6 @@ void writeline(std::ofstream& file, const mtx_edge_t* edges, const T* weights, u
 
 size_t mxt_format_size(mtx_format fmt) {
   switch (fmt) {
-  case mtx_format::None:
-    return 0;
   case mtx_format::Int32:
     return sizeof(int);
   case mtx_format::Float:
@@ -46,11 +44,16 @@ size_t mxt_format_size(mtx_format fmt) {
     return sizeof(int64_t);
   case mtx_format::Double:
     return sizeof(double);
+  default:
+    return 0;
   }
 }
 
 void mtx_format_cast(void* dst, mtx_format fmt, double value) {
   switch (fmt) {
+  case mtx_format::None:
+    std::abort();
+    break;
   case mtx_format::Int32:
     *(int*)dst = value;
     break;
@@ -97,8 +100,8 @@ int mtx_read_header_from_binary(std::ifstream& file, mtx_header_t* header) {
 int mtx_read_data_from_binary(std::ifstream& file, const mtx_header_t& header,
                               mtx_edge_t* edges, int edges_size,
                               void* weights, int weights_size) {
-  size_t edges_size_ = header.nnz * sizeof(mtx_edge_t);
-  size_t weights_size_ = header.nnz * mxt_format_size(header.fmt);
+  int edges_size_ = header.nnz * sizeof(mtx_edge_t);
+  int weights_size_ = header.nnz * mxt_format_size(header.fmt);
 
   if (edges == nullptr || edges_size < edges_size_)
     return -1;
@@ -169,8 +172,8 @@ int mtx_detect_header_from_text(std::ifstream& file, mtx_header_t* header) {
 int mtx_read_data_from_text(std::ifstream& file, const mtx_header_t& header,
                          mtx_edge_t* edges, int edges_size,
                          void* weights, int weights_size) {
-  size_t edges_size_ = header.nnz * sizeof(mtx_edge_t);
-  size_t weights_size_ = header.nnz * mxt_format_size(header.fmt);
+  int edges_size_ = header.nnz * sizeof(mtx_edge_t);
+  int weights_size_ = header.nnz * mxt_format_size(header.fmt);
 
   if (edges == nullptr || edges_size < edges_size_)
     return -1;
@@ -183,6 +186,9 @@ int mtx_read_data_from_text(std::ifstream& file, const mtx_header_t& header,
   if (weights) {
     int ret = -1;
     switch (header.fmt) {
+    case mtx_format::None:
+      std::abort();
+      break;
     case mtx_format::Int32:
       ret = readline(file, edges, (int*)weights);
       break;
@@ -218,8 +224,8 @@ int mtx_write_binary(std::ofstream& file, const mtx_header_t& header,
                      const void* weights, int weights_size) {
   char magic[4] = {'M', 'T', 'X', 0};
 
-  size_t edges_size_ = header.nnz * sizeof(mtx_edge_t);
-  size_t weights_size_ = header.nnz * mxt_format_size(header.fmt);
+  int edges_size_ = header.nnz * sizeof(mtx_edge_t);
+  int weights_size_ = header.nnz * mxt_format_size(header.fmt);
 
   if (edges == nullptr || edges_size < edges_size_)
     return -1;
@@ -241,8 +247,8 @@ int mtx_write_binary(std::ofstream& file, const mtx_header_t& header,
 int mtx_write_text(std::ofstream& file, const mtx_header_t& header,
                    const mtx_edge_t* edges, int edges_size,
                    const void* weights, int weights_size) {
-  size_t edges_size_ = header.nnz * sizeof(mtx_edge_t);
-  size_t weights_size_ = header.nnz * mxt_format_size(header.fmt);
+  int edges_size_ = header.nnz * sizeof(mtx_edge_t);
+  int weights_size_ = header.nnz * mxt_format_size(header.fmt);
 
   if (edges == nullptr || edges_size < edges_size_)
     return -1;
@@ -258,6 +264,9 @@ int mtx_write_text(std::ofstream& file, const mtx_header_t& header,
 
   if (weights) {
     switch (header.fmt) {
+    case mtx_format::None:
+      std::abort();
+      break;
     case mtx_format::Int32:
       writeline(file, edges, (const int*)weights, header.nnz);
       break;

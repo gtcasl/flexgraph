@@ -13,7 +13,7 @@ const char* mtx_file = "sample.mtx";
 
 namespace spmv {
 int verbose = 0;
-};
+}
 
 void spmv::DbgPrint(int level, const char *format, ...) {
   char buf[256];
@@ -24,16 +24,6 @@ void spmv::DbgPrint(int level, const char *format, ...) {
     std::cout << buf;
   }
   va_end(args);
-}
-
-static inline uint64_t __rdtsc() {
-  uint32_t hi, lo;
-  __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
-  return ((uint64_t)hi << 32) | lo;
-}
-
-static double elapsed_time(uint64_t start, uint64_t end) {
-  return (end - start) / CPU_FREQ;
 }
 
 static void parse_args(int argc, char **argv) {
@@ -53,6 +43,7 @@ static void parse_args(int argc, char **argv) {
     case 'h':
       printf("SPMV RTL Simulator v1.0 - by Blaise Tine.\n");
       printf("Usage: [-m mtx matrix] [-v verbose_level] [-t run_ticks] [-h help]\n");
+      [[fallthrough]];
     default:
       exit(1);
     }
@@ -68,17 +59,10 @@ static void parse_args(int argc, char **argv) {
 int main(int argc, char **argv) {  
   //--  
   parse_args(argc, argv);
-  
-  //--
-  simulator* sim = new simulator(mtx_file);
-  uint64_t start = __rdtsc();
-  
-  sim->run(run_ticks);
-  
-  uint64_t end = __rdtsc();
-  printf("Total elapsed time = %.3f s\n", elapsed_time(start, end));
 
-  delete sim;
+  //--
+  simulator sim(mtx_file);
+  sim.run(run_ticks);
 
   return 0;
 }

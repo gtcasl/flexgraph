@@ -27,7 +27,7 @@ public:
     uint32_t nzx,
     uint32_t num_parts,
     uint32_t data_size) {
-    this->init(cols, rows, nnz, nnz, num_parts, data_size);
+    this->init(cols, rows, nnz, nzx, num_parts, data_size);
   }
   
   mdcsc_t(const char* mtx_file, mtx_format edge_type, uint32_t part_size);

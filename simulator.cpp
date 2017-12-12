@@ -1,18 +1,7 @@
 #include "simulator.h"
+#include <chrono>
 
 using namespace spmv;
-
-#define CPU_FREQ (2.3e9)
-
-static uint64_t __rdtsc() {
-  unsigned int hi, lo;
-  __asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));
-  return ((uint64_t)hi << 32) | lo;
-}
-
-static double elapsed_time(uint64_t start, uint64_t end) {
-  return (end - start) / CPU_FREQ;
-}
 
 simulator::simulator(const char* mtx_file)
   : vcd_file_("spmv.vcd") {
@@ -34,7 +23,7 @@ void simulator::run(ch_tick run_ticks) {
   // reset native simulator
   ch_tick t = tracer_->reset(0);
 
-  uint64_t start = __rdtsc();
+  auto start_time = std::chrono::system_clock::now();
 
   // run simulation  
   for (;t < run_ticks;) {
@@ -47,8 +36,10 @@ void simulator::run(ch_tick run_ticks) {
     t = tracer_->step(t);
   }
 
-  uint64_t end = __rdtsc();
-  printf("Total elapsed time = %.3f s\n", elapsed_time(start, end));
+  auto end_time = std::chrono::system_clock::now();
+  auto latency = end_time - start_time;
+  printf("Total elapsed time = %lf ms\n",
+         std::chrono::duration<double, std::milli>(latency).count());
   
   // dump stats
   this->dump_stats(t);

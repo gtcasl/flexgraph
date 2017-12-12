@@ -128,8 +128,8 @@ static void build(mdcsc_t* matrix,
     if (nnz       > 0) {
       uint32_t nzx = 0;
       uint32_t nzy = 0;
-      for (uint32_t i = edge_start, col = -1; i < edge_end; ++i) {
-        if (col == -1 || edges[i].dst > col) {          
+      for (uint32_t i = edge_start, col = 0xffffffff; i < edge_end; ++i) {
+        if (col == 0xffffffff || edges[i].dst > col) {
           col = edges[i].dst;          
           ++nzx;
         }
@@ -171,9 +171,9 @@ static void build(mdcsc_t* matrix,
     uint32_t edge_end   = edge_ptr[p];
     uint32_t nnz_parts  = edge_end - edge_start;
     if (nnz_parts > 0) {
-      uint32_t col = -1;
+      uint32_t col = 0xffffffff;
       for (uint32_t i = edge_start; i < edge_end; ++i) {
-        if (col == -1 || col < edges[i].dst) {
+        if (col == 0xffffffff || col < edges[i].dst) {
           col = edges[i].dst;
           col_ind[col_idx] = col;
           row_ptr[col_idx] = i;
@@ -239,7 +239,6 @@ static void load_mtx(mdcsc_t* matrix,
   // Assign partition id to each edge
   // based on the src value being within a partition rows range
   //
-#pragma omp parallel for num_threads(nthreads)
   for (uint32_t i = 0; i < header.nnz; ++i) {
 #ifdef SET_PARTITION_IDS_BINARY_SEARCH
     uint32_t key = edges[i].src;

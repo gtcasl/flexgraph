@@ -56,7 +56,7 @@ private:
 
 struct rq_data_t {
   rq_data_t() {
-    for (int i = 0; i < sizeof(__m); ++i) {
+    for (unsigned i = 0; i < sizeof(__m); ++i) {
       __m[i] = 0;
     }
   }
@@ -65,7 +65,7 @@ struct rq_data_t {
 
 struct rq_mdata_t {
   rq_mdata_t() {
-    for (int i = 0; i < sizeof(__m); ++i) {
+    for (unsigned i = 0; i < sizeof(__m); ++i) {
       __m[i] = 0;
     }
   }
@@ -149,9 +149,10 @@ private:
   std::list<request_t*> qpi_read_requests_;
   std::list<request_t*> qpi_write_requests_;
   
+  byte_t*   shared_mem_;
+
   mdcsc_t*  matrix_;
   vertex_t* vertex_;
-  byte_t*   shared_mem_;
 
   accumulator<ch_tick> qpi_rd_stats_;
   accumulator<ch_tick> qpi_wr_stats_;

@@ -93,9 +93,9 @@ void spmv_lsu::write_req_thread() {
     auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
     auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.asSeq();
 
-    __switch (qw_state) (
-    __case (ch_qpi_write_state::ready) (
-      __if (lsu_write_valid) (
+    __switch (qw_state)
+    __case (ch_qpi_write_state::ready) {
+      __if (lsu_write_valid) {
         // get the data
         ch_wr_mdata_t mdata(req_owner, req_data.type);
         qpi_wr_req_addr.next  = get_baseaddr(req_data.type) + req_data.addr;
@@ -103,8 +103,8 @@ void spmv_lsu::write_req_thread() {
         qpi_wr_req_mdata.next = ch_zext<qpi::mdata_width>(mdata.asBits());
         // go to write
         qw_state.next = ch_qpi_write_state::write;
-      )__else (
-        __if (wr_cache_.io.evict.valid) (
+      } __else {
+        __if (wr_cache_.io.evict.valid) {
           // get the data
           auto owner = ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
           ch_wr_mdata_t mdata(owner, ch_wr_request::y_masks);
@@ -113,20 +113,20 @@ void spmv_lsu::write_req_thread() {
           qpi_wr_req_mdata.next = ch_zext<qpi::mdata_width>(mdata.asBits());
           // go to write
           qw_state.next = ch_qpi_write_state::write;
-        );
-      );
-    )
-    __case (ch_qpi_write_state::write) (
-      __if (!io.qpi.wr_req.almostfull) (
+        };
+      };
+    }
+    __case (ch_qpi_write_state::write) {
+      __if (!io.qpi.wr_req.almostfull) {
         qpi_wr_req_valid.next = true; // QPI write enable
         outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
         qw_state.next = ch_qpi_write_state::ready;
-      );
-    )
-    __default (
+      };
+    }
+    __default {
       qpi_wr_req_valid.next = false; // valid signal is a pulse (goes off the following cycle)
       outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
-    ));
+    };
 
     //--
     if (verbose) {
@@ -142,61 +142,61 @@ void spmv_lsu::write_req_thread() {
 
   // control thread
   {
-    __switch (state) (
-    __case (ch_wr_req_state::ready) (
-      __if (wr_req_arb_.io.out.valid) (
+    __switch (state)
+    __case (ch_wr_req_state::ready) {
+      __if (wr_req_arb_.io.out.valid) {
         req_data.next.addr = wr_req_arb_.io.out.data.addr;
         req_data.next.type = wr_req_arb_.io.out.data.type;
         req_data.next.data = wr_req_arb_.io.out.data.data;
         req_owner.next     = wr_req_arb_.io.out.grant;
-        __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) (
-          __if (wr_req_arb_.io.out.grant == CTRL_ID) (
+        __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) {
+          __if (wr_req_arb_.io.out.grant == CTRL_ID) {
             state.next = ch_wr_req_state::flush;
-          )__else (
+          } __else {
             state.next = ch_wr_req_state::write_mask;
-          );
-        )__else (
+          };
+        } __else {
           state.next = ch_wr_req_state::write_value;
-        );
-      );
-    )
-    __case (ch_wr_req_state::write_value) (
+        };
+      };
+    }
+    __case (ch_wr_req_state::write_value) {
       lsu_write_valid = true;
       // wait for QPI write ack
-      __if (qpi_write_ready) (
+      __if (qpi_write_ready) {
         // return
         state.next = ch_wr_req_state::ready;
-      );
-    )
-    __case (ch_wr_req_state::write_mask) (
+      };
+    }
+    __case (ch_wr_req_state::write_mask) {
       // send the request to the write cache
       wr_cache_.io.enq.data.owner = ch_slice<PE_COUNT>(req_owner); // remove ctrl's bit
       wr_cache_.io.enq.data.tag   = req_data.addr;
       wr_cache_.io.enq.data.data  = req_data.data;
       wr_cache_.io.enq.valid      = true;
       // wait for the cache ack
-      __if (wr_cache_.io.enq.ready) (
+      __if (wr_cache_.io.enq.ready) {
         // return
         state.next = ch_wr_req_state::ready;
-      );
-    )
-    __case (ch_wr_req_state::flush) (
+      };
+    }
+    __case (ch_wr_req_state::flush) {
       // enable cache flush
       wr_cache_.io.flush = true;
       // wait for the cache ack
-      __if (wr_cache_.io.enq.ready) (
+      __if (wr_cache_.io.enq.ready) {
         // go wait for data
         state.next = ch_wr_req_state::wait_for_flush;
-      );
-    )
-    __case (ch_wr_req_state::wait_for_flush) (
+      };
+    }
+    __case (ch_wr_req_state::wait_for_flush) {
       // waitr for write flushes to complete
-      __if (wr_cache_.io.enq.ready) (
+      __if (wr_cache_.io.enq.ready) {
         // return
         state.next = ch_wr_req_state::ready;
-      );
-    )
-    __default (
+      };
+    }
+    __default {
       //--
       wr_cache_.io.enq.data.owner = 0;
       wr_cache_.io.enq.data.tag   = 0;
@@ -205,7 +205,7 @@ void spmv_lsu::write_req_thread() {
       wr_cache_.io.flush          = false;
       //--
       lsu_write_valid = false;
-    ));
+    };
   }
     
   //--
@@ -223,7 +223,7 @@ void spmv_lsu::write_req_thread() {
 
 void spmv_lsu::read_rsp_thread() {
   //--
-  auto mdata = io.qpi.rd_rsp.mdata.slice<ch_bitwidth_v<ch_rd_mdata_t>>().as<ch_rd_mdata_t>();
+  auto mdata = io.qpi.rd_rsp.mdata.slice<ch_width_v<ch_rd_mdata_t>>().as<ch_rd_mdata_t>();
 
   //--
   io.ctrl.rd_rsp.valid     = io.qpi.rd_rsp.valid & (mdata.owner == CTRL_ID);
@@ -254,24 +254,22 @@ void spmv_lsu::write_rsp1_thread() {
 
 ch_blk_addr spmv_lsu::get_baseaddr(const ch_rd_request& rq_type) {
   ch_blk_addr addr;
-  __switch (rq_type) (
-  __case (ch_rd_request::a_colptr) (addr = io.ctx.a.col_ptr;)
-  __case (ch_rd_request::a_colind) (addr = io.ctx.a.col_ind;)
-  __case (ch_rd_request::a_rowptr) (addr = io.ctx.a.row_ptr;)
-  __case (ch_rd_request::a_rowind) (addr = io.ctx.a.row_ind;)
-  __case (ch_rd_request::a_values) (addr = io.ctx.a.values;)
-  __case (ch_rd_request::x_values) (addr = io.ctx.x.values;)
-  __default                        (addr = io.ctx.x.masks;)
-  );
+  __switch (rq_type)
+  __case (ch_rd_request::a_colptr) { addr = io.ctx.a.col_ptr; }
+  __case (ch_rd_request::a_colind) { addr = io.ctx.a.col_ind; }
+  __case (ch_rd_request::a_rowptr) { addr = io.ctx.a.row_ptr; }
+  __case (ch_rd_request::a_rowind) { addr = io.ctx.a.row_ind; }
+  __case (ch_rd_request::a_values) { addr = io.ctx.a.values; }
+  __case (ch_rd_request::x_values) { addr = io.ctx.x.values; }
+  __default                        { addr = io.ctx.x.masks; };
   return addr;
 }
 
 ch_blk_addr spmv_lsu::get_baseaddr(const ch_wr_request& rq_type) {
   ch_blk_addr addr;
-  __switch (rq_type) (
-  __case (ch_wr_request::y_values)   (addr = io.ctx.y.values;)
-  __case (ch_wr_request::y_masks)    (addr = io.ctx.y.masks;)
-  __default                          (addr = io.ctx.stats;)
-  );
+  __switch (rq_type)
+  __case (ch_wr_request::y_values) { addr = io.ctx.y.values; }
+  __case (ch_wr_request::y_masks)  { addr = io.ctx.y.masks; }
+  __default                        { addr = io.ctx.stats; };
   return addr;
 }

@@ -115,7 +115,7 @@ private:
 
   ch_module<ch_rd_req_arb_t> rd_req_arb_;
   ch_module<ch_wr_req_arb_t> wr_req_arb_;
-  ch_module<spmv_write_cache<ch_block, PE_COUNT, ch_bitwidth_v<ch_blk_addr>>> wr_cache_;
+  ch_module<spmv_write_cache<ch_block, PE_COUNT, ch_width_v<ch_blk_addr>>> wr_cache_;
 };
 
 }

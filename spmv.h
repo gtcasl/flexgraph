@@ -15,7 +15,7 @@ enum {
   LOG2_HWCNTR_ADDR_SIZE = log2ceil(PE_COUNT+1),
 };
 
-using ch_part_buf = ch_bit<ch_bitwidth_v<ch_block> + PARTITION_VALUE_BITS>;
+using ch_part_buf = ch_bit<ch_width_v<ch_block> + PARTITION_VALUE_BITS>;
 
 using ch_pbuf_t = ch_queue<ch_block, PBUF_SIZE>;
 

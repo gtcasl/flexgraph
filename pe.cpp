@@ -20,9 +20,9 @@ spmv_pe::spmv_pe() {
   io.stats = stats_;
 
   //--
-  __if (y_wenable_) (
+  __if (y_wenable_) {
     y_values_[y_waddr_] = y_value_;    
-  );
+  };
 }
 
 spmv_pe::~spmv_pe() {}
@@ -74,55 +74,53 @@ void spmv_pe::describe() {
   // track outstanding requests
   auto pe_issue = mult_pipe_.io.enq.valid;
   auto pe_commit = (ch_pe_state::ready == state) && add_pipe_.io.deq.valid;
-  __if (pe_issue && !pe_commit) (
+  __if (pe_issue && !pe_commit) {
     pending_reqs_.next = pending_reqs_ + 1;
-  )
-  __elif (!pe_issue && pe_commit) (
+  } __elif (!pe_issue && pe_commit) {
     pending_reqs_.next = pending_reqs_ - 1;
-  );
+  };
 
   // in-flight controller:
   // flag rows as they enter/exit the Adder pipeline
   auto adder_issue = add_pipe_.io.enq.valid && !add_pipe_.io.enq.data.is_end;
   auto adder_commit = pe_commit && !add_pipe_.io.deq.data.is_end;
-  __if (adder_commit) (
-    __if (adder_issue && (y_raddr_mask != y_waddr_mask)) (
+  __if (adder_commit) {
+    __if (adder_issue && (y_raddr_mask != y_waddr_mask)) {
       inflight_mask_.next = (inflight_mask_ & ~y_waddr_mask) | y_raddr_mask;
-    )__else (
+    } __else {
       inflight_mask_.next = inflight_mask_ & ~y_waddr_mask;
-    );
-  )
-  __elif (adder_issue) (
+    };
+  } __elif (adder_issue) {
     inflight_mask_.next = inflight_mask_ | y_raddr_mask;
-  );
+  };
 
   //--
-  __if (adder_commit) (
+  __if (adder_commit) {
     y0_.next = add_pipe_.io.deq.data.a_rowind & ~0x1f_h20;
-  );
+  };
 
   //--
-  __switch (state) (
-  __case (ch_pe_state::ready) (
+  __switch (state)
+  __case (ch_pe_state::ready) {
     //--
     y_wenable_ = add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end;
     y_waddr_   = (add_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();
     y_value_   = add_value;
 
     //--
-    __if (y_wenable_) (
+    __if (y_wenable_) {
       y_mask_.next = y_mask_ | y_waddr_mask;
-    );
+    };
 
     //--
     __if (add_pipe_.io.deq.valid
-       && add_pipe_.io.deq.data.is_end) (
+       && add_pipe_.io.deq.data.is_end) {
       y_mask_cpy_.next = y_mask_;
       y_mask_.next = 0;
       state.next = ch_pe_state::write_value0;
-    );
-  )
-  __case (ch_pe_state::write_value0) (
+    };
+  }
+  __case (ch_pe_state::write_value0) {
     // submit first y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
@@ -133,15 +131,15 @@ void spmv_pe::describe() {
     io.lsu.wr_req.data.data = value;
     io.lsu.wr_req.valid = true;
     // wait for LSU ack
-    __if (io.lsu.wr_req.ready) (
+    __if (io.lsu.wr_req.ready) {
       // go write second y_value block
       state.next = ch_pe_state::write_value1;
-    )__else (
+    } __else {
       // profiling
       stats_.next.write_value_stalls = stats_.write_value_stalls + 1;
-    );
-  )
-  __case (ch_pe_state::write_value1) (
+    };
+  }
+  __case (ch_pe_state::write_value1) {
     // submit second y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
@@ -152,30 +150,30 @@ void spmv_pe::describe() {
     io.lsu.wr_req.data.data = value;
     io.lsu.wr_req.valid = true;
     // wait for LSU ack
-    __if (io.lsu.wr_req.ready) (
+    __if (io.lsu.wr_req.ready) {
       // go write mask value
       state.next = ch_pe_state::write_mask;
-    )__else (
+    } __else {
       // profiling
       stats_.next.write_value_stalls = stats_.write_value_stalls + 1;
-    );
-  )
-  __case (ch_pe_state::write_mask) (
+    };
+  }
+  __case (ch_pe_state::write_mask) {
     // submit write mask
     io.lsu.wr_req.data.type = ch_wr_request::y_masks;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_ >> 5); // divide by 32
     io.lsu.wr_req.data.data = ch_zext<512>(y_mask_cpy_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
     io.lsu.wr_req.valid     = true;
    // wait for LSU ack
-    __if (io.lsu.wr_req.ready) (
+    __if (io.lsu.wr_req.ready) {
       // return
       state.next = ch_pe_state::ready;
-    )__else (
+    } __else {
       // profiling
       stats_.next.write_mask_stalls = stats_.write_mask_stalls + 1;
-    );
-  )
-  __default (
+    };
+  }
+  __default {
     //--
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = 0;
@@ -186,7 +184,7 @@ void spmv_pe::describe() {
     y_wenable_ = false;
     y_value_   = 0.0f;
     y_waddr_   = 0;
-  ));
+  };
 
   /*//--
   if (verbose) {

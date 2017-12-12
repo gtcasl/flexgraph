@@ -60,7 +60,7 @@ template <typename Context, typename Qpi = opae_qpi0>
 class opae_device {
 public:
   using qpi_io = typename Qpi::io;
-  static_assert(ch_bitwidth_v<Context> == Qpi::cdata_width, "invalid context size");
+  static_assert(ch_width_v<Context> == Qpi::cdata_width, "invalid context size");
   static_assert(ch_direction_v<Context> == ch_direction::in, "invalid context direction");
 
   __io (
