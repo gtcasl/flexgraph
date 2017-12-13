@@ -128,7 +128,7 @@ void spmv_device::main_thread() {
   __case (ch_ctrl_state::write_stats) {
     // write ctrl counters
     lsu_.io.ctrl.wr_req.data.type = ch_wr_request::stats;
-    lsu_.io.ctrl.wr_req.data.addr = ch_zext<ch_width_v<ch_blk_addr>>(stats_addr_);
+    lsu_.io.ctrl.wr_req.data.addr = ch_blk_addr(stats_addr_);
     lsu_.io.ctrl.wr_req.data.data = this->get_stats(stats_addr_);
     lsu_.io.ctrl.wr_req.valid     = true;
     // wait for LSU ack
@@ -251,15 +251,15 @@ void spmv_device::dispatch_thread() {
 
 ch_block spmv_device::get_stats(const ch_stats_addr& addr) {
   //--
-  auto cs = ch_case(addr, 0, ch_zext<ch_width_v<ch_block>>(stats_.asBits()));
+  auto cs = ch_case(addr, 0, ch_block(stats_.asBits()));
   for (int i = 1; i < PE_COUNT; ++i) {
     ch_stats_t stats;
     stats.walker = walkers_[i-1].io.ctrl.stats;
     stats.pe = PEs_[i-1].io.stats;
-    cs(i, ch_zext<ch_width_v<ch_block>>(stats.asBits()));
+    cs(i, ch_block(stats.asBits()));
   }
   ch_stats_t stats;
   stats.walker = walkers_[PE_COUNT-1].io.ctrl.stats;
   stats.pe = PEs_[PE_COUNT-1].io.stats;
-  return cs(ch_zext<ch_width_v<ch_block>>(stats.asBits()));
+  return cs(ch_block(stats.asBits()));
 }
