@@ -60,23 +60,22 @@ void spmv_dcsc_walk::describe() {
   io.ctrl.start.ready = (state == ch_walk_state::ready);
 
   //--
-#define emit_pending_size(p, q, rt) \
-  { \
-    auto req = io.lsu.rd_req.valid && io.lsu.rd_req.ready && (io.lsu.rd_req.data.type == ch_rd_request::rt); \
-    auto deq = q.io.deq.ready; \
-    __if (req && !deq) { \
-      p.next = p + 1; \
-    } __elif (!req && deq) { \
-      p.next = p - 1; \
-    }; \
-  }
-  emit_pending_size(acbuf_pending_size_, acbuf_, a_colind)
-  emit_pending_size(asbuf_pending_size_, asbuf_, a_rowptr)
-  emit_pending_size(arbuf_pending_size_, arbuf_, a_rowind)
-  emit_pending_size(avbuf_pending_size_, avbuf_, a_values)
-  emit_pending_size(xvbuf_pending_size_, xvbuf_, x_values)
-  emit_pending_size(xmbuf_pending_size_, xmbuf_, x_masks)
-#undef emit_pending_size
+  auto emit_pending_size = [&](auto& p, const auto& q, auto type) {
+    auto req = io.lsu.rd_req.valid && io.lsu.rd_req.ready && (io.lsu.rd_req.data.type == type);
+    auto deq = q.io.deq.ready;
+    __if (req && !deq) {
+      p.next = p + 1;
+    }
+    __elif (!req && deq) {
+      p.next = p - 1;
+    };
+  };
+  emit_pending_size(acbuf_pending_size_, acbuf_, ch_rd_request::a_colind);
+  emit_pending_size(asbuf_pending_size_, asbuf_, ch_rd_request::a_rowptr);
+  emit_pending_size(arbuf_pending_size_, arbuf_, ch_rd_request::a_rowind);
+  emit_pending_size(avbuf_pending_size_, avbuf_, ch_rd_request::a_values);
+  emit_pending_size(xvbuf_pending_size_, xvbuf_, ch_rd_request::x_values);
+  emit_pending_size(xmbuf_pending_size_, xmbuf_, ch_rd_request::x_masks);
 
   //--
   if (verbose && id_ == 2) {

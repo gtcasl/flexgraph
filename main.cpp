@@ -8,6 +8,8 @@ using namespace spmv;
 
 #define CPU_FREQ (2.3e9)
 
+bool verilog_only = false;
+
 int run_ticks = 1000000;
 const char* mtx_file = "sample.mtx";
 
@@ -28,7 +30,7 @@ void spmv::DbgPrint(int level, const char *format, ...) {
 
 static void parse_args(int argc, char **argv) {
   int c;
-  while ((c = getopt(argc, argv, "sm:v:t:i:h?")) != -1) {
+  while ((c = getopt(argc, argv, "lm:v:t:i:h?")) != -1) {
     switch (c) {
     case 'v':
       spmv::verbose = atoi(optarg);
@@ -36,13 +38,16 @@ static void parse_args(int argc, char **argv) {
     case 'm':
       mtx_file = optarg;
       break;
+    case 'l':
+      verilog_only = true;
+      break;
     case 't':
       run_ticks = atoi(optarg);
       break;
     case '?':
     case 'h':
       printf("SPMV RTL Simulator v1.0 - by Blaise Tine.\n");
-      printf("Usage: [-m mtx matrix] [-v verbose_level] [-t run_ticks] [-h help]\n");
+      printf("Usage: [-m mtx matrix] [-v verbose level] [-l verilog only] [-t run ticks] [-h help]\n");
       [[fallthrough]];
     default:
       exit(1);
@@ -62,7 +67,9 @@ int main(int argc, char **argv) {
 
   //--
   simulator sim(mtx_file);
-  sim.run(run_ticks);
+  if (!verilog_only) {
+    sim.run(run_ticks);
+  }
 
   return 0;
 }
