@@ -2,6 +2,7 @@ TODO
 dcsc_walk.cpp
 dcsc_walk.h
 flexgraph.v
+flexgraph_tb.v
 opae.h
 pipew.h
 report.py

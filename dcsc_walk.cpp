@@ -93,6 +93,12 @@ void spmv_dcsc_walk::describe() {
              row_blk_curr_, row_blk_end_, row_blk_cnt_, stats_.num_parts);
   }
 
+  //--
+  auto acbuf_deq = acbuf_.io.deq.ready.asSeq();
+  auto asbuf_deq = asbuf_.io.deq.ready.asSeq();
+  auto xvbuf_deq = xvbuf_.io.deq.ready.asSeq();
+  auto xmbuf_deq = xmbuf_.io.deq.ready.asSeq();
+
   // ch_walk_state FSM
   __switch (state)
   __case (ch_walk_state::ready) {
@@ -152,12 +158,12 @@ void spmv_dcsc_walk::describe() {
       //--
       acblock_.next = acbuf_.io.deq.data;
       a_colidx_.next = (acblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_width_v<ch_ptr>>();
-      acbuf_.io.deq.ready = true;
+      acbuf_deq.next = true;
 
       //--
       asblock_.next = asbuf_.io.deq.data;
       row_curr_.next = (asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_width_v<ch_ptr>>();
-      asbuf_.io.deq.ready = true;
+      asbuf_deq.next = true;
 
       //--
       __if ((col_curr_ & 0xf) != 0xf) {
@@ -195,7 +201,7 @@ void spmv_dcsc_walk::describe() {
     __if (asbuf_.io.deq.valid) {
       // get the returned block
       auto asblock = asbuf_.io.deq.data;
-      asbuf_.io.deq.ready = true;
+      asbuf_deq.next = true;
       row_end_.next = asblock.slice<ch_width_v<ch_ptr>>(); // no offset needed because the value will be at the begining of block
       // check the vertex mask
       state.next = ch_walk_state::check_x_mask;
@@ -262,7 +268,7 @@ void spmv_dcsc_walk::describe() {
     __if (xmbuf_.io.deq.valid) {
       // get the returned block
       xmblock_.next = xmbuf_.io.deq.data;
-      xmbuf_.io.deq.ready = true;
+      xmbuf_deq.next = true;
       // check if the index is valid
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = (xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
@@ -366,7 +372,7 @@ void spmv_dcsc_walk::describe() {
       __if (xvbuf_.io.deq.valid) {
         // fetch x_value block
         xvblock_.next = xvbuf_.io.deq.data;
-        xvbuf_.io.deq.ready = true;
+        xvbuf_deq.next = true;
         x_value_.next = (xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
       } __else {
         // get x_value from local storage
@@ -470,12 +476,12 @@ void spmv_dcsc_walk::describe() {
     io.lsu.rd_req.valid     = false;
 
     //--
-    acbuf_.io.deq.ready = false;
-    asbuf_.io.deq.ready = false;
+    acbuf_deq.next = false;
+    asbuf_deq.next = false;
     arbuf_.io.deq.ready = false;
     avbuf_.io.deq.ready = false;
-    xvbuf_.io.deq.ready = false;
-    xmbuf_.io.deq.ready = false;
+    xvbuf_deq.next = false;
+    xmbuf_deq.next = false;
 
     //--
     io.pe.data.a_rowind = 0;
