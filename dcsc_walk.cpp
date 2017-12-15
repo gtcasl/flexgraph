@@ -96,8 +96,18 @@ void spmv_dcsc_walk::describe() {
   //--
   auto acbuf_deq = acbuf_.io.deq.ready.asSeq();
   auto asbuf_deq = asbuf_.io.deq.ready.asSeq();
+  auto arbuf_deq = arbuf_.io.deq.ready.asSeq();
+  auto avbuf_deq = avbuf_.io.deq.ready.asSeq();
   auto xvbuf_deq = xvbuf_.io.deq.ready.asSeq();
   auto xmbuf_deq = xmbuf_.io.deq.ready.asSeq();
+
+  //--
+  auto pe_data = io.pe.data.asSeq();
+  auto pe_valid = io.pe.valid.asSeq();
+
+  //--
+  arbuf_.io.deq.ready = false;
+  avbuf_.io.deq.ready = false;
 
   // ch_walk_state FSM
   __switch (state)
@@ -348,7 +358,7 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
         row_blk_curr_.next = row_blk_curr_ + 1;
-        __if (row_blk_curr_.next != row_blk_end_) {
+        __if (row_blk_curr_ != row_blk_end_) {
           // request next a_rowind
           state.next = ch_walk_state::get_a_rowidx;
         } __else {
@@ -387,28 +397,28 @@ void spmv_dcsc_walk::describe() {
   }
   __case (ch_walk_state::execute) {
     // push data to PE
-    io.pe.data.a_rowind = (arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_width_v<ch_ptr>>();
-    io.pe.data.a_value  = (avbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
-    io.pe.data.x_value  = x_value_.as<ch_float32>();
-    io.pe.data.is_end   = false;
-    io.pe.valid         = true;
+    pe_data.next.a_rowind = (arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_width_v<ch_ptr>>();
+    pe_data.next.a_value  = (avbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
+    pe_data.next.x_value  = x_value_.as<ch_float32>();
+    pe_data.next.is_end   = false;
+    pe_valid.next         = true;
 
     // wait for PE ack
     __if (io.pe.ready) {
       // advance row
       row_curr_.next = row_curr_ + 1;
       // check if not last row
-      __if (row_curr_.next != row_end_) {
+      __if (row_curr_ != row_end_) {
         // check if last entry in block
         __if ((row_curr_ & 0xf) == 0xf) {
           // pop fifo
-          arbuf_.io.deq.ready = true;
-          avbuf_.io.deq.ready = true;
+          arbuf_deq.next = true;
+          avbuf_deq.next = true;
         };
       } __else {
         // pop fifo
-        arbuf_.io.deq.ready = true;
-        avbuf_.io.deq.ready = true;
+        arbuf_deq.next = true;
+        avbuf_deq.next = true;
         // go to next column
         state.next = ch_walk_state::next_column;
       };
@@ -421,7 +431,7 @@ void spmv_dcsc_walk::describe() {
     // advance to next column
     col_curr_.next = col_curr_ + 1;
     // check if not last column
-    __if (col_curr_.next != col_end_) {
+    __if (col_curr_ != col_end_) {
       // check if not last entry in block
       __if ((col_curr_ & 0xf) != 0xf) {
         // get the next a_index
@@ -429,7 +439,7 @@ void spmv_dcsc_walk::describe() {
         // get the next row_curr
         row_curr_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_width_v<ch_ptr>>();
         // get the next row_end
-        __if ((col_curr_.next & 0xf) != 0xf) {
+        __if ((col_curr_ & 0xf) != 0xf) {
           row_end_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1)).slice<ch_width_v<ch_ptr>>();
           // check the vertex mask
           state.next = ch_walk_state::check_x_mask;
@@ -448,11 +458,8 @@ void spmv_dcsc_walk::describe() {
   }
   __case (ch_walk_state::end_partition) {
     // send end-of-partition signal to PE
-    io.pe.data.a_rowind = 0;
-    io.pe.data.a_value  = 0;
-    io.pe.data.x_value  = 0;
-    io.pe.data.is_end   = true;
-    io.pe.valid         = true;
+    pe_data.next.is_end = true;
+    pe_valid.next       = true;
 
     // wait for PE ack
     __if (io.pe.ready) {
@@ -478,17 +485,17 @@ void spmv_dcsc_walk::describe() {
     //--
     acbuf_deq.next = false;
     asbuf_deq.next = false;
-    arbuf_.io.deq.ready = false;
-    avbuf_.io.deq.ready = false;
+    arbuf_deq.next = false;
+    avbuf_deq.next = false;
     xvbuf_deq.next = false;
     xmbuf_deq.next = false;
 
     //--
-    io.pe.data.a_rowind = 0;
-    io.pe.data.a_value  = 0;
-    io.pe.data.x_value  = 0;
-    io.pe.data.is_end   = false;
-    io.pe.valid         = false;
+    pe_data.next.a_rowind = 0;
+    pe_data.next.a_value  = 0;
+    pe_data.next.x_value  = 0;
+    pe_data.next.is_end   = false;
+    pe_valid.next         = false;
   };
 
   //--
