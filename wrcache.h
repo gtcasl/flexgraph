@@ -13,11 +13,11 @@ private:
   using ch_tag = ch_bit<TagBits>;
 
   __enum (ch_state, (
-    (ready,       1<<0),
-    (lookup,      1<<1),
-    (check_evict, 1<<2),
-    (evict,       1<<3),
-    (flush,       1<<4)
+    ready,
+    lookup,
+    check_evict,
+    evict,
+    flush
   ));
 
   __struct (entry_t, (

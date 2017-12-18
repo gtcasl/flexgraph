@@ -4,12 +4,12 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_ctrl_state, (
-  (ready,             1<<0),
-  (get_partition,     1<<1),
-  (wait_for_execute,  1<<2),
-  (flush_buffers,     1<<3),
-  (write_stats,       1<<4),
-  (wait_for_writes,   1<<5)
+  ready,
+  get_partition,
+  wait_for_execute,
+  flush_buffers,
+  write_stats,
+  wait_for_writes
 ));
 
 spmv_device::spmv_device() {
@@ -95,7 +95,7 @@ void spmv_device::main_thread() {
       // wait for LSU ack
       __if (lsu_.io.ctrl.rd_req.ready) {
         part_blk_curr_.next = part_blk_curr_ + 1;
-        __if (part_blk_curr_.next == part_blk_end_) {
+        __if (part_blk_curr_ == part_blk_end_) { //=part_blk_curr_.next
           // go wait for execution to complete
           state.next = ch_ctrl_state::wait_for_execute;
         };
@@ -216,8 +216,8 @@ void spmv_device::dispatch_thread() {
 
           // check if we can pop another partition from current block
           // we need at least two entries to proceed
-          __if (part_curr_.next != num_parts_
-             && part_buf_size_.next != 1) {
+          __if (part_curr_ != num_parts_    //=part_curr_.next
+             && part_buf_size_ != 1) {      //=part_buf_size_.next
             // goto next PE
             state.next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
           } __else {

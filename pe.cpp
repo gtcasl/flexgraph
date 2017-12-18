@@ -5,10 +5,10 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_pe_state, (
-  (ready,         1<<0),
-  (write_value0,  1<<1),
-  (write_value1,  1<<2),
-  (write_mask,    1<<3)
+  ready,
+  write_value0,
+  write_value1,
+  write_mask
 ));
 
 spmv_pe::spmv_pe() {

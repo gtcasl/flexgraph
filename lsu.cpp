@@ -4,16 +4,16 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_wr_req_state, (
-  (ready,           1<<0),
-  (write_value,     1<<1),
-  (write_mask,      1<<2),
-  (flush,           1<<3),
-  (wait_for_flush,  1<<4)
+  ready,
+  write_value,
+  write_mask,
+  flush,
+  wait_for_flush
 ));
 
 __enum (ch_qpi_write_state, (
-  (ready, 1<<0),
-  (write, 1<<1)
+  ready,
+  write
 ));
 
 spmv_lsu::spmv_lsu() {

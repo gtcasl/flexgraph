@@ -4,22 +4,22 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_walk_state, (
-  (ready,             1<<0),
-  (get_a_colidx,      1<<1),
-  (get_a_rstart,      1<<2),
-  (wait_for_a_rstart, 1<<3),
-  (get_a_rend,        1<<4),
-  (wait_for_a_rend,   1<<5),
-  (check_x_mask,      1<<6),
-  (get_x_mask,        1<<7),
-  (wait_for_x_mask,   1<<8),
-  (get_x_value,       1<<9),
-  (get_a_rowidx,      1<<10),
-  (get_a_value,       1<<11),
-  (wait_for_data,     1<<12),
-  (execute,           1<<13),
-  (next_column,       1<<14),
-  (end_partition,     1<<15)
+  ready,
+  get_a_colidx,
+  get_a_rstart,
+  wait_for_a_rstart,
+  get_a_rend,
+  wait_for_a_rend,
+  check_x_mask,
+  get_x_mask,
+  wait_for_x_mask,
+  get_x_value,
+  get_a_rowidx,
+  get_a_value,
+  wait_for_data,
+  execute,
+  next_column,
+  end_partition
 ));
 
 spmv_dcsc_walk::spmv_dcsc_walk()
@@ -222,19 +222,19 @@ void spmv_dcsc_walk::describe() {
   }
   __case (ch_walk_state::check_x_mask) {
     // check if the current mask block is valid
-    ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
+    /*ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
     ch_ptr x_mask_addr = INT32_TO_BLOCK_ADDR(x_mask_index);
     __if (x_mask_addr == xmblock_addr_) {
       // check if the index is valid
       ch_bit32 mask = (xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
-      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
+      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {*/
         // check if the current value block is valid
         ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
         __if (x_value_addr == xvblock_addr_) {
           // calculate rows prefetch iterators
           row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
           row_blk_end_.next  = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
-          row_blk_cnt_.next  = (row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
+          row_blk_cnt_.next  = 0; //=(row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
           // request a_rowind
           state.next = ch_walk_state::get_a_rowidx;
         } __else {
@@ -242,7 +242,7 @@ void spmv_dcsc_walk::describe() {
           xvblock_addr_.next = x_value_addr;
           // request x_value
           state.next = ch_walk_state::get_x_value;
-        };
+        };/*
       } __else {
         // go to next column
         state.next = ch_walk_state::next_column;
@@ -252,7 +252,7 @@ void spmv_dcsc_walk::describe() {
       xmblock_addr_.next = x_mask_addr;
       // request x_mask value
       state.next = ch_walk_state::get_x_mask;
-    };
+    };*/
   }
   __case (ch_walk_state::get_x_mask) {
     // request x_mask
@@ -276,20 +276,20 @@ void spmv_dcsc_walk::describe() {
   __case (ch_walk_state::wait_for_x_mask) {
     // wait for the x_mask block to arrive
     __if (xmbuf_.io.deq.valid) {
-      // get the returned block
+      /*// get the returned block
       xmblock_.next = xmbuf_.io.deq.data;
       xmbuf_deq.next = true;
       // check if the index is valid
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = (xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
-      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
+      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {*/
         // check if the current value block is valid
-        ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
+        ch_ptr x_value_addr(0); //=INT32_TO_BLOCK_ADDR(a_colidx_);
         __if (x_value_addr == xvblock_addr_) {
           // calculate rows prefetch iterators
           row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
           row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
-          row_blk_cnt_.next = (row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
+          row_blk_cnt_.next = 0; //=(row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
           // request a_rowind
           state.next = ch_walk_state::get_a_rowidx;
         } __else {
@@ -297,11 +297,11 @@ void spmv_dcsc_walk::describe() {
           xvblock_addr_.next = x_value_addr;
           // request x_value
           state.next = ch_walk_state::get_x_value;
-        };
+        };/*
       } __else {
         // go to next column
         state.next = ch_walk_state::next_column;
-      };
+      };*/
     } __else {
       // profiling
       stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
@@ -318,7 +318,7 @@ void spmv_dcsc_walk::describe() {
         // calculate rows prefetch iterators
         row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
         row_blk_end_.next  = CEIL_INT32_TO_BLOCK_ADDR(row_end_);
-        row_blk_cnt_.next  = (row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
+        row_blk_cnt_.next  = 0; //=(row_blk_end_.next - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
         // request a_rowind
         state.next = ch_walk_state::get_a_rowidx;
       } __else {
@@ -357,8 +357,8 @@ void spmv_dcsc_walk::describe() {
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
-        row_blk_curr_.next = row_blk_curr_ + 1;
-        __if (row_blk_curr_ != row_blk_end_) {
+        row_blk_curr_.next = 0; //=row_blk_curr_ + 1;
+        __if (row_blk_curr_ != row_blk_end_) { //=row_blk_curr_.next
           // request next a_rowind
           state.next = ch_walk_state::get_a_rowidx;
         } __else {
@@ -378,7 +378,7 @@ void spmv_dcsc_walk::describe() {
     // wait for all a_rowind and a_value blocks to arrive
     // read requests are returned in order, so
     // we only need to wait on the requested last buffer
-    __if (avbuf_.io.size == row_blk_cnt_) {
+    //__if (avbuf_.io.size == row_blk_cnt_) {
       __if (xvbuf_.io.deq.valid) {
         // fetch x_value block
         xvblock_.next = xvbuf_.io.deq.data;
@@ -390,10 +390,10 @@ void spmv_dcsc_walk::describe() {
       };
       // go to execute
       state.next = ch_walk_state::execute;
-    } __else {
-      // profiling
-      stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
-    };
+    //} __else {
+    //  // profiling
+    //  stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
+    //};
   }
   __case (ch_walk_state::execute) {
     // push data to PE
@@ -408,7 +408,7 @@ void spmv_dcsc_walk::describe() {
       // advance row
       row_curr_.next = row_curr_ + 1;
       // check if not last row
-      __if (row_curr_ != row_end_) {
+      __if (row_curr_ != row_end_) { //=row_curr_.next
         // check if last entry in block
         __if ((row_curr_ & 0xf) == 0xf) {
           // pop fifo
@@ -431,7 +431,7 @@ void spmv_dcsc_walk::describe() {
     // advance to next column
     col_curr_.next = col_curr_ + 1;
     // check if not last column
-    __if (col_curr_ != col_end_) {
+    __if (col_curr_ != col_end_) { //=col_curr_.next
       // check if not last entry in block
       __if ((col_curr_ & 0xf) != 0xf) {
         // get the next a_index
@@ -439,7 +439,7 @@ void spmv_dcsc_walk::describe() {
         // get the next row_curr
         row_curr_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_width_v<ch_ptr>>();
         // get the next row_end
-        __if ((col_curr_ & 0xf) != 0xf) {
+        __if ((col_curr_ & 0xf) != 0xf) { //=col_curr_.next
           row_end_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1)).slice<ch_width_v<ch_ptr>>();
           // check the vertex mask
           state.next = ch_walk_state::check_x_mask;
@@ -464,7 +464,7 @@ void spmv_dcsc_walk::describe() {
     // wait for PE ack
     __if (io.pe.ready) {
       // profiling
-      ch_bit32 runtime = (io.ctrl.timer - prof_start_).slice<32>();
+      ch_bit32 runtime(0); //=(io.ctrl.timer - prof_start_).slice<32>();
       stats_.next.min_latency   = ch_select(stats_.min_latency == 0, runtime, ch_min(stats_.min_latency, runtime));
       stats_.next.max_latency   = ch_max(stats_.min_latency, runtime);
       stats_.next.total_latency = stats_.total_latency + runtime;
