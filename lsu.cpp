@@ -223,7 +223,7 @@ void spmv_lsu::write_req_thread() {
 
 void spmv_lsu::read_rsp_thread() {
   //--
-  auto mdata = io.qpi.rd_rsp.mdata.slice<ch_width_v<ch_rd_mdata_t>>().as<ch_rd_mdata_t>();
+  ch_rd_mdata_t mdata(io.qpi.rd_rsp.mdata); //.slice<ch_width_v<ch_rd_mdata_t>>().as<ch_rd_mdata_t>();
 
   //--
   io.ctrl.rd_rsp.valid     = io.qpi.rd_rsp.valid & (mdata.owner == CTRL_ID);

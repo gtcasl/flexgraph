@@ -47,13 +47,12 @@ protected:
 
   ch_seq<ch_ptr> part_blk_curr_;
   ch_seq<ch_ptr> part_blk_end_;
-  ch_seq<ch_ptr> part_curr_;
 
   ch_seq<ch_stats_addr> stats_addr_;
 
   ch_seq<ch_ctrl_stats_t> stats_;
 
-  ch_ptr num_parts_;
+  ch_seq<ch_ptr> num_parts_;
 };
 
 }

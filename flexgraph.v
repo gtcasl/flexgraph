@@ -196,32 +196,30 @@ module spmv_dcsc_walk(
     wire[511:0] lit320 = 512'h0;
     wire[351:0] lit374 = 352'h0;
     wire[84:0] lit629 = 85'b0;
-    wire[63:0] io_ctrl_start_data5; // #36 dcsc_walk.cpp(27)
-    wire[63:0] io_ctrl_start_data_part6; // #37 dcsc_walk.cpp(27)
-    wire[31:0] io_ctrl_start_data_part_start7; // #38 dcsc_walk.cpp(27)
-    wire[31:0] io_ctrl_start_data_part_end8; // #39 dcsc_walk.cpp(27)
-    wire io_ctrl_start_ready11; // #40 dcsc_walk.cpp(27)
-    wire[351:0] io_ctrl_stats17; // #42 dcsc_walk.cpp(27)
-    wire[22:0] io_lsu_rd_req_data34; // #55 dcsc_walk.cpp(27)
-    wire[2:0] io_lsu_rd_req_data_type35; // #56 dcsc_walk.cpp(27)
-    wire[514:0] io_lsu_rd_rsp_data45; // #60 dcsc_walk.cpp(27)
-    wire[2:0] io_lsu_rd_rsp_data_type46; // #61 dcsc_walk.cpp(27)
-    wire[511:0] io_lsu_rd_rsp_data_data47; // #62 dcsc_walk.cpp(27)
-    wire io_pe_valid50; // #63 dcsc_walk.cpp(27)
-    wire[84:0] io_pe_data53; // #64 dcsc_walk.cpp(27)
-    reg[19:0] reg70; // #70 dcsc_walk.cpp(27)
-    reg[19:0] reg76; // #73 dcsc_walk.cpp(27)
-    reg[19:0] reg82; // #76 dcsc_walk.cpp(27)
-    reg[19:0] reg88; // #79 dcsc_walk.cpp(27)
-    reg[19:0] reg94; // #82 dcsc_walk.cpp(27)
-    wire[19:0] proxy96; // #85 dcsc_walk.cpp(27)
-    wire[19:0] proxy98; // #86 /home/blaise/dev/cash/src/seq.h(26)
-    reg[19:0] reg101; // #85 dcsc_walk.cpp(27)
-    reg[19:0] reg107; // #88 dcsc_walk.cpp(27)
-    reg[19:0] reg113; // #91 dcsc_walk.cpp(27)
-    reg[19:0] reg119; // #94 dcsc_walk.cpp(27)
-    wire[31:0] proxy128; // #100 dcsc_walk.cpp(27)
-    reg[31:0] reg133; // #100 dcsc_walk.cpp(27)
+    wire[63:0] io_ctrl_start_data5; // #36 dcsc_walk.cpp(29)
+    wire[63:0] io_ctrl_start_data_part6; // #37 dcsc_walk.cpp(29)
+    wire[31:0] io_ctrl_start_data_part_start7; // #38 dcsc_walk.cpp(29)
+    wire[31:0] io_ctrl_start_data_part_end8; // #39 dcsc_walk.cpp(29)
+    wire io_ctrl_start_ready11; // #40 dcsc_walk.cpp(29)
+    wire[351:0] io_ctrl_stats17; // #42 dcsc_walk.cpp(29)
+    wire[22:0] io_lsu_rd_req_data34; // #55 dcsc_walk.cpp(29)
+    wire[2:0] io_lsu_rd_req_data_type35; // #56 dcsc_walk.cpp(29)
+    wire[514:0] io_lsu_rd_rsp_data45; // #60 dcsc_walk.cpp(29)
+    wire[2:0] io_lsu_rd_rsp_data_type46; // #61 dcsc_walk.cpp(29)
+    wire[511:0] io_lsu_rd_rsp_data_data47; // #62 dcsc_walk.cpp(29)
+    wire io_pe_valid50; // #63 dcsc_walk.cpp(29)
+    wire[84:0] io_pe_data53; // #64 dcsc_walk.cpp(29)
+    reg[19:0] reg70; // #70 dcsc_walk.cpp(29)
+    reg[19:0] reg76; // #73 dcsc_walk.cpp(29)
+    reg[19:0] reg82; // #76 dcsc_walk.cpp(29)
+    reg[19:0] reg88; // #79 dcsc_walk.cpp(29)
+    reg[19:0] reg94; // #82 dcsc_walk.cpp(29)
+    reg[19:0] reg101; // #85 dcsc_walk.cpp(29)
+    reg[19:0] reg107; // #88 dcsc_walk.cpp(29)
+    reg[19:0] reg113; // #91 dcsc_walk.cpp(29)
+    reg[19:0] reg119; // #94 dcsc_walk.cpp(29)
+    wire[31:0] proxy128; // #100 dcsc_walk.cpp(29)
+    reg[31:0] reg133; // #100 dcsc_walk.cpp(29)
     wire[31:0] proxy134; // #103 /home/blaise/dev/cash/src/seq.h(20)
     wire proxy136; // #136 /home/blaise/dev/cash/src/module.h(33)
     wire bindin138;
@@ -279,30 +277,32 @@ module spmv_dcsc_walk(
     wire[511:0] proxy262; // #332 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindin263;
     wire bindout269;
+    wire[511:0] bindout272;
     wire proxy274; // #336 /home/blaise/dev/cash/src/module.h(33)
     wire bindin275;
-    reg[7:0] reg285; // #338 dcsc_walk.cpp(27)
-    reg[7:0] reg291; // #341 dcsc_walk.cpp(27)
-    reg[7:0] reg297; // #344 dcsc_walk.cpp(27)
-    reg[7:0] reg303; // #347 dcsc_walk.cpp(27)
-    reg[7:0] reg309; // #350 dcsc_walk.cpp(27)
-    reg[7:0] reg315; // #353 dcsc_walk.cpp(27)
-    reg[511:0] reg322; // #356 dcsc_walk.cpp(27)
-    reg[511:0] reg328; // #359 dcsc_walk.cpp(27)
-    reg[511:0] reg340; // #365 dcsc_walk.cpp(27)
-    wire[351:0] proxy349; // #371 dcsc_walk.cpp(27)
-    wire[31:0] proxy_num_parts350; // #372 dcsc_walk.cpp(27)
-    wire[31:0] proxy_min_latency351; // #373 dcsc_walk.cpp(27)
-    wire[31:0] proxy_total_latency353; // #375 dcsc_walk.cpp(27)
-    wire[31:0] proxy_a_colind_stalls354; // #376 dcsc_walk.cpp(27)
-    wire[31:0] proxy_a_rowptr_stalls355; // #377 dcsc_walk.cpp(27)
-    wire[31:0] proxy_a_rowind_stalls356; // #378 dcsc_walk.cpp(27)
-    wire[31:0] proxy_a_values_stalls357; // #379 dcsc_walk.cpp(27)
-    wire[31:0] proxy_x_values_stalls358; // #380 dcsc_walk.cpp(27)
-    wire[31:0] proxy_x_masks_stalls359; // #381 dcsc_walk.cpp(27)
-    wire[31:0] proxy_execute_stalls360; // #382 dcsc_walk.cpp(27)
+    reg[7:0] reg285; // #338 dcsc_walk.cpp(29)
+    reg[7:0] reg291; // #341 dcsc_walk.cpp(29)
+    reg[7:0] reg297; // #344 dcsc_walk.cpp(29)
+    reg[7:0] reg303; // #347 dcsc_walk.cpp(29)
+    reg[7:0] reg309; // #350 dcsc_walk.cpp(29)
+    reg[7:0] reg315; // #353 dcsc_walk.cpp(29)
+    reg[511:0] reg322; // #356 dcsc_walk.cpp(29)
+    reg[511:0] reg328; // #359 dcsc_walk.cpp(29)
+    reg[511:0] reg334; // #362 dcsc_walk.cpp(29)
+    reg[511:0] reg340; // #365 dcsc_walk.cpp(29)
+    wire[351:0] proxy349; // #371 dcsc_walk.cpp(29)
+    wire[31:0] proxy_num_parts350; // #372 dcsc_walk.cpp(29)
+    wire[31:0] proxy_min_latency351; // #373 dcsc_walk.cpp(29)
+    wire[31:0] proxy_total_latency353; // #375 dcsc_walk.cpp(29)
+    wire[31:0] proxy_a_colind_stalls354; // #376 dcsc_walk.cpp(29)
+    wire[31:0] proxy_a_rowptr_stalls355; // #377 dcsc_walk.cpp(29)
+    wire[31:0] proxy_a_rowind_stalls356; // #378 dcsc_walk.cpp(29)
+    wire[31:0] proxy_a_values_stalls357; // #379 dcsc_walk.cpp(29)
+    wire[31:0] proxy_x_values_stalls358; // #380 dcsc_walk.cpp(29)
+    wire[31:0] proxy_x_masks_stalls359; // #381 dcsc_walk.cpp(29)
+    wire[31:0] proxy_execute_stalls360; // #382 dcsc_walk.cpp(29)
     wire[351:0] ch_walker_stats_t362; // #383 /home/blaise/dev/cash/src/seq.h(17)
-    reg[351:0] reg376; // #371 dcsc_walk.cpp(27)
+    reg[351:0] reg376; // #371 dcsc_walk.cpp(29)
     wire eq379;
     wire and381;
     wire proxy382; // #398 unknown(0)
@@ -321,13 +321,13 @@ module spmv_dcsc_walk(
     wire eq409;
     wire and411;
     wire proxy412; // #413 unknown(0)
-    reg[3:0] reg419; // #414 dcsc_walk.cpp(57)
+    reg[4:0] reg419; // #414 dcsc_walk.cpp(59)
     wire eq421;
     wire proxy422; // #418 unknown(0)
     wire eq424;
     wire and426;
     wire and428;
-    wire proxy430; // #423 dcsc_walk.cpp(65)
+    wire proxy430; // #423 dcsc_walk.cpp(67)
     wire inv431;
     wire and433;
     wire inv435;
@@ -341,7 +341,7 @@ module spmv_dcsc_walk(
     wire eq451;
     wire and453;
     wire and455;
-    wire proxy457; // #436 dcsc_walk.cpp(65)
+    wire proxy457; // #436 dcsc_walk.cpp(67)
     wire inv458;
     wire and460;
     wire inv462;
@@ -355,7 +355,7 @@ module spmv_dcsc_walk(
     wire eq477;
     wire and479;
     wire and481;
-    wire proxy483; // #449 dcsc_walk.cpp(65)
+    wire proxy483; // #449 dcsc_walk.cpp(67)
     wire inv484;
     wire and486;
     wire inv488;
@@ -369,7 +369,7 @@ module spmv_dcsc_walk(
     wire eq503;
     wire and505;
     wire and507;
-    wire proxy509; // #462 dcsc_walk.cpp(65)
+    wire proxy509; // #462 dcsc_walk.cpp(67)
     wire inv510;
     wire and512;
     wire inv514;
@@ -383,7 +383,7 @@ module spmv_dcsc_walk(
     wire eq529;
     wire and531;
     wire and533;
-    wire proxy535; // #475 dcsc_walk.cpp(65)
+    wire proxy535; // #475 dcsc_walk.cpp(67)
     wire inv536;
     wire and538;
     wire inv540;
@@ -397,7 +397,7 @@ module spmv_dcsc_walk(
     wire eq555;
     wire and557;
     wire and559;
-    wire proxy561; // #488 dcsc_walk.cpp(65)
+    wire proxy561; // #488 dcsc_walk.cpp(67)
     wire inv562;
     wire and564;
     wire inv566;
@@ -408,496 +408,483 @@ module spmv_dcsc_walk(
     wire inv577;
     wire and578;
     wire[7:0] sel579;
-    wire proxy581; // #497 dcsc_walk.cpp(97)
-    reg reg586; // #497 dcsc_walk.cpp(97)
-    wire proxy588; // #500 dcsc_walk.cpp(98)
-    reg reg592; // #500 dcsc_walk.cpp(98)
-    wire proxy606; // #509 dcsc_walk.cpp(101)
-    reg reg610; // #509 dcsc_walk.cpp(101)
-    wire proxy612; // #512 dcsc_walk.cpp(102)
-    reg reg616; // #512 dcsc_walk.cpp(102)
-    wire[84:0] proxy618; // #515 dcsc_walk.cpp(105)
+    wire proxy581; // #497 dcsc_walk.cpp(99)
+    reg reg586; // #497 dcsc_walk.cpp(99)
+    wire proxy588; // #500 dcsc_walk.cpp(100)
+    reg reg592; // #500 dcsc_walk.cpp(100)
+    wire proxy606; // #509 dcsc_walk.cpp(103)
+    reg reg610; // #509 dcsc_walk.cpp(103)
+    wire proxy612; // #512 dcsc_walk.cpp(104)
+    reg reg616; // #512 dcsc_walk.cpp(104)
+    wire[84:0] proxy618; // #515 dcsc_walk.cpp(107)
     wire[84:0] ch_pe_req_t624; // #520 /home/blaise/dev/cash/src/seq.h(17)
-    reg[84:0] reg631; // #515 dcsc_walk.cpp(105)
-    wire proxy633; // #526 dcsc_walk.cpp(106)
-    reg reg637; // #526 dcsc_walk.cpp(106)
+    reg[84:0] reg631; // #515 dcsc_walk.cpp(107)
+    wire proxy633; // #526 dcsc_walk.cpp(108)
+    reg reg637; // #526 dcsc_walk.cpp(108)
     wire eq639;
-    wire[19:0] proxy640; // #530 dcsc_walk.cpp(27)
+    wire[19:0] proxy640; // #530 dcsc_walk.cpp(29)
     wire and641;
     wire[19:0] sel642;
-    wire[19:0] proxy643; // #531 dcsc_walk.cpp(27)
-    wire[19:0] sel644;
-    wire ne645;
-    wire and647;
-    wire[3:0] sel650;
-    wire eq652;
-    wire inv653;
-    wire and654;
-    wire[2:0] sel656;
-    wire[19:0] sll659;
-    wire[19:0] srl663;
-    wire[19:0] sel666;
-    wire ne669;
-    wire and672;
-    wire sel673;
-    wire and675;
-    wire[3:0] sel676;
-    wire[31:0] add679;
-    wire inv681;
-    wire and682;
-    wire[31:0] proxy683;
-    wire[31:0] sel684;
-    wire[31:0] add686;
-    wire inv688;
-    wire and689;
-    wire[31:0] sel690;
-    wire eq692;
-    wire or693;
-    wire inv694;
-    wire and695;
-    wire[2:0] sel696;
-    wire[19:0] sll698;
-    wire[19:0] srl701;
-    wire[19:0] sel703;
-    wire ne705;
-    wire and707;
-    wire sel708;
-    wire and710;
-    wire[3:0] sel711;
-    wire[31:0] add713;
-    wire inv715;
-    wire and716;
-    wire[31:0] proxy717;
-    wire[31:0] sel718;
-    wire[31:0] add720;
-    wire inv722;
-    wire and723;
-    wire[31:0] sel724;
-    wire eq726;
+    wire[19:0] proxy643; // #531 dcsc_walk.cpp(29)
+    wire[19:0] sub646;
+    wire[19:0] sel648;
+    wire ne649;
+    wire and651;
+    wire[4:0] sel654;
+    wire eq656;
+    wire inv657;
+    wire and658;
+    wire[2:0] sel660;
+    wire[19:0] sll663;
+    wire[19:0] srl667;
+    wire[19:0] sel670;
+    wire ne673;
+    wire and676;
+    wire sel677;
+    wire and679;
+    wire[4:0] sel680;
+    wire[31:0] add683;
+    wire inv685;
+    wire and686;
+    wire[31:0] proxy687;
+    wire[31:0] sel688;
+    wire[31:0] add690;
+    wire inv692;
+    wire and693;
+    wire[31:0] sel694;
+    wire eq696;
+    wire or697;
+    wire inv698;
+    wire and699;
+    wire[2:0] sel700;
+    wire[19:0] sll702;
+    wire[19:0] srl705;
+    wire[19:0] sel707;
+    wire ne709;
+    wire and711;
+    wire sel712;
+    wire and714;
+    wire[4:0] sel715;
+    wire[31:0] add717;
+    wire inv719;
+    wire and720;
+    wire[31:0] proxy721;
+    wire[31:0] sel722;
+    wire[31:0] add724;
+    wire inv726;
     wire and727;
-    wire or729;
-    wire or730;
-    wire inv731;
-    wire and732;
-    wire and733;
-    wire[511:0] sel734;
-    wire[19:0] and737;
-    wire[19:0] sll741;
-    wire[511:0] srl743;
-    wire[511:0] proxy744; // #561 unknown(0)
-    wire[19:0] proxy745; // #562 unknown(0)
-    wire[19:0] sel746;
-    wire sel747;
-    wire[511:0] sel748;
-    wire[19:0] and750;
-    wire[19:0] sll753;
-    wire[511:0] srl755;
-    wire[511:0] proxy756; // #567 unknown(0)
-    wire[19:0] proxy757; // #568 unknown(0)
-    wire[19:0] sel758;
-    wire sel759;
-    wire[19:0] and761;
-    wire ne764;
-    wire[19:0] add768;
-    wire[19:0] and771;
-    wire[19:0] sll774;
-    wire[511:0] srl776;
-    wire[511:0] proxy777; // #579 unknown(0)
-    wire[19:0] proxy778; // #580 unknown(0)
-    wire and779;
-    wire[19:0] sel780;
-    wire[3:0] sel782;
-    wire inv784;
-    wire and785;
-    wire[3:0] sel786;
-    wire eq788;
-    wire or789;
-    wire or790;
-    wire or791;
-    wire inv792;
-    wire and793;
-    wire[2:0] sel794;
-    wire[19:0] sel795;
-    wire ne797;
-    wire and799;
-    wire sel800;
-    wire and802;
-    wire[3:0] sel803;
-    wire[31:0] add805;
-    wire inv807;
-    wire and808;
-    wire[31:0] sel809;
-    wire[31:0] add811;
-    wire inv813;
+    wire[31:0] sel728;
+    wire eq730;
+    wire and731;
+    wire or733;
+    wire or734;
+    wire inv735;
+    wire and736;
+    wire and737;
+    wire[511:0] sel738;
+    wire[19:0] and741;
+    wire[19:0] sll745;
+    wire[511:0] srl747;
+    wire[511:0] proxy748; // #563 unknown(0)
+    wire[19:0] proxy749; // #564 unknown(0)
+    wire[19:0] sel750;
+    wire sel751;
+    wire[511:0] sel752;
+    wire[19:0] and754;
+    wire[19:0] sll757;
+    wire[511:0] srl759;
+    wire[511:0] proxy760; // #569 unknown(0)
+    wire[19:0] proxy761; // #570 unknown(0)
+    wire[19:0] sel762;
+    wire sel763;
+    wire[19:0] and765;
+    wire ne768;
+    wire[19:0] add771;
+    wire[19:0] and774;
+    wire[19:0] sll777;
+    wire[511:0] srl779;
+    wire[511:0] proxy780; // #581 unknown(0)
+    wire[19:0] proxy781; // #582 unknown(0)
+    wire and782;
+    wire[19:0] sel783;
+    wire[4:0] sel785;
+    wire inv787;
+    wire and788;
+    wire[4:0] sel789;
+    wire eq791;
+    wire or792;
+    wire or793;
+    wire or794;
+    wire inv795;
+    wire and796;
+    wire[2:0] sel797;
+    wire[19:0] add799;
+    wire[19:0] sll802;
+    wire[19:0] srl805;
+    wire[19:0] sel807;
+    wire ne809;
+    wire and811;
+    wire sel812;
     wire and814;
-    wire[31:0] sel815;
-    wire eq817;
-    wire[511:0] proxy818; // #589 dcsc_walk.cpp(213)
-    wire or819;
-    wire or820;
-    wire or821;
-    wire or822;
-    wire inv823;
-    wire and824;
-    wire and825;
-    wire sel826;
-    wire[19:0] proxy827; // #590 dcsc_walk.cpp(213)
-    wire[19:0] sel828;
-    wire[3:0] sel829;
-    wire[31:0] add831;
-    wire inv833;
-    wire and834;
-    wire[31:0] sel835;
-    wire eq837;
-    wire[19:0] sll839;
-    wire[19:0] srl842;
-    wire eq844;
-    wire[19:0] sll847;
-    wire[19:0] srl850;
-    wire or852;
-    wire or853;
-    wire or854;
-    wire or855;
-    wire or856;
-    wire inv857;
-    wire and858;
-    wire and859;
-    wire[19:0] sel860;
-    wire[19:0] sll862;
-    wire[19:0] add866;
-    wire[19:0] srl869;
-    wire[19:0] sel871;
-    wire[3:0] sel874;
-    wire inv875;
-    wire and876;
-    wire[19:0] sel877;
-    wire[3:0] sel879;
-    wire eq882;
+    wire[4:0] sel815;
+    wire[31:0] add817;
+    wire inv819;
+    wire and820;
+    wire[31:0] sel821;
+    wire[31:0] add823;
+    wire inv825;
+    wire and826;
+    wire[31:0] sel827;
+    wire eq829;
+    wire[511:0] proxy830; // #597 dcsc_walk.cpp(220)
+    wire or831;
+    wire or832;
+    wire or833;
+    wire or834;
+    wire inv835;
+    wire and836;
+    wire and837;
+    wire sel838;
+    wire[19:0] proxy839; // #598 dcsc_walk.cpp(220)
+    wire[19:0] sel840;
+    wire[4:0] sel841;
+    wire[31:0] add843;
+    wire inv845;
+    wire and846;
+    wire[31:0] sel847;
+    wire eq849;
+    wire[19:0] srl851;
+    wire[19:0] sll854;
+    wire[19:0] srl857;
+    wire eq859;
+    wire[19:0] and862;
+    wire[19:0] sll865;
+    wire[511:0] srl867;
+    wire[511:0] proxy868; // #613 unknown(0)
+    wire[31:0] proxy869; // #614 unknown(0)
+    wire[19:0] and872;
+    wire[31:0] sll875;
+    wire[31:0] and877;
+    wire ne880;
     wire or883;
     wire or884;
     wire or885;
     wire or886;
     wire or887;
-    wire or888;
-    wire inv889;
+    wire inv888;
+    wire and889;
     wire and890;
-    wire[2:0] sel891;
-    wire[19:0] sel892;
-    wire ne894;
-    wire and896;
-    wire sel897;
-    wire and899;
-    wire[3:0] sel900;
-    wire[31:0] add902;
-    wire inv904;
-    wire and905;
-    wire[31:0] proxy906;
-    wire[31:0] sel907;
-    wire[31:0] add909;
-    wire inv911;
-    wire and912;
-    wire[31:0] sel913;
-    wire eq915;
-    wire eq917;
-    wire[19:0] sll920;
-    wire[19:0] srl923;
-    wire or925;
-    wire or926;
-    wire or927;
-    wire or928;
-    wire or929;
-    wire or930;
-    wire or931;
-    wire inv932;
-    wire and933;
-    wire and934;
-    wire and935;
-    wire[19:0] sel936;
-    wire[19:0] sll938;
-    wire[19:0] add941;
-    wire[19:0] srl944;
+    wire and891;
+    wire[4:0] sel892;
+    wire inv894;
+    wire and895;
+    wire[4:0] sel896;
+    wire inv897;
+    wire and898;
+    wire[19:0] sel899;
+    wire[4:0] sel901;
+    wire eq903;
+    wire[19:0] sll905;
+    wire[19:0] srl908;
+    wire eq910;
+    wire[19:0] sll913;
+    wire[19:0] srl916;
+    wire or918;
+    wire or919;
+    wire or920;
+    wire or921;
+    wire or922;
+    wire or923;
+    wire inv924;
+    wire and925;
+    wire and926;
+    wire[19:0] sel927;
+    wire[19:0] sll929;
+    wire[19:0] add933;
+    wire[19:0] srl936;
+    wire[19:0] sub939;
+    wire[19:0] sel941;
+    wire[4:0] sel943;
+    wire inv944;
+    wire and945;
     wire[19:0] sel946;
-    wire[3:0] sel948;
-    wire inv949;
-    wire and950;
-    wire[19:0] sel951;
-    wire[3:0] sel952;
-    wire[31:0] add954;
-    wire inv956;
-    wire and957;
-    wire[31:0] sel958;
-    wire eq960;
-    wire or961;
-    wire or962;
-    wire or963;
-    wire or964;
-    wire or965;
-    wire or966;
-    wire or967;
-    wire or968;
-    wire inv969;
-    wire and970;
-    wire[2:0] sel971;
-    wire[19:0] sll973;
-    wire[19:0] srl976;
-    wire[19:0] sel978;
-    wire ne980;
-    wire and982;
-    wire sel983;
-    wire[19:0] sll985;
-    wire[19:0] srl988;
-    wire and990;
-    wire[19:0] sel991;
-    wire[19:0] sll993;
-    wire[19:0] add996;
+    wire[4:0] sel948;
+    wire eq950;
+    wire or951;
+    wire or952;
+    wire or953;
+    wire or954;
+    wire or955;
+    wire or956;
+    wire or957;
+    wire inv958;
+    wire and959;
+    wire[2:0] sel960;
+    wire[19:0] sel961;
+    wire ne963;
+    wire and965;
+    wire sel966;
+    wire and968;
+    wire[4:0] sel969;
+    wire[31:0] add971;
+    wire inv973;
+    wire and974;
+    wire[31:0] proxy975;
+    wire[31:0] sel976;
+    wire[31:0] add978;
+    wire inv980;
+    wire and981;
+    wire[31:0] sel982;
+    wire eq984;
+    wire or985;
+    wire or986;
+    wire or987;
+    wire or988;
+    wire or989;
+    wire or990;
+    wire or991;
+    wire or992;
+    wire inv993;
+    wire and994;
+    wire and995;
+    wire[511:0] sel996;
+    wire sel997;
     wire[19:0] srl999;
-    wire[19:0] sel1001;
-    wire[3:0] sel1003;
-    wire[31:0] add1005;
-    wire inv1007;
-    wire and1008;
-    wire[31:0] proxy1009;
-    wire[31:0] sel1010;
-    wire[31:0] add1012;
-    wire inv1014;
-    wire and1015;
-    wire[31:0] sel1016;
-    wire eq1018;
-    wire or1019;
-    wire or1020;
-    wire or1021;
-    wire or1022;
-    wire or1023;
-    wire or1024;
-    wire or1025;
-    wire or1026;
-    wire or1027;
-    wire inv1028;
-    wire and1029;
-    wire[2:0] sel1030;
-    wire[19:0] sel1031;
-    wire ne1034;
-    wire and1036;
-    wire sel1037;
-    wire and1039;
-    wire[3:0] sel1040;
-    wire[31:0] add1042;
-    wire inv1044;
-    wire and1045;
-    wire[31:0] proxy1046;
-    wire[31:0] sel1047;
-    wire[31:0] add1049;
-    wire inv1051;
-    wire and1052;
-    wire[31:0] sel1053;
-    wire eq1055;
+    wire[19:0] and1002;
+    wire[19:0] sll1005;
+    wire[511:0] srl1007;
+    wire[511:0] proxy1008; // #654 unknown(0)
+    wire[31:0] proxy1009; // #655 unknown(0)
+    wire[19:0] and1011;
+    wire[31:0] sll1014;
+    wire[31:0] and1016;
+    wire ne1019;
+    wire and1022;
+    wire[4:0] sel1023;
+    wire inv1024;
+    wire and1025;
+    wire[4:0] sel1026;
+    wire[31:0] add1028;
+    wire inv1030;
+    wire and1031;
+    wire[31:0] sel1032;
+    wire eq1034;
+    wire[19:0] sll1036;
+    wire[19:0] srl1039;
+    wire eq1041;
+    wire[19:0] sll1044;
+    wire[19:0] srl1047;
+    wire or1049;
+    wire or1050;
+    wire or1051;
+    wire or1052;
+    wire or1053;
+    wire or1054;
+    wire or1055;
     wire or1056;
     wire or1057;
-    wire or1058;
-    wire or1059;
-    wire or1060;
-    wire or1061;
-    wire or1062;
-    wire or1063;
-    wire or1064;
-    wire or1065;
-    wire inv1066;
-    wire and1067;
-    wire[2:0] sel1068;
-    wire[19:0] sel1069;
-    wire ne1071;
-    wire and1073;
-    wire sel1074;
-    wire and1075;
-    wire[19:0] sel1076;
-    wire ne1077;
-    wire and1079;
-    wire[3:0] sel1080;
-    wire inv1082;
-    wire and1083;
-    wire[3:0] sel1084;
-    wire[31:0] add1086;
-    wire inv1088;
-    wire and1089;
-    wire[31:0] proxy1090;
-    wire[31:0] sel1091;
-    wire[31:0] add1093;
-    wire inv1095;
-    wire and1096;
-    wire[31:0] sel1097;
-    wire eq1099;
-    wire or1100;
-    wire or1101;
-    wire or1102;
-    wire or1103;
-    wire or1104;
-    wire or1105;
-    wire or1106;
-    wire or1107;
-    wire or1108;
-    wire or1109;
-    wire or1110;
-    wire inv1111;
-    wire and1112;
+    wire inv1058;
+    wire and1059;
+    wire and1060;
+    wire[19:0] sel1061;
+    wire[19:0] sll1063;
+    wire[19:0] add1066;
+    wire[19:0] srl1069;
+    wire[19:0] sub1072;
+    wire[19:0] sel1074;
+    wire[4:0] sel1075;
+    wire inv1076;
+    wire and1077;
+    wire[19:0] sel1078;
+    wire[4:0] sel1079;
+    wire eq1081;
+    wire or1082;
+    wire or1083;
+    wire or1084;
+    wire or1085;
+    wire or1086;
+    wire or1087;
+    wire or1088;
+    wire or1089;
+    wire or1090;
+    wire or1091;
+    wire inv1092;
+    wire and1093;
+    wire[2:0] sel1094;
+    wire[19:0] sll1096;
+    wire[19:0] srl1099;
+    wire[19:0] sel1101;
+    wire ne1103;
+    wire and1105;
+    wire sel1106;
+    wire[19:0] sll1108;
+    wire[19:0] srl1111;
     wire and1113;
-    wire[511:0] sel1114;
-    wire sel1115;
-    wire[19:0] and1117;
-    wire[19:0] sll1120;
-    wire[511:0] srl1122;
-    wire[511:0] proxy1123; // #672 unknown(0)
-    wire[31:0] proxy1124; // #673 unknown(0)
-    wire[31:0] sel1125;
-    wire[19:0] and1127;
-    wire[19:0] sll1130;
-    wire[511:0] srl1132;
-    wire[511:0] proxy1133; // #678 unknown(0)
-    wire[31:0] proxy1134; // #679 unknown(0)
-    wire inv1135;
-    wire and1136;
-    wire[31:0] sel1137;
-    wire[3:0] sel1139;
-    wire eq1141;
-    wire[19:0] and1143;
-    wire[19:0] sll1146;
-    wire[511:0] srl1148;
-    wire[511:0] proxy1149; // #685 unknown(0)
-    wire[19:0] proxy1150; // #686 unknown(0)
+    wire[19:0] sel1114;
+    wire[19:0] sll1116;
+    wire[19:0] add1119;
+    wire[19:0] srl1122;
+    wire[19:0] sub1125;
+    wire[19:0] sel1127;
+    wire[4:0] sel1128;
+    wire[31:0] add1130;
+    wire inv1132;
+    wire and1133;
+    wire[31:0] proxy1134;
+    wire[31:0] sel1135;
+    wire[31:0] add1137;
+    wire inv1139;
+    wire and1140;
+    wire[31:0] sel1141;
+    wire eq1143;
+    wire or1144;
+    wire or1145;
+    wire or1146;
+    wire or1147;
+    wire or1148;
+    wire or1149;
+    wire or1150;
     wire or1151;
     wire or1152;
     wire or1153;
     wire or1154;
-    wire or1155;
-    wire or1156;
-    wire or1157;
-    wire or1158;
-    wire or1159;
-    wire or1160;
-    wire or1161;
-    wire or1162;
-    wire inv1163;
-    wire and1164;
-    wire[19:0] sel1166;
-    wire[19:0] and1168;
-    wire[19:0] sll1171;
-    wire[511:0] srl1173;
-    wire[511:0] proxy1174; // #691 unknown(0)
-    wire[31:0] proxy1175; // #692 unknown(0)
-    wire[31:0] sel1177;
-    wire[31:0] proxy1178; // #693 dcsc_walk.cpp(402)
+    wire inv1155;
+    wire and1156;
+    wire[2:0] sel1157;
+    wire[19:0] sel1158;
+    wire ne1161;
+    wire and1163;
+    wire sel1164;
+    wire and1166;
+    wire[4:0] sel1167;
+    wire[31:0] add1169;
+    wire inv1171;
+    wire and1172;
+    wire[31:0] proxy1173;
+    wire[31:0] sel1174;
+    wire[31:0] add1176;
+    wire inv1178;
+    wire and1179;
     wire[31:0] sel1180;
-    wire sel1182;
-    wire sel1183;
-    wire[19:0] add1185;
-    wire and1187;
-    wire[19:0] sel1188;
-    wire ne1189;
-    wire inv1201;
+    wire eq1182;
+    wire or1183;
+    wire or1184;
+    wire or1185;
+    wire or1186;
+    wire or1187;
+    wire or1188;
+    wire or1189;
+    wire or1190;
+    wire or1191;
+    wire or1192;
+    wire or1193;
+    wire or1194;
+    wire inv1195;
+    wire and1196;
+    wire[2:0] sel1197;
+    wire[19:0] sel1198;
+    wire ne1200;
     wire and1202;
-    wire[3:0] sel1206;
-    wire[31:0] add1208;
-    wire inv1210;
+    wire sel1203;
+    wire[19:0] add1205;
+    wire and1207;
+    wire[19:0] sel1208;
+    wire ne1209;
     wire and1211;
-    wire[31:0] proxy1212;
-    wire[31:0] sel1213;
-    wire eq1215;
-    wire[19:0] add1217;
-    wire or1219;
-    wire or1220;
-    wire or1221;
-    wire or1222;
-    wire or1223;
-    wire or1224;
-    wire or1225;
-    wire or1226;
-    wire or1227;
-    wire or1228;
-    wire or1229;
-    wire or1230;
-    wire or1231;
-    wire inv1232;
-    wire and1233;
-    wire[19:0] sel1234;
-    wire ne1235;
-    wire[19:0] and1238;
-    wire ne1241;
-    wire[19:0] and1244;
-    wire[19:0] sll1247;
-    wire[511:0] srl1249;
-    wire[511:0] proxy1250; // #715 unknown(0)
-    wire[19:0] proxy1251; // #716 unknown(0)
-    wire and1252;
-    wire and1253;
-    wire[19:0] sel1254;
-    wire[19:0] and1256;
-    wire[19:0] sll1259;
-    wire[511:0] srl1261;
-    wire[511:0] proxy1262; // #721 unknown(0)
-    wire[19:0] proxy1263; // #722 unknown(0)
-    wire[19:0] sel1264;
-    wire[19:0] and1266;
-    wire ne1269;
-    wire[19:0] add1272;
-    wire[19:0] and1275;
-    wire[19:0] sll1278;
-    wire[511:0] srl1280;
-    wire[511:0] proxy1281; // #733 unknown(0)
-    wire[19:0] proxy1282; // #734 unknown(0)
-    wire and1283;
-    wire[19:0] sel1284;
-    wire[3:0] sel1285;
-    wire inv1286;
-    wire and1287;
-    wire[3:0] sel1288;
-    wire inv1289;
-    wire and1290;
-    wire[3:0] sel1291;
-    wire inv1293;
-    wire and1294;
-    wire[3:0] sel1295;
-    wire eq1297;
+    wire[4:0] sel1212;
+    wire inv1214;
+    wire and1215;
+    wire[4:0] sel1216;
+    wire[31:0] add1218;
+    wire inv1220;
+    wire and1221;
+    wire[31:0] proxy1222;
+    wire[31:0] sel1223;
+    wire[31:0] add1225;
+    wire inv1227;
+    wire and1228;
+    wire[31:0] sel1229;
+    wire eq1231;
+    wire or1232;
+    wire or1233;
+    wire or1234;
+    wire or1235;
+    wire or1236;
+    wire or1237;
+    wire or1238;
+    wire or1239;
+    wire or1240;
+    wire or1241;
+    wire or1242;
+    wire or1243;
+    wire or1244;
+    wire inv1245;
+    wire and1246;
+    wire and1247;
+    wire[511:0] sel1248;
+    wire sel1249;
+    wire[19:0] and1251;
+    wire[19:0] sll1254;
+    wire[511:0] srl1256;
+    wire[511:0] proxy1257; // #728 unknown(0)
+    wire[31:0] proxy1258; // #729 unknown(0)
+    wire[31:0] sel1259;
+    wire[19:0] and1261;
+    wire[19:0] sll1264;
+    wire[511:0] srl1266;
+    wire[511:0] proxy1267; // #734 unknown(0)
+    wire[31:0] proxy1268; // #735 unknown(0)
+    wire inv1269;
+    wire and1270;
+    wire[31:0] sel1271;
+    wire[4:0] sel1273;
+    wire eq1275;
+    wire[19:0] and1277;
+    wire[19:0] sll1280;
+    wire[511:0] srl1282;
+    wire[511:0] proxy1283; // #741 unknown(0)
+    wire[19:0] proxy1284; // #742 unknown(0)
+    wire or1285;
+    wire or1286;
+    wire or1287;
+    wire or1288;
+    wire or1289;
+    wire or1290;
+    wire or1291;
+    wire or1292;
+    wire or1293;
+    wire or1294;
+    wire or1295;
+    wire or1296;
+    wire or1297;
     wire or1298;
-    wire or1299;
-    wire or1300;
-    wire or1301;
-    wire or1302;
-    wire or1303;
-    wire or1304;
-    wire or1305;
-    wire or1306;
-    wire or1307;
-    wire or1308;
-    wire or1309;
-    wire or1310;
-    wire or1311;
-    wire inv1312;
-    wire and1313;
-    wire sel1314;
-    wire sel1315;
-    wire lt1317;
-    wire[31:0] sel1319;
-    wire eq1322;
-    wire[31:0] sel1324;
-    wire and1326;
-    wire[31:0] proxy1327;
-    wire[31:0] sel1328;
-    wire gt1329;
-    wire[31:0] sel1331;
-    wire[31:0] proxy1333;
-    wire[31:0] sel1334;
-    wire[31:0] add1335;
-    wire[31:0] proxy1337;
-    wire[31:0] sel1338;
-    wire[31:0] add1340;
-    wire[31:0] proxy1342;
-    wire[31:0] sel1343;
-    wire[3:0] sel1344;
-    wire[31:0] add1346;
-    wire inv1348;
-    wire and1349;
-    wire[31:0] sel1350;
-    wire or1352;
-    wire or1353;
+    wire inv1299;
+    wire and1300;
+    wire[19:0] sel1302;
+    wire[19:0] and1304;
+    wire[19:0] sll1307;
+    wire[511:0] srl1309;
+    wire[511:0] proxy1310; // #747 unknown(0)
+    wire[31:0] proxy1311; // #748 unknown(0)
+    wire[31:0] sel1313;
+    wire[31:0] proxy1314; // #749 dcsc_walk.cpp(414)
+    wire[31:0] sel1316;
+    wire sel1318;
+    wire sel1319;
+    wire[19:0] add1321;
+    wire and1323;
+    wire[19:0] sel1324;
+    wire ne1325;
+    wire inv1337;
+    wire and1338;
+    wire[4:0] sel1341;
+    wire[31:0] add1343;
+    wire inv1345;
+    wire and1346;
+    wire[31:0] proxy1347;
+    wire[31:0] sel1348;
+    wire eq1350;
+    wire[19:0] add1352;
     wire or1354;
     wire or1355;
     wire or1356;
@@ -911,8 +898,91 @@ module spmv_dcsc_walk(
     wire or1364;
     wire or1365;
     wire or1366;
-    wire inv1367;
-    wire sel1368;
+    wire or1367;
+    wire or1368;
+    wire inv1369;
+    wire and1370;
+    wire[19:0] sel1371;
+    wire ne1372;
+    wire[19:0] and1375;
+    wire ne1378;
+    wire[19:0] and1381;
+    wire[19:0] sll1384;
+    wire[511:0] srl1386;
+    wire[511:0] proxy1387; // #771 unknown(0)
+    wire[19:0] proxy1388; // #772 unknown(0)
+    wire and1389;
+    wire and1390;
+    wire[19:0] sel1391;
+    wire[19:0] and1393;
+    wire[19:0] sll1396;
+    wire[511:0] srl1398;
+    wire[511:0] proxy1399; // #777 unknown(0)
+    wire[19:0] proxy1400; // #778 unknown(0)
+    wire[19:0] sel1401;
+    wire[19:0] and1403;
+    wire ne1406;
+    wire[19:0] add1409;
+    wire[19:0] and1412;
+    wire[19:0] sll1415;
+    wire[511:0] srl1417;
+    wire[511:0] proxy1418; // #789 unknown(0)
+    wire[19:0] proxy1419; // #790 unknown(0)
+    wire and1420;
+    wire[19:0] sel1421;
+    wire[4:0] sel1422;
+    wire inv1423;
+    wire and1424;
+    wire[4:0] sel1425;
+    wire inv1426;
+    wire and1427;
+    wire[4:0] sel1428;
+    wire inv1430;
+    wire and1431;
+    wire[4:0] sel1432;
+    wire eq1434;
+    wire or1435;
+    wire or1436;
+    wire or1437;
+    wire or1438;
+    wire or1439;
+    wire or1440;
+    wire or1441;
+    wire or1442;
+    wire or1443;
+    wire or1444;
+    wire or1445;
+    wire or1446;
+    wire or1447;
+    wire or1448;
+    wire or1449;
+    wire or1450;
+    wire inv1451;
+    wire and1452;
+    wire sel1453;
+    wire sel1454;
+    wire lt1456;
+    wire[31:0] sel1458;
+    wire eq1461;
+    wire[31:0] sel1463;
+    wire and1465;
+    wire[31:0] proxy1466;
+    wire[31:0] sel1467;
+    wire gt1468;
+    wire[31:0] sel1470;
+    wire[31:0] proxy1472;
+    wire[31:0] sel1473;
+    wire[31:0] add1474;
+    wire[31:0] proxy1476;
+    wire[31:0] sel1477;
+    wire[31:0] add1479;
+    wire[31:0] proxy1481;
+    wire[31:0] sel1482;
+    wire[4:0] sel1483;
+    wire[31:0] add1485;
+    wire inv1487;
+    wire and1488;
+    wire[31:0] sel1489;
 
     assign io_ctrl_start_data5 = io_ctrl_start_data;
     assign io_ctrl_start_data_part6 = io_ctrl_start_data5;
@@ -920,26 +990,24 @@ module spmv_dcsc_walk(
     assign io_ctrl_start_data_part_end8 = io_ctrl_start_data_part6[63:32];
     assign io_ctrl_start_ready11 = proxy422;
     assign io_ctrl_stats17 = proxy349;
-    assign io_lsu_rd_req_data34 = {sel1069, sel1068};
+    assign io_lsu_rd_req_data34 = {sel1198, sel1197};
     assign io_lsu_rd_req_data_type35 = io_lsu_rd_req_data34[2:0];
     assign io_lsu_rd_rsp_data45 = io_lsu_rd_rsp_data;
     assign io_lsu_rd_rsp_data_type46 = io_lsu_rd_rsp_data45[2:0];
     assign io_lsu_rd_rsp_data_data47 = io_lsu_rd_rsp_data45[514:3];
     assign io_pe_valid50 = proxy633;
     assign io_pe_data53 = proxy618;
-    always @ (posedge clk) reg70 <= reset ? 20'h0 : sel1234;
-    always @ (posedge clk) reg76 <= reset ? 20'h0 : sel644;
-    always @ (posedge clk) reg82 <= reset ? 20'h0 : sel1254;
-    always @ (posedge clk) reg88 <= reset ? 20'h0 : sel1264;
-    always @ (posedge clk) reg94 <= reset ? 20'h0 : sel1284;
-    assign proxy96 = reg101;
-    assign proxy98 = proxy96;
-    always @ (posedge clk) reg101 <= reset ? 20'hfffff : proxy98;
-    always @ (posedge clk) reg107 <= reset ? 20'hfffff : sel951;
-    always @ (posedge clk) reg113 <= reset ? 20'h0 : sel1076;
-    always @ (posedge clk) reg119 <= reset ? 20'h0 : sel1001;
+    always @ (posedge clk) reg70 <= reset ? 20'h0 : sel1371;
+    always @ (posedge clk) reg76 <= reset ? 20'h0 : sel648;
+    always @ (posedge clk) reg82 <= reset ? 20'h0 : sel1391;
+    always @ (posedge clk) reg88 <= reset ? 20'h0 : sel1401;
+    always @ (posedge clk) reg94 <= reset ? 20'h0 : sel1421;
+    always @ (posedge clk) reg101 <= reset ? 20'hfffff : sel899;
+    always @ (posedge clk) reg107 <= reset ? 20'hfffff : sel1078;
+    always @ (posedge clk) reg113 <= reset ? 20'h0 : sel1208;
+    always @ (posedge clk) reg119 <= reset ? 20'h0 : sel1127;
     assign proxy128 = reg133;
-    always @ (posedge clk) reg133 <= reset ? 32'h0 : sel1137;
+    always @ (posedge clk) reg133 <= reset ? 32'h0 : sel1271;
     assign proxy134 = proxy128;
     assign proxy136 = proxy382;
     assign bindin138 = clk;
@@ -990,7 +1058,7 @@ module spmv_dcsc_walk(
     assign proxy256 = proxy412;
     assign bindin258 = clk;
     assign bindin259 = reset;
-    ch_queue __module7__(.clk(bindin258), .reset(bindin259), .io_enq_valid(bindin260), .io_enq_data(bindin263), .io_deq_ready(bindin275), .io_deq_valid(bindout269));
+    ch_queue __module7__(.clk(bindin258), .reset(bindin259), .io_enq_valid(bindin260), .io_enq_data(bindin263), .io_deq_ready(bindin275), .io_deq_valid(bindout269), .io_deq_data(bindout272));
     assign bindin260 = proxy256;
     assign proxy262 = io_lsu_rd_rsp_data_data47;
     assign bindin263 = proxy262;
@@ -1002,9 +1070,10 @@ module spmv_dcsc_walk(
     always @ (posedge clk) reg303 <= reset ? 8'h0 : sel527;
     always @ (posedge clk) reg309 <= reset ? 8'h0 : sel553;
     always @ (posedge clk) reg315 <= reset ? 8'h0 : sel579;
-    always @ (posedge clk) reg322 <= reset ? lit320 : sel734;
-    always @ (posedge clk) reg328 <= reset ? lit320 : sel748;
-    always @ (posedge clk) reg340 <= reset ? lit320 : sel1114;
+    always @ (posedge clk) reg322 <= reset ? lit320 : sel738;
+    always @ (posedge clk) reg328 <= reset ? lit320 : sel752;
+    always @ (posedge clk) reg334 <= reset ? lit320 : sel996;
+    always @ (posedge clk) reg340 <= reset ? lit320 : sel1248;
     assign proxy349 = reg376;
     assign proxy_num_parts350 = proxy349[31:0];
     assign proxy_min_latency351 = proxy349[63:32];
@@ -1016,7 +1085,7 @@ module spmv_dcsc_walk(
     assign proxy_x_values_stalls358 = proxy349[287:256];
     assign proxy_x_masks_stalls359 = proxy349[319:288];
     assign proxy_execute_stalls360 = proxy349[351:320];
-    assign ch_walker_stats_t362 = {sel1350, sel958, sel1016, sel1097, sel1053, sel835, sel690, sel1338, sel1334, sel1328, sel1343};
+    assign ch_walker_stats_t362 = {sel1489, sel1032, sel1141, sel1229, sel1180, sel847, sel694, sel1477, sel1473, sel1467, sel1482};
     always @ (posedge clk) reg376 <= reset ? lit374 : ch_walker_stats_t362;
     assign eq379 = io_lsu_rd_rsp_data_type46 == 3'b1;
     assign and381 = io_lsu_rd_rsp_valid & eq379;
@@ -1036,11 +1105,11 @@ module spmv_dcsc_walk(
     assign eq409 = io_lsu_rd_rsp_data_type46 == 3'b110;
     assign and411 = io_lsu_rd_rsp_valid & eq409;
     assign proxy412 = and411;
-    always @ (posedge clk) reg419 <= reset ? 4'h0 : sel1344;
-    assign eq421 = reg419 == 4'h0;
+    always @ (posedge clk) reg419 <= reset ? 5'b0 : sel1483;
+    assign eq421 = reg419 == 5'b0;
     assign proxy422 = eq421;
     assign eq424 = io_lsu_rd_req_data_type35 == 3'b1;
-    assign and426 = sel1074 & io_lsu_rd_req_ready;
+    assign and426 = sel1203 & io_lsu_rd_req_ready;
     assign and428 = and426 & eq424;
     assign proxy430 = proxy154;
     assign inv431 = ~and428;
@@ -1054,7 +1123,7 @@ module spmv_dcsc_walk(
     assign and448 = inv447 & and433;
     assign sel449 = and448 ? sub445 : sel443;
     assign eq451 = io_lsu_rd_req_data_type35 == 3'b10;
-    assign and453 = sel1074 & io_lsu_rd_req_ready;
+    assign and453 = sel1203 & io_lsu_rd_req_ready;
     assign and455 = and453 & eq451;
     assign proxy457 = proxy178;
     assign inv458 = ~and455;
@@ -1068,7 +1137,7 @@ module spmv_dcsc_walk(
     assign and474 = inv473 & and460;
     assign sel475 = and474 ? sub471 : sel469;
     assign eq477 = io_lsu_rd_req_data_type35 == 3'b11;
-    assign and479 = sel1074 & io_lsu_rd_req_ready;
+    assign and479 = sel1203 & io_lsu_rd_req_ready;
     assign and481 = and479 & eq477;
     assign proxy483 = proxy202;
     assign inv484 = ~and481;
@@ -1082,7 +1151,7 @@ module spmv_dcsc_walk(
     assign and500 = inv499 & and486;
     assign sel501 = and500 ? sub497 : sel495;
     assign eq503 = io_lsu_rd_req_data_type35 == 3'b100;
-    assign and505 = sel1074 & io_lsu_rd_req_ready;
+    assign and505 = sel1203 & io_lsu_rd_req_ready;
     assign and507 = and505 & eq503;
     assign proxy509 = proxy226;
     assign inv510 = ~and507;
@@ -1096,7 +1165,7 @@ module spmv_dcsc_walk(
     assign and526 = inv525 & and512;
     assign sel527 = and526 ? sub523 : sel521;
     assign eq529 = io_lsu_rd_req_data_type35 == 3'b101;
-    assign and531 = sel1074 & io_lsu_rd_req_ready;
+    assign and531 = sel1203 & io_lsu_rd_req_ready;
     assign and533 = and531 & eq529;
     assign proxy535 = proxy250;
     assign inv536 = ~and533;
@@ -1110,7 +1179,7 @@ module spmv_dcsc_walk(
     assign and552 = inv551 & and538;
     assign sel553 = and552 ? sub549 : sel547;
     assign eq555 = io_lsu_rd_req_data_type35 == 3'b110;
-    assign and557 = sel1074 & io_lsu_rd_req_ready;
+    assign and557 = sel1203 & io_lsu_rd_req_ready;
     assign and559 = and557 & eq555;
     assign proxy561 = proxy274;
     assign inv562 = ~and559;
@@ -1124,514 +1193,584 @@ module spmv_dcsc_walk(
     assign and578 = inv577 & and564;
     assign sel579 = and578 ? sub575 : sel573;
     assign proxy581 = reg586;
-    always @ (posedge clk) reg586 <= reset ? 1'b0 : sel747;
+    always @ (posedge clk) reg586 <= reset ? 1'b0 : sel751;
     assign proxy588 = reg592;
-    always @ (posedge clk) reg592 <= reset ? 1'b0 : sel826;
+    always @ (posedge clk) reg592 <= reset ? 1'b0 : sel838;
     assign proxy606 = reg610;
-    always @ (posedge clk) reg610 <= reset ? 1'b0 : sel1115;
+    always @ (posedge clk) reg610 <= reset ? 1'b0 : sel1249;
     assign proxy612 = reg616;
-    always @ (posedge clk) reg616 <= reset ? 1'b0 : sel1368;
+    always @ (posedge clk) reg616 <= reset ? 1'b0 : sel997;
     assign proxy618 = reg631;
-    assign ch_pe_req_t624 = {sel1314, sel1180, sel1177, sel1166};
+    assign ch_pe_req_t624 = {sel1453, sel1316, sel1313, sel1302};
     always @ (posedge clk) reg631 <= reset ? lit629 : ch_pe_req_t624;
     assign proxy633 = reg637;
-    always @ (posedge clk) reg637 <= reset ? 1'b0 : sel1315;
-    assign eq639 = reg419 == 4'h0;
+    always @ (posedge clk) reg637 <= reset ? 1'b0 : sel1454;
+    assign eq639 = reg419 == 5'b0;
     assign proxy640 = io_ctrl_start_data_part_start7[19:0];
     assign and641 = eq639 & io_ctrl_start_valid;
     assign sel642 = and641 ? proxy640 : reg70;
     assign proxy643 = io_ctrl_start_data_part_end8[19:0];
-    assign sel644 = and641 ? proxy643 : reg76;
-    assign ne645 = sel1234 != sel644;
-    assign and647 = and641 & ne645;
-    assign sel650 = and647 ? 4'h1 : reg419;
-    assign eq652 = reg419 == 4'h1;
-    assign inv653 = ~eq639;
-    assign and654 = inv653 & eq652;
-    assign sel656 = and654 ? 3'b1 : 3'b0;
-    assign sll659 = reg70 << 20'h2;
-    assign srl663 = sll659 >> 20'h6;
-    assign sel666 = and654 ? srl663 : 20'h0;
-    assign ne669 = reg285 != 8'h2;
-    assign and672 = and654 & ne669;
-    assign sel673 = and672 ? 1'b1 : 1'b0;
-    assign and675 = and672 & io_lsu_rd_req_ready;
-    assign sel676 = and675 ? 4'h2 : sel650;
-    assign add679 = proxy_a_colind_stalls354 + 32'h1;
-    assign inv681 = ~io_lsu_rd_req_ready;
-    assign and682 = and672 & inv681;
-    assign proxy683 = proxy349[159:128];
-    assign sel684 = and682 ? add679 : proxy683;
-    assign add686 = proxy_a_colind_stalls354 + 32'h1;
-    assign inv688 = ~ne669;
-    assign and689 = and654 & inv688;
-    assign sel690 = and689 ? add686 : sel684;
-    assign eq692 = reg419 == 4'h2;
-    assign or693 = eq652 | eq639;
-    assign inv694 = ~or693;
-    assign and695 = inv694 & eq692;
-    assign sel696 = and695 ? 3'b10 : sel656;
-    assign sll698 = reg70 << 20'h2;
-    assign srl701 = sll698 >> 20'h6;
-    assign sel703 = and695 ? srl701 : sel666;
-    assign ne705 = reg291 != 8'h2;
-    assign and707 = and695 & ne705;
-    assign sel708 = and707 ? 1'b1 : sel673;
-    assign and710 = and707 & io_lsu_rd_req_ready;
-    assign sel711 = and710 ? 4'h3 : sel676;
-    assign add713 = proxy_a_rowptr_stalls355 + 32'h1;
-    assign inv715 = ~io_lsu_rd_req_ready;
-    assign and716 = and707 & inv715;
-    assign proxy717 = proxy349[191:160];
-    assign sel718 = and716 ? add713 : proxy717;
-    assign add720 = proxy_a_rowptr_stalls355 + 32'h1;
-    assign inv722 = ~ne705;
-    assign and723 = and695 & inv722;
-    assign sel724 = and723 ? add720 : sel718;
-    assign eq726 = reg419 == 4'h3;
-    assign and727 = bindout149 & bindout173;
-    assign or729 = eq692 | eq652;
-    assign or730 = or729 | eq639;
-    assign inv731 = ~or730;
-    assign and732 = inv731 & eq726;
-    assign and733 = and732 & and727;
-    assign sel734 = and733 ? bindout152 : reg322;
-    assign and737 = reg70 & 20'hf;
-    assign sll741 = and737 << 20'h5;
-    assign srl743 = sel734 >> sll741;
-    assign proxy744 = srl743;
-    assign proxy745 = proxy744[19:0];
-    assign sel746 = and733 ? proxy745 : reg82;
-    assign sel747 = and733 ? 1'b1 : 1'b0;
-    assign sel748 = and733 ? proxy175 : reg328;
-    assign and750 = reg70 & 20'hf;
-    assign sll753 = and750 << 20'h5;
-    assign srl755 = sel748 >> sll753;
-    assign proxy756 = srl755;
-    assign proxy757 = proxy756[19:0];
-    assign sel758 = and733 ? proxy757 : reg88;
-    assign sel759 = and733 ? 1'b1 : 1'b0;
-    assign and761 = reg70 & 20'hf;
-    assign ne764 = and761 != 20'hf;
-    assign add768 = reg70 + 20'h1;
-    assign and771 = add768 & 20'hf;
-    assign sll774 = and771 << 20'h5;
-    assign srl776 = sel748 >> sll774;
-    assign proxy777 = srl776;
-    assign proxy778 = proxy777[19:0];
-    assign and779 = and733 & ne764;
-    assign sel780 = and779 ? proxy778 : reg94;
-    assign sel782 = and779 ? 4'h6 : sel711;
-    assign inv784 = ~ne764;
-    assign and785 = and733 & inv784;
-    assign sel786 = and785 ? 4'h4 : sel782;
-    assign eq788 = reg419 == 4'h4;
-    assign or789 = eq726 | eq692;
-    assign or790 = or789 | eq652;
-    assign or791 = or790 | eq639;
-    assign inv792 = ~or791;
-    assign and793 = inv792 & eq788;
-    assign sel794 = and793 ? 3'b10 : sel696;
-    assign sel795 = and793 ? 20'h0 : sel703;
-    assign ne797 = reg291 != 8'h2;
-    assign and799 = and793 & ne797;
-    assign sel800 = and799 ? 1'b1 : sel708;
-    assign and802 = and799 & io_lsu_rd_req_ready;
-    assign sel803 = and802 ? 4'h5 : sel786;
-    assign add805 = proxy_a_rowptr_stalls355 + 32'h1;
-    assign inv807 = ~io_lsu_rd_req_ready;
-    assign and808 = and799 & inv807;
-    assign sel809 = and808 ? add805 : sel724;
-    assign add811 = proxy_a_rowptr_stalls355 + 32'h1;
-    assign inv813 = ~ne797;
-    assign and814 = and793 & inv813;
-    assign sel815 = and814 ? add811 : sel809;
-    assign eq817 = reg419 == 4'h5;
-    assign proxy818 = proxy175;
-    assign or819 = eq788 | eq726;
-    assign or820 = or819 | eq692;
-    assign or821 = or820 | eq652;
-    assign or822 = or821 | eq639;
-    assign inv823 = ~or822;
-    assign and824 = inv823 & eq817;
-    assign and825 = and824 & bindout173;
-    assign sel826 = and825 ? 1'b1 : sel759;
-    assign proxy827 = proxy818[19:0];
-    assign sel828 = and825 ? proxy827 : sel780;
-    assign sel829 = and825 ? 4'h6 : sel803;
-    assign add831 = proxy_a_rowptr_stalls355 + 32'h1;
-    assign inv833 = ~bindout173;
-    assign and834 = and824 & inv833;
-    assign sel835 = and834 ? add831 : sel815;
-    assign eq837 = reg419 == 4'h6;
-    assign sll839 = reg82 << 20'h2;
-    assign srl842 = sll839 >> 20'h6;
-    assign eq844 = srl842 == reg107;
-    assign sll847 = reg88 << 20'h2;
-    assign srl850 = sll847 >> 20'h6;
-    assign or852 = eq817 | eq788;
-    assign or853 = or852 | eq726;
-    assign or854 = or853 | eq692;
-    assign or855 = or854 | eq652;
-    assign or856 = or855 | eq639;
-    assign inv857 = ~or856;
-    assign and858 = inv857 & eq837;
-    assign and859 = and858 & eq844;
-    assign sel860 = and859 ? srl850 : reg113;
-    assign sll862 = reg94 << 20'h2;
-    assign add866 = sll862 + 20'h3f;
-    assign srl869 = add866 >> 20'h6;
-    assign sel871 = and859 ? srl869 : reg119;
-    assign sel874 = and859 ? 4'ha : sel829;
-    assign inv875 = ~eq844;
-    assign and876 = and858 & inv875;
-    assign sel877 = and876 ? srl842 : reg107;
-    assign sel879 = and876 ? 4'h9 : sel874;
-    assign eq882 = reg419 == 4'h7;
-    assign or883 = eq837 | eq817;
-    assign or884 = or883 | eq788;
-    assign or885 = or884 | eq726;
-    assign or886 = or885 | eq692;
-    assign or887 = or886 | eq652;
-    assign or888 = or887 | eq639;
-    assign inv889 = ~or888;
-    assign and890 = inv889 & eq882;
-    assign sel891 = and890 ? 3'b110 : sel794;
-    assign sel892 = and890 ? proxy96 : sel795;
-    assign ne894 = reg315 != 8'h2;
-    assign and896 = and890 & ne894;
-    assign sel897 = and896 ? 1'b1 : sel800;
-    assign and899 = and896 & io_lsu_rd_req_ready;
-    assign sel900 = and899 ? 4'h8 : sel879;
-    assign add902 = proxy_x_masks_stalls359 + 32'h1;
-    assign inv904 = ~io_lsu_rd_req_ready;
-    assign and905 = and896 & inv904;
-    assign proxy906 = proxy349[319:288];
-    assign sel907 = and905 ? add902 : proxy906;
-    assign add909 = proxy_x_masks_stalls359 + 32'h1;
-    assign inv911 = ~ne894;
-    assign and912 = and890 & inv911;
-    assign sel913 = and912 ? add909 : sel907;
-    assign eq915 = reg419 == 4'h8;
-    assign eq917 = 20'h0 == reg107;
-    assign sll920 = reg88 << 20'h2;
-    assign srl923 = sll920 >> 20'h6;
-    assign or925 = eq882 | eq837;
-    assign or926 = or925 | eq817;
-    assign or927 = or926 | eq788;
-    assign or928 = or927 | eq726;
-    assign or929 = or928 | eq692;
-    assign or930 = or929 | eq652;
-    assign or931 = or930 | eq639;
-    assign inv932 = ~or931;
-    assign and933 = inv932 & eq915;
-    assign and934 = and933 & bindout269;
-    assign and935 = and934 & eq917;
-    assign sel936 = and935 ? srl923 : sel860;
-    assign sll938 = reg94 << 20'h2;
-    assign add941 = sll938 + 20'h3f;
-    assign srl944 = add941 >> 20'h6;
-    assign sel946 = and935 ? srl944 : sel871;
-    assign sel948 = and935 ? 4'ha : sel900;
-    assign inv949 = ~eq917;
-    assign and950 = and934 & inv949;
-    assign sel951 = and950 ? 20'h0 : sel877;
-    assign sel952 = and950 ? 4'h9 : sel948;
-    assign add954 = proxy_x_masks_stalls359 + 32'h1;
-    assign inv956 = ~bindout269;
-    assign and957 = and933 & inv956;
-    assign sel958 = and957 ? add954 : sel913;
-    assign eq960 = reg419 == 4'h9;
-    assign or961 = eq915 | eq882;
-    assign or962 = or961 | eq837;
-    assign or963 = or962 | eq817;
-    assign or964 = or963 | eq788;
-    assign or965 = or964 | eq726;
-    assign or966 = or965 | eq692;
-    assign or967 = or966 | eq652;
-    assign or968 = or967 | eq639;
-    assign inv969 = ~or968;
-    assign and970 = inv969 & eq960;
-    assign sel971 = and970 ? 3'b101 : sel891;
-    assign sll973 = reg82 << 20'h2;
-    assign srl976 = sll973 >> 20'h6;
-    assign sel978 = and970 ? srl976 : sel892;
-    assign ne980 = reg309 != 8'h2;
-    assign and982 = and970 & ne980;
-    assign sel983 = and982 ? 1'b1 : sel897;
-    assign sll985 = reg88 << 20'h2;
-    assign srl988 = sll985 >> 20'h6;
-    assign and990 = and982 & io_lsu_rd_req_ready;
-    assign sel991 = and990 ? srl988 : sel936;
-    assign sll993 = reg94 << 20'h2;
-    assign add996 = sll993 + 20'h3f;
-    assign srl999 = add996 >> 20'h6;
-    assign sel1001 = and990 ? srl999 : sel946;
-    assign sel1003 = and990 ? 4'ha : sel952;
-    assign add1005 = proxy_x_values_stalls358 + 32'h1;
-    assign inv1007 = ~io_lsu_rd_req_ready;
-    assign and1008 = and982 & inv1007;
-    assign proxy1009 = proxy349[287:256];
-    assign sel1010 = and1008 ? add1005 : proxy1009;
-    assign add1012 = proxy_x_values_stalls358 + 32'h1;
-    assign inv1014 = ~ne980;
-    assign and1015 = and970 & inv1014;
-    assign sel1016 = and1015 ? add1012 : sel1010;
-    assign eq1018 = reg419 == 4'ha;
-    assign or1019 = eq960 | eq915;
-    assign or1020 = or1019 | eq882;
-    assign or1021 = or1020 | eq837;
-    assign or1022 = or1021 | eq817;
-    assign or1023 = or1022 | eq788;
-    assign or1024 = or1023 | eq726;
-    assign or1025 = or1024 | eq692;
-    assign or1026 = or1025 | eq652;
-    assign or1027 = or1026 | eq639;
-    assign inv1028 = ~or1027;
-    assign and1029 = inv1028 & eq1018;
-    assign sel1030 = and1029 ? 3'b11 : sel971;
-    assign sel1031 = and1029 ? reg113 : sel978;
-    assign ne1034 = reg297 != 8'h20;
-    assign and1036 = and1029 & ne1034;
-    assign sel1037 = and1036 ? 1'b1 : sel983;
-    assign and1039 = and1036 & io_lsu_rd_req_ready;
-    assign sel1040 = and1039 ? 4'hb : sel1003;
-    assign add1042 = proxy_a_rowind_stalls356 + 32'h1;
-    assign inv1044 = ~io_lsu_rd_req_ready;
-    assign and1045 = and1036 & inv1044;
-    assign proxy1046 = proxy349[223:192];
-    assign sel1047 = and1045 ? add1042 : proxy1046;
-    assign add1049 = proxy_a_rowind_stalls356 + 32'h1;
-    assign inv1051 = ~ne1034;
-    assign and1052 = and1029 & inv1051;
-    assign sel1053 = and1052 ? add1049 : sel1047;
-    assign eq1055 = reg419 == 4'hb;
-    assign or1056 = eq1018 | eq960;
-    assign or1057 = or1056 | eq915;
-    assign or1058 = or1057 | eq882;
-    assign or1059 = or1058 | eq837;
-    assign or1060 = or1059 | eq817;
-    assign or1061 = or1060 | eq788;
-    assign or1062 = or1061 | eq726;
-    assign or1063 = or1062 | eq692;
-    assign or1064 = or1063 | eq652;
-    assign or1065 = or1064 | eq639;
-    assign inv1066 = ~or1065;
-    assign and1067 = inv1066 & eq1055;
-    assign sel1068 = and1067 ? 3'b100 : sel1030;
-    assign sel1069 = and1067 ? reg113 : sel1031;
-    assign ne1071 = reg303 != 8'h20;
-    assign and1073 = and1067 & ne1071;
-    assign sel1074 = and1073 ? 1'b1 : sel1037;
-    assign and1075 = and1073 & io_lsu_rd_req_ready;
-    assign sel1076 = and1075 ? 20'h0 : sel991;
-    assign ne1077 = reg113 != reg119;
-    assign and1079 = and1075 & ne1077;
-    assign sel1080 = and1079 ? 4'ha : sel1040;
-    assign inv1082 = ~ne1077;
-    assign and1083 = and1075 & inv1082;
-    assign sel1084 = and1083 ? 4'hc : sel1080;
-    assign add1086 = proxy_a_values_stalls357 + 32'h1;
-    assign inv1088 = ~io_lsu_rd_req_ready;
-    assign and1089 = and1073 & inv1088;
-    assign proxy1090 = proxy349[255:224];
-    assign sel1091 = and1089 ? add1086 : proxy1090;
-    assign add1093 = proxy_a_values_stalls357 + 32'h1;
-    assign inv1095 = ~ne1071;
-    assign and1096 = and1067 & inv1095;
-    assign sel1097 = and1096 ? add1093 : sel1091;
-    assign eq1099 = reg419 == 4'hc;
-    assign or1100 = eq1055 | eq1018;
-    assign or1101 = or1100 | eq960;
-    assign or1102 = or1101 | eq915;
-    assign or1103 = or1102 | eq882;
-    assign or1104 = or1103 | eq837;
-    assign or1105 = or1104 | eq817;
-    assign or1106 = or1105 | eq788;
-    assign or1107 = or1106 | eq726;
-    assign or1108 = or1107 | eq692;
-    assign or1109 = or1108 | eq652;
-    assign or1110 = or1109 | eq639;
-    assign inv1111 = ~or1110;
-    assign and1112 = inv1111 & eq1099;
-    assign and1113 = and1112 & bindout245;
-    assign sel1114 = and1113 ? bindout248 : reg340;
-    assign sel1115 = and1113 ? 1'b1 : 1'b0;
-    assign and1117 = reg82 & 20'hf;
-    assign sll1120 = and1117 << 20'h5;
-    assign srl1122 = sel1114 >> sll1120;
-    assign proxy1123 = srl1122;
-    assign proxy1124 = proxy1123[31:0];
-    assign sel1125 = and1113 ? proxy1124 : proxy134;
-    assign and1127 = reg82 & 20'hf;
-    assign sll1130 = and1127 << 20'h5;
-    assign srl1132 = reg340 >> sll1130;
-    assign proxy1133 = srl1132;
-    assign proxy1134 = proxy1133[31:0];
-    assign inv1135 = ~bindout245;
-    assign and1136 = and1112 & inv1135;
-    assign sel1137 = and1136 ? proxy1134 : sel1125;
-    assign sel1139 = and1112 ? 4'hd : sel1084;
-    assign eq1141 = reg419 == 4'hd;
-    assign and1143 = reg88 & 20'hf;
-    assign sll1146 = and1143 << 20'h5;
-    assign srl1148 = bindout200 >> sll1146;
-    assign proxy1149 = srl1148;
-    assign proxy1150 = proxy1149[19:0];
-    assign or1151 = eq1099 | eq1055;
-    assign or1152 = or1151 | eq1018;
-    assign or1153 = or1152 | eq960;
-    assign or1154 = or1153 | eq915;
-    assign or1155 = or1154 | eq882;
-    assign or1156 = or1155 | eq837;
-    assign or1157 = or1156 | eq817;
-    assign or1158 = or1157 | eq788;
-    assign or1159 = or1158 | eq726;
-    assign or1160 = or1159 | eq692;
-    assign or1161 = or1160 | eq652;
-    assign or1162 = or1161 | eq639;
-    assign inv1163 = ~or1162;
-    assign and1164 = inv1163 & eq1141;
-    assign sel1166 = and1164 ? proxy1150 : 20'h0;
-    assign and1168 = reg88 & 20'hf;
-    assign sll1171 = and1168 << 20'h5;
-    assign srl1173 = bindout224 >> sll1171;
-    assign proxy1174 = srl1173;
-    assign proxy1175 = proxy1174[31:0];
-    assign sel1177 = and1164 ? proxy1175 : 32'h0;
-    assign proxy1178 = proxy128;
-    assign sel1180 = and1164 ? proxy1178 : 32'h0;
-    assign sel1182 = and1164 ? 1'b0 : 1'b0;
-    assign sel1183 = and1164 ? 1'b1 : 1'b0;
-    assign add1185 = reg88 + 20'h1;
-    assign and1187 = and1164 & io_pe_ready;
-    assign sel1188 = and1187 ? add1185 : sel758;
-    assign ne1189 = reg88 != reg94;
-    assign inv1201 = ~ne1189;
-    assign and1202 = and1187 & inv1201;
-    assign sel1206 = and1202 ? 4'he : sel1139;
-    assign add1208 = proxy_execute_stalls360 + 32'h1;
-    assign inv1210 = ~io_pe_ready;
-    assign and1211 = and1164 & inv1210;
-    assign proxy1212 = proxy349[351:320];
-    assign sel1213 = and1211 ? add1208 : proxy1212;
-    assign eq1215 = reg419 == 4'he;
-    assign add1217 = reg70 + 20'h1;
-    assign or1219 = eq1141 | eq1099;
-    assign or1220 = or1219 | eq1055;
-    assign or1221 = or1220 | eq1018;
-    assign or1222 = or1221 | eq960;
-    assign or1223 = or1222 | eq915;
-    assign or1224 = or1223 | eq882;
-    assign or1225 = or1224 | eq837;
-    assign or1226 = or1225 | eq817;
-    assign or1227 = or1226 | eq788;
-    assign or1228 = or1227 | eq726;
-    assign or1229 = or1228 | eq692;
-    assign or1230 = or1229 | eq652;
-    assign or1231 = or1230 | eq639;
-    assign inv1232 = ~or1231;
-    assign and1233 = inv1232 & eq1215;
-    assign sel1234 = and1233 ? add1217 : sel642;
-    assign ne1235 = reg70 != reg76;
-    assign and1238 = reg70 & 20'hf;
-    assign ne1241 = and1238 != 20'hf;
-    assign and1244 = sel1234 & 20'hf;
-    assign sll1247 = and1244 << 20'h5;
-    assign srl1249 = reg322 >> sll1247;
-    assign proxy1250 = srl1249;
-    assign proxy1251 = proxy1250[19:0];
-    assign and1252 = and1233 & ne1235;
-    assign and1253 = and1252 & ne1241;
-    assign sel1254 = and1253 ? proxy1251 : sel746;
-    assign and1256 = sel1234 & 20'hf;
-    assign sll1259 = and1256 << 20'h5;
-    assign srl1261 = reg328 >> sll1259;
-    assign proxy1262 = srl1261;
-    assign proxy1263 = proxy1262[19:0];
-    assign sel1264 = and1253 ? proxy1263 : sel1188;
-    assign and1266 = reg70 & 20'hf;
-    assign ne1269 = and1266 != 20'hf;
-    assign add1272 = sel1234 + 20'h1;
-    assign and1275 = add1272 & 20'hf;
-    assign sll1278 = and1275 << 20'h5;
-    assign srl1280 = reg328 >> sll1278;
-    assign proxy1281 = srl1280;
-    assign proxy1282 = proxy1281[19:0];
-    assign and1283 = and1253 & ne1269;
-    assign sel1284 = and1283 ? proxy1282 : sel828;
-    assign sel1285 = and1283 ? 4'h6 : sel1206;
-    assign inv1286 = ~ne1269;
-    assign and1287 = and1253 & inv1286;
-    assign sel1288 = and1287 ? 4'h4 : sel1285;
-    assign inv1289 = ~ne1241;
-    assign and1290 = and1252 & inv1289;
-    assign sel1291 = and1290 ? 4'h1 : sel1288;
-    assign inv1293 = ~ne1235;
-    assign and1294 = and1233 & inv1293;
-    assign sel1295 = and1294 ? 4'hf : sel1291;
-    assign eq1297 = reg419 == 4'hf;
-    assign or1298 = eq1215 | eq1141;
-    assign or1299 = or1298 | eq1099;
-    assign or1300 = or1299 | eq1055;
-    assign or1301 = or1300 | eq1018;
-    assign or1302 = or1301 | eq960;
-    assign or1303 = or1302 | eq915;
-    assign or1304 = or1303 | eq882;
-    assign or1305 = or1304 | eq837;
-    assign or1306 = or1305 | eq817;
-    assign or1307 = or1306 | eq788;
-    assign or1308 = or1307 | eq726;
-    assign or1309 = or1308 | eq692;
-    assign or1310 = or1309 | eq652;
-    assign or1311 = or1310 | eq639;
-    assign inv1312 = ~or1311;
-    assign and1313 = inv1312 & eq1297;
-    assign sel1314 = and1313 ? 1'b1 : sel1182;
-    assign sel1315 = and1313 ? 1'b1 : sel1183;
-    assign lt1317 = proxy_min_latency351 < 32'h0;
-    assign sel1319 = lt1317 ? proxy_min_latency351 : 32'h0;
-    assign eq1322 = proxy_min_latency351 == 32'h0;
-    assign sel1324 = eq1322 ? 32'h0 : sel1319;
-    assign and1326 = and1313 & io_pe_ready;
-    assign proxy1327 = proxy349[63:32];
-    assign sel1328 = and1326 ? sel1324 : proxy1327;
-    assign gt1329 = proxy_min_latency351 > 32'h0;
-    assign sel1331 = gt1329 ? proxy_min_latency351 : 32'h0;
-    assign proxy1333 = proxy349[95:64];
-    assign sel1334 = and1326 ? sel1331 : proxy1333;
-    assign add1335 = proxy_total_latency353 + 32'h0;
-    assign proxy1337 = proxy349[127:96];
-    assign sel1338 = and1326 ? add1335 : proxy1337;
-    assign add1340 = proxy_num_parts350 + 32'h1;
-    assign proxy1342 = proxy349[31:0];
-    assign sel1343 = and1326 ? add1340 : proxy1342;
-    assign sel1344 = and1326 ? 4'h0 : sel1295;
-    assign add1346 = proxy_execute_stalls360 + 32'h1;
-    assign inv1348 = ~io_pe_ready;
-    assign and1349 = and1313 & inv1348;
-    assign sel1350 = and1349 ? add1346 : sel1213;
-    assign or1352 = eq1297 | eq1215;
-    assign or1353 = or1352 | eq1141;
-    assign or1354 = or1353 | eq1099;
-    assign or1355 = or1354 | eq1055;
-    assign or1356 = or1355 | eq1018;
-    assign or1357 = or1356 | eq960;
-    assign or1358 = or1357 | eq915;
-    assign or1359 = or1358 | eq882;
-    assign or1360 = or1359 | eq837;
-    assign or1361 = or1360 | eq817;
-    assign or1362 = or1361 | eq788;
-    assign or1363 = or1362 | eq726;
-    assign or1364 = or1363 | eq692;
-    assign or1365 = or1364 | eq652;
-    assign or1366 = or1365 | eq639;
-    assign inv1367 = ~or1366;
-    assign sel1368 = inv1367 ? 1'b0 : proxy612;
+    assign sub646 = proxy643 - 20'h1;
+    assign sel648 = and641 ? sub646 : reg76;
+    assign ne649 = reg70 != sel648;
+    assign and651 = and641 & ne649;
+    assign sel654 = and651 ? 5'b1 : reg419;
+    assign eq656 = reg419 == 5'b1;
+    assign inv657 = ~eq639;
+    assign and658 = inv657 & eq656;
+    assign sel660 = and658 ? 3'b1 : 3'b0;
+    assign sll663 = reg70 << 20'h2;
+    assign srl667 = sll663 >> 20'h6;
+    assign sel670 = and658 ? srl667 : 20'h0;
+    assign ne673 = reg285 != 8'h2;
+    assign and676 = and658 & ne673;
+    assign sel677 = and676 ? 1'b1 : 1'b0;
+    assign and679 = and676 & io_lsu_rd_req_ready;
+    assign sel680 = and679 ? 5'b10 : sel654;
+    assign add683 = proxy_a_colind_stalls354 + 32'h1;
+    assign inv685 = ~io_lsu_rd_req_ready;
+    assign and686 = and676 & inv685;
+    assign proxy687 = proxy349[159:128];
+    assign sel688 = and686 ? add683 : proxy687;
+    assign add690 = proxy_a_colind_stalls354 + 32'h1;
+    assign inv692 = ~ne673;
+    assign and693 = and658 & inv692;
+    assign sel694 = and693 ? add690 : sel688;
+    assign eq696 = reg419 == 5'b10;
+    assign or697 = eq656 | eq639;
+    assign inv698 = ~or697;
+    assign and699 = inv698 & eq696;
+    assign sel700 = and699 ? 3'b10 : sel660;
+    assign sll702 = reg70 << 20'h2;
+    assign srl705 = sll702 >> 20'h6;
+    assign sel707 = and699 ? srl705 : sel670;
+    assign ne709 = reg291 != 8'h2;
+    assign and711 = and699 & ne709;
+    assign sel712 = and711 ? 1'b1 : sel677;
+    assign and714 = and711 & io_lsu_rd_req_ready;
+    assign sel715 = and714 ? 5'b11 : sel680;
+    assign add717 = proxy_a_rowptr_stalls355 + 32'h1;
+    assign inv719 = ~io_lsu_rd_req_ready;
+    assign and720 = and711 & inv719;
+    assign proxy721 = proxy349[191:160];
+    assign sel722 = and720 ? add717 : proxy721;
+    assign add724 = proxy_a_rowptr_stalls355 + 32'h1;
+    assign inv726 = ~ne709;
+    assign and727 = and699 & inv726;
+    assign sel728 = and727 ? add724 : sel722;
+    assign eq730 = reg419 == 5'b11;
+    assign and731 = bindout149 & bindout173;
+    assign or733 = eq696 | eq656;
+    assign or734 = or733 | eq639;
+    assign inv735 = ~or734;
+    assign and736 = inv735 & eq730;
+    assign and737 = and736 & and731;
+    assign sel738 = and737 ? bindout152 : reg322;
+    assign and741 = reg70 & 20'hf;
+    assign sll745 = and741 << 20'h5;
+    assign srl747 = sel738 >> sll745;
+    assign proxy748 = srl747;
+    assign proxy749 = proxy748[19:0];
+    assign sel750 = and737 ? proxy749 : reg82;
+    assign sel751 = and737 ? 1'b1 : 1'b0;
+    assign sel752 = and737 ? proxy175 : reg328;
+    assign and754 = reg70 & 20'hf;
+    assign sll757 = and754 << 20'h5;
+    assign srl759 = sel752 >> sll757;
+    assign proxy760 = srl759;
+    assign proxy761 = proxy760[19:0];
+    assign sel762 = and737 ? proxy761 : reg88;
+    assign sel763 = and737 ? 1'b1 : 1'b0;
+    assign and765 = reg70 & 20'hf;
+    assign ne768 = and765 != 20'hf;
+    assign add771 = reg70 + 20'h1;
+    assign and774 = add771 & 20'hf;
+    assign sll777 = and774 << 20'h5;
+    assign srl779 = sel752 >> sll777;
+    assign proxy780 = srl779;
+    assign proxy781 = proxy780[19:0];
+    assign and782 = and737 & ne768;
+    assign sel783 = and782 ? proxy781 : reg94;
+    assign sel785 = and782 ? 5'b110 : sel715;
+    assign inv787 = ~ne768;
+    assign and788 = and737 & inv787;
+    assign sel789 = and788 ? 5'b100 : sel785;
+    assign eq791 = reg419 == 5'b100;
+    assign or792 = eq730 | eq696;
+    assign or793 = or792 | eq656;
+    assign or794 = or793 | eq639;
+    assign inv795 = ~or794;
+    assign and796 = inv795 & eq791;
+    assign sel797 = and796 ? 3'b10 : sel700;
+    assign add799 = reg70 + 20'h1;
+    assign sll802 = add799 << 20'h2;
+    assign srl805 = sll802 >> 20'h6;
+    assign sel807 = and796 ? srl805 : sel707;
+    assign ne809 = reg291 != 8'h2;
+    assign and811 = and796 & ne809;
+    assign sel812 = and811 ? 1'b1 : sel712;
+    assign and814 = and811 & io_lsu_rd_req_ready;
+    assign sel815 = and814 ? 5'b101 : sel789;
+    assign add817 = proxy_a_rowptr_stalls355 + 32'h1;
+    assign inv819 = ~io_lsu_rd_req_ready;
+    assign and820 = and811 & inv819;
+    assign sel821 = and820 ? add817 : sel728;
+    assign add823 = proxy_a_rowptr_stalls355 + 32'h1;
+    assign inv825 = ~ne809;
+    assign and826 = and796 & inv825;
+    assign sel827 = and826 ? add823 : sel821;
+    assign eq829 = reg419 == 5'b101;
+    assign proxy830 = proxy175;
+    assign or831 = eq791 | eq730;
+    assign or832 = or831 | eq696;
+    assign or833 = or832 | eq656;
+    assign or834 = or833 | eq639;
+    assign inv835 = ~or834;
+    assign and836 = inv835 & eq829;
+    assign and837 = and836 & bindout173;
+    assign sel838 = and837 ? 1'b1 : sel763;
+    assign proxy839 = proxy830[19:0];
+    assign sel840 = and837 ? proxy839 : sel783;
+    assign sel841 = and837 ? 5'b110 : sel815;
+    assign add843 = proxy_a_rowptr_stalls355 + 32'h1;
+    assign inv845 = ~bindout173;
+    assign and846 = and836 & inv845;
+    assign sel847 = and846 ? add843 : sel827;
+    assign eq849 = reg419 == 5'b110;
+    assign srl851 = reg82 >> 20'h5;
+    assign sll854 = srl851 << 20'h2;
+    assign srl857 = sll854 >> 20'h6;
+    assign eq859 = srl857 == reg101;
+    assign and862 = srl851 & 20'hf;
+    assign sll865 = and862 << 20'h5;
+    assign srl867 = reg334 >> sll865;
+    assign proxy868 = srl867;
+    assign proxy869 = proxy868[31:0];
+    assign and872 = reg82 & 20'h1f;
+    assign sll875 = 32'h1 << and872;
+    assign and877 = proxy869 & sll875;
+    assign ne880 = and877 != 32'h0;
+    assign or883 = eq829 | eq791;
+    assign or884 = or883 | eq730;
+    assign or885 = or884 | eq696;
+    assign or886 = or885 | eq656;
+    assign or887 = or886 | eq639;
+    assign inv888 = ~or887;
+    assign and889 = inv888 & eq849;
+    assign and890 = and889 & eq859;
+    assign and891 = and890 & ne880;
+    assign sel892 = and891 ? 5'b111 : sel841;
+    assign inv894 = ~ne880;
+    assign and895 = and890 & inv894;
+    assign sel896 = and895 ? 5'b10000 : sel892;
+    assign inv897 = ~eq859;
+    assign and898 = and889 & inv897;
+    assign sel899 = and898 ? srl857 : reg101;
+    assign sel901 = and898 ? 5'b1000 : sel896;
+    assign eq903 = reg419 == 5'b111;
+    assign sll905 = reg82 << 20'h2;
+    assign srl908 = sll905 >> 20'h6;
+    assign eq910 = srl908 == reg107;
+    assign sll913 = reg88 << 20'h2;
+    assign srl916 = sll913 >> 20'h6;
+    assign or918 = eq849 | eq829;
+    assign or919 = or918 | eq791;
+    assign or920 = or919 | eq730;
+    assign or921 = or920 | eq696;
+    assign or922 = or921 | eq656;
+    assign or923 = or922 | eq639;
+    assign inv924 = ~or923;
+    assign and925 = inv924 & eq903;
+    assign and926 = and925 & eq910;
+    assign sel927 = and926 ? srl916 : reg113;
+    assign sll929 = reg94 << 20'h2;
+    assign add933 = sll929 + 20'h3f;
+    assign srl936 = add933 >> 20'h6;
+    assign sub939 = srl936 - 20'h1;
+    assign sel941 = and926 ? sub939 : reg119;
+    assign sel943 = and926 ? 5'b1100 : sel901;
+    assign inv944 = ~eq910;
+    assign and945 = and925 & inv944;
+    assign sel946 = and945 ? srl908 : reg107;
+    assign sel948 = and945 ? 5'b1011 : sel943;
+    assign eq950 = reg419 == 5'b1000;
+    assign or951 = eq903 | eq849;
+    assign or952 = or951 | eq829;
+    assign or953 = or952 | eq791;
+    assign or954 = or953 | eq730;
+    assign or955 = or954 | eq696;
+    assign or956 = or955 | eq656;
+    assign or957 = or956 | eq639;
+    assign inv958 = ~or957;
+    assign and959 = inv958 & eq950;
+    assign sel960 = and959 ? 3'b110 : sel797;
+    assign sel961 = and959 ? reg101 : sel807;
+    assign ne963 = reg315 != 8'h2;
+    assign and965 = and959 & ne963;
+    assign sel966 = and965 ? 1'b1 : sel812;
+    assign and968 = and965 & io_lsu_rd_req_ready;
+    assign sel969 = and968 ? 5'b1001 : sel948;
+    assign add971 = proxy_x_masks_stalls359 + 32'h1;
+    assign inv973 = ~io_lsu_rd_req_ready;
+    assign and974 = and965 & inv973;
+    assign proxy975 = proxy349[319:288];
+    assign sel976 = and974 ? add971 : proxy975;
+    assign add978 = proxy_x_masks_stalls359 + 32'h1;
+    assign inv980 = ~ne963;
+    assign and981 = and959 & inv980;
+    assign sel982 = and981 ? add978 : sel976;
+    assign eq984 = reg419 == 5'b1001;
+    assign or985 = eq950 | eq903;
+    assign or986 = or985 | eq849;
+    assign or987 = or986 | eq829;
+    assign or988 = or987 | eq791;
+    assign or989 = or988 | eq730;
+    assign or990 = or989 | eq696;
+    assign or991 = or990 | eq656;
+    assign or992 = or991 | eq639;
+    assign inv993 = ~or992;
+    assign and994 = inv993 & eq984;
+    assign and995 = and994 & bindout269;
+    assign sel996 = and995 ? bindout272 : reg334;
+    assign sel997 = and995 ? 1'b1 : 1'b0;
+    assign srl999 = reg82 >> 20'h5;
+    assign and1002 = srl999 & 20'hf;
+    assign sll1005 = and1002 << 20'h5;
+    assign srl1007 = sel996 >> sll1005;
+    assign proxy1008 = srl1007;
+    assign proxy1009 = proxy1008[31:0];
+    assign and1011 = reg82 & 20'h1f;
+    assign sll1014 = 32'h1 << and1011;
+    assign and1016 = proxy1009 & sll1014;
+    assign ne1019 = and1016 != 32'h0;
+    assign and1022 = and995 & ne1019;
+    assign sel1023 = and1022 ? 5'b1010 : sel969;
+    assign inv1024 = ~ne1019;
+    assign and1025 = and995 & inv1024;
+    assign sel1026 = and1025 ? 5'b10000 : sel1023;
+    assign add1028 = proxy_x_masks_stalls359 + 32'h1;
+    assign inv1030 = ~bindout269;
+    assign and1031 = and994 & inv1030;
+    assign sel1032 = and1031 ? add1028 : sel982;
+    assign eq1034 = reg419 == 5'b1010;
+    assign sll1036 = reg82 << 20'h2;
+    assign srl1039 = sll1036 >> 20'h6;
+    assign eq1041 = srl1039 == reg107;
+    assign sll1044 = reg88 << 20'h2;
+    assign srl1047 = sll1044 >> 20'h6;
+    assign or1049 = eq984 | eq950;
+    assign or1050 = or1049 | eq903;
+    assign or1051 = or1050 | eq849;
+    assign or1052 = or1051 | eq829;
+    assign or1053 = or1052 | eq791;
+    assign or1054 = or1053 | eq730;
+    assign or1055 = or1054 | eq696;
+    assign or1056 = or1055 | eq656;
+    assign or1057 = or1056 | eq639;
+    assign inv1058 = ~or1057;
+    assign and1059 = inv1058 & eq1034;
+    assign and1060 = and1059 & eq1041;
+    assign sel1061 = and1060 ? srl1047 : sel927;
+    assign sll1063 = reg94 << 20'h2;
+    assign add1066 = sll1063 + 20'h3f;
+    assign srl1069 = add1066 >> 20'h6;
+    assign sub1072 = srl1069 - 20'h1;
+    assign sel1074 = and1060 ? sub1072 : sel941;
+    assign sel1075 = and1060 ? 5'b1100 : sel1026;
+    assign inv1076 = ~eq1041;
+    assign and1077 = and1059 & inv1076;
+    assign sel1078 = and1077 ? srl1039 : sel946;
+    assign sel1079 = and1077 ? 5'b1011 : sel1075;
+    assign eq1081 = reg419 == 5'b1011;
+    assign or1082 = eq1034 | eq984;
+    assign or1083 = or1082 | eq950;
+    assign or1084 = or1083 | eq903;
+    assign or1085 = or1084 | eq849;
+    assign or1086 = or1085 | eq829;
+    assign or1087 = or1086 | eq791;
+    assign or1088 = or1087 | eq730;
+    assign or1089 = or1088 | eq696;
+    assign or1090 = or1089 | eq656;
+    assign or1091 = or1090 | eq639;
+    assign inv1092 = ~or1091;
+    assign and1093 = inv1092 & eq1081;
+    assign sel1094 = and1093 ? 3'b101 : sel960;
+    assign sll1096 = reg82 << 20'h2;
+    assign srl1099 = sll1096 >> 20'h6;
+    assign sel1101 = and1093 ? srl1099 : sel961;
+    assign ne1103 = reg309 != 8'h2;
+    assign and1105 = and1093 & ne1103;
+    assign sel1106 = and1105 ? 1'b1 : sel966;
+    assign sll1108 = reg88 << 20'h2;
+    assign srl1111 = sll1108 >> 20'h6;
+    assign and1113 = and1105 & io_lsu_rd_req_ready;
+    assign sel1114 = and1113 ? srl1111 : sel1061;
+    assign sll1116 = reg94 << 20'h2;
+    assign add1119 = sll1116 + 20'h3f;
+    assign srl1122 = add1119 >> 20'h6;
+    assign sub1125 = srl1122 - 20'h1;
+    assign sel1127 = and1113 ? sub1125 : sel1074;
+    assign sel1128 = and1113 ? 5'b1100 : sel1079;
+    assign add1130 = proxy_x_values_stalls358 + 32'h1;
+    assign inv1132 = ~io_lsu_rd_req_ready;
+    assign and1133 = and1105 & inv1132;
+    assign proxy1134 = proxy349[287:256];
+    assign sel1135 = and1133 ? add1130 : proxy1134;
+    assign add1137 = proxy_x_values_stalls358 + 32'h1;
+    assign inv1139 = ~ne1103;
+    assign and1140 = and1093 & inv1139;
+    assign sel1141 = and1140 ? add1137 : sel1135;
+    assign eq1143 = reg419 == 5'b1100;
+    assign or1144 = eq1081 | eq1034;
+    assign or1145 = or1144 | eq984;
+    assign or1146 = or1145 | eq950;
+    assign or1147 = or1146 | eq903;
+    assign or1148 = or1147 | eq849;
+    assign or1149 = or1148 | eq829;
+    assign or1150 = or1149 | eq791;
+    assign or1151 = or1150 | eq730;
+    assign or1152 = or1151 | eq696;
+    assign or1153 = or1152 | eq656;
+    assign or1154 = or1153 | eq639;
+    assign inv1155 = ~or1154;
+    assign and1156 = inv1155 & eq1143;
+    assign sel1157 = and1156 ? 3'b11 : sel1094;
+    assign sel1158 = and1156 ? reg113 : sel1101;
+    assign ne1161 = reg297 != 8'h20;
+    assign and1163 = and1156 & ne1161;
+    assign sel1164 = and1163 ? 1'b1 : sel1106;
+    assign and1166 = and1163 & io_lsu_rd_req_ready;
+    assign sel1167 = and1166 ? 5'b1101 : sel1128;
+    assign add1169 = proxy_a_rowind_stalls356 + 32'h1;
+    assign inv1171 = ~io_lsu_rd_req_ready;
+    assign and1172 = and1163 & inv1171;
+    assign proxy1173 = proxy349[223:192];
+    assign sel1174 = and1172 ? add1169 : proxy1173;
+    assign add1176 = proxy_a_rowind_stalls356 + 32'h1;
+    assign inv1178 = ~ne1161;
+    assign and1179 = and1156 & inv1178;
+    assign sel1180 = and1179 ? add1176 : sel1174;
+    assign eq1182 = reg419 == 5'b1101;
+    assign or1183 = eq1143 | eq1081;
+    assign or1184 = or1183 | eq1034;
+    assign or1185 = or1184 | eq984;
+    assign or1186 = or1185 | eq950;
+    assign or1187 = or1186 | eq903;
+    assign or1188 = or1187 | eq849;
+    assign or1189 = or1188 | eq829;
+    assign or1190 = or1189 | eq791;
+    assign or1191 = or1190 | eq730;
+    assign or1192 = or1191 | eq696;
+    assign or1193 = or1192 | eq656;
+    assign or1194 = or1193 | eq639;
+    assign inv1195 = ~or1194;
+    assign and1196 = inv1195 & eq1182;
+    assign sel1197 = and1196 ? 3'b100 : sel1157;
+    assign sel1198 = and1196 ? reg113 : sel1158;
+    assign ne1200 = reg303 != 8'h20;
+    assign and1202 = and1196 & ne1200;
+    assign sel1203 = and1202 ? 1'b1 : sel1164;
+    assign add1205 = reg113 + 20'h1;
+    assign and1207 = and1202 & io_lsu_rd_req_ready;
+    assign sel1208 = and1207 ? add1205 : sel1114;
+    assign ne1209 = reg113 != reg119;
+    assign and1211 = and1207 & ne1209;
+    assign sel1212 = and1211 ? 5'b1100 : sel1167;
+    assign inv1214 = ~ne1209;
+    assign and1215 = and1207 & inv1214;
+    assign sel1216 = and1215 ? 5'b1110 : sel1212;
+    assign add1218 = proxy_a_values_stalls357 + 32'h1;
+    assign inv1220 = ~io_lsu_rd_req_ready;
+    assign and1221 = and1202 & inv1220;
+    assign proxy1222 = proxy349[255:224];
+    assign sel1223 = and1221 ? add1218 : proxy1222;
+    assign add1225 = proxy_a_values_stalls357 + 32'h1;
+    assign inv1227 = ~ne1200;
+    assign and1228 = and1196 & inv1227;
+    assign sel1229 = and1228 ? add1225 : sel1223;
+    assign eq1231 = reg419 == 5'b1110;
+    assign or1232 = eq1182 | eq1143;
+    assign or1233 = or1232 | eq1081;
+    assign or1234 = or1233 | eq1034;
+    assign or1235 = or1234 | eq984;
+    assign or1236 = or1235 | eq950;
+    assign or1237 = or1236 | eq903;
+    assign or1238 = or1237 | eq849;
+    assign or1239 = or1238 | eq829;
+    assign or1240 = or1239 | eq791;
+    assign or1241 = or1240 | eq730;
+    assign or1242 = or1241 | eq696;
+    assign or1243 = or1242 | eq656;
+    assign or1244 = or1243 | eq639;
+    assign inv1245 = ~or1244;
+    assign and1246 = inv1245 & eq1231;
+    assign and1247 = and1246 & bindout245;
+    assign sel1248 = and1247 ? bindout248 : reg340;
+    assign sel1249 = and1247 ? 1'b1 : 1'b0;
+    assign and1251 = reg82 & 20'hf;
+    assign sll1254 = and1251 << 20'h5;
+    assign srl1256 = sel1248 >> sll1254;
+    assign proxy1257 = srl1256;
+    assign proxy1258 = proxy1257[31:0];
+    assign sel1259 = and1247 ? proxy1258 : proxy134;
+    assign and1261 = reg82 & 20'hf;
+    assign sll1264 = and1261 << 20'h5;
+    assign srl1266 = reg340 >> sll1264;
+    assign proxy1267 = srl1266;
+    assign proxy1268 = proxy1267[31:0];
+    assign inv1269 = ~bindout245;
+    assign and1270 = and1246 & inv1269;
+    assign sel1271 = and1270 ? proxy1268 : sel1259;
+    assign sel1273 = and1246 ? 5'b1111 : sel1216;
+    assign eq1275 = reg419 == 5'b1111;
+    assign and1277 = reg88 & 20'hf;
+    assign sll1280 = and1277 << 20'h5;
+    assign srl1282 = bindout200 >> sll1280;
+    assign proxy1283 = srl1282;
+    assign proxy1284 = proxy1283[19:0];
+    assign or1285 = eq1231 | eq1182;
+    assign or1286 = or1285 | eq1143;
+    assign or1287 = or1286 | eq1081;
+    assign or1288 = or1287 | eq1034;
+    assign or1289 = or1288 | eq984;
+    assign or1290 = or1289 | eq950;
+    assign or1291 = or1290 | eq903;
+    assign or1292 = or1291 | eq849;
+    assign or1293 = or1292 | eq829;
+    assign or1294 = or1293 | eq791;
+    assign or1295 = or1294 | eq730;
+    assign or1296 = or1295 | eq696;
+    assign or1297 = or1296 | eq656;
+    assign or1298 = or1297 | eq639;
+    assign inv1299 = ~or1298;
+    assign and1300 = inv1299 & eq1275;
+    assign sel1302 = and1300 ? proxy1284 : 20'h0;
+    assign and1304 = reg88 & 20'hf;
+    assign sll1307 = and1304 << 20'h5;
+    assign srl1309 = bindout224 >> sll1307;
+    assign proxy1310 = srl1309;
+    assign proxy1311 = proxy1310[31:0];
+    assign sel1313 = and1300 ? proxy1311 : 32'h0;
+    assign proxy1314 = proxy128;
+    assign sel1316 = and1300 ? proxy1314 : 32'h0;
+    assign sel1318 = and1300 ? 1'b0 : 1'b0;
+    assign sel1319 = and1300 ? 1'b1 : 1'b0;
+    assign add1321 = reg88 + 20'h1;
+    assign and1323 = and1300 & io_pe_ready;
+    assign sel1324 = and1323 ? add1321 : sel762;
+    assign ne1325 = reg88 != reg94;
+    assign inv1337 = ~ne1325;
+    assign and1338 = and1323 & inv1337;
+    assign sel1341 = and1338 ? 5'b10000 : sel1273;
+    assign add1343 = proxy_execute_stalls360 + 32'h1;
+    assign inv1345 = ~io_pe_ready;
+    assign and1346 = and1300 & inv1345;
+    assign proxy1347 = proxy349[351:320];
+    assign sel1348 = and1346 ? add1343 : proxy1347;
+    assign eq1350 = reg419 == 5'b10000;
+    assign add1352 = reg70 + 20'h1;
+    assign or1354 = eq1275 | eq1231;
+    assign or1355 = or1354 | eq1182;
+    assign or1356 = or1355 | eq1143;
+    assign or1357 = or1356 | eq1081;
+    assign or1358 = or1357 | eq1034;
+    assign or1359 = or1358 | eq984;
+    assign or1360 = or1359 | eq950;
+    assign or1361 = or1360 | eq903;
+    assign or1362 = or1361 | eq849;
+    assign or1363 = or1362 | eq829;
+    assign or1364 = or1363 | eq791;
+    assign or1365 = or1364 | eq730;
+    assign or1366 = or1365 | eq696;
+    assign or1367 = or1366 | eq656;
+    assign or1368 = or1367 | eq639;
+    assign inv1369 = ~or1368;
+    assign and1370 = inv1369 & eq1350;
+    assign sel1371 = and1370 ? add1352 : sel642;
+    assign ne1372 = reg70 != reg76;
+    assign and1375 = reg70 & 20'hf;
+    assign ne1378 = and1375 != 20'hf;
+    assign and1381 = sel1371 & 20'hf;
+    assign sll1384 = and1381 << 20'h5;
+    assign srl1386 = reg322 >> sll1384;
+    assign proxy1387 = srl1386;
+    assign proxy1388 = proxy1387[19:0];
+    assign and1389 = and1370 & ne1372;
+    assign and1390 = and1389 & ne1378;
+    assign sel1391 = and1390 ? proxy1388 : sel750;
+    assign and1393 = sel1371 & 20'hf;
+    assign sll1396 = and1393 << 20'h5;
+    assign srl1398 = reg328 >> sll1396;
+    assign proxy1399 = srl1398;
+    assign proxy1400 = proxy1399[19:0];
+    assign sel1401 = and1390 ? proxy1400 : sel1324;
+    assign and1403 = reg70 & 20'hf;
+    assign ne1406 = and1403 != 20'hf;
+    assign add1409 = sel1371 + 20'h1;
+    assign and1412 = add1409 & 20'hf;
+    assign sll1415 = and1412 << 20'h5;
+    assign srl1417 = reg328 >> sll1415;
+    assign proxy1418 = srl1417;
+    assign proxy1419 = proxy1418[19:0];
+    assign and1420 = and1390 & ne1406;
+    assign sel1421 = and1420 ? proxy1419 : sel840;
+    assign sel1422 = and1420 ? 5'b110 : sel1341;
+    assign inv1423 = ~ne1406;
+    assign and1424 = and1390 & inv1423;
+    assign sel1425 = and1424 ? 5'b100 : sel1422;
+    assign inv1426 = ~ne1378;
+    assign and1427 = and1389 & inv1426;
+    assign sel1428 = and1427 ? 5'b1 : sel1425;
+    assign inv1430 = ~ne1372;
+    assign and1431 = and1370 & inv1430;
+    assign sel1432 = and1431 ? 5'b10001 : sel1428;
+    assign eq1434 = reg419 == 5'b10001;
+    assign or1435 = eq1350 | eq1275;
+    assign or1436 = or1435 | eq1231;
+    assign or1437 = or1436 | eq1182;
+    assign or1438 = or1437 | eq1143;
+    assign or1439 = or1438 | eq1081;
+    assign or1440 = or1439 | eq1034;
+    assign or1441 = or1440 | eq984;
+    assign or1442 = or1441 | eq950;
+    assign or1443 = or1442 | eq903;
+    assign or1444 = or1443 | eq849;
+    assign or1445 = or1444 | eq829;
+    assign or1446 = or1445 | eq791;
+    assign or1447 = or1446 | eq730;
+    assign or1448 = or1447 | eq696;
+    assign or1449 = or1448 | eq656;
+    assign or1450 = or1449 | eq639;
+    assign inv1451 = ~or1450;
+    assign and1452 = inv1451 & eq1434;
+    assign sel1453 = and1452 ? 1'b1 : sel1318;
+    assign sel1454 = and1452 ? 1'b1 : sel1319;
+    assign lt1456 = proxy_min_latency351 < 32'h0;
+    assign sel1458 = lt1456 ? proxy_min_latency351 : 32'h0;
+    assign eq1461 = proxy_min_latency351 == 32'h0;
+    assign sel1463 = eq1461 ? 32'h0 : sel1458;
+    assign and1465 = and1452 & io_pe_ready;
+    assign proxy1466 = proxy349[63:32];
+    assign sel1467 = and1465 ? sel1463 : proxy1466;
+    assign gt1468 = proxy_min_latency351 > 32'h0;
+    assign sel1470 = gt1468 ? proxy_min_latency351 : 32'h0;
+    assign proxy1472 = proxy349[95:64];
+    assign sel1473 = and1465 ? sel1470 : proxy1472;
+    assign add1474 = proxy_total_latency353 + 32'h0;
+    assign proxy1476 = proxy349[127:96];
+    assign sel1477 = and1465 ? add1474 : proxy1476;
+    assign add1479 = proxy_num_parts350 + 32'h1;
+    assign proxy1481 = proxy349[31:0];
+    assign sel1482 = and1465 ? add1479 : proxy1481;
+    assign sel1483 = and1465 ? 5'b0 : sel1432;
+    assign add1485 = proxy_execute_stalls360 + 32'h1;
+    assign inv1487 = ~io_pe_ready;
+    assign and1488 = and1452 & inv1487;
+    assign sel1489 = and1488 ? add1485 : sel1348;
 
     assign io_ctrl_start_ready = io_ctrl_start_ready11;
     assign io_ctrl_stats = io_ctrl_stats17;
-    assign io_lsu_rd_req_valid = sel1074;
+    assign io_lsu_rd_req_valid = sel1203;
     assign io_lsu_rd_req_data = io_lsu_rd_req_data34;
     assign io_pe_valid = io_pe_valid50;
     assign io_pe_data = io_pe_data53;
@@ -1649,44 +1788,44 @@ module ch_pipe(
     output wire io_deq_valid,
     output wire[20:0] io_deq_data
 );
-    wire io_enq_valid2; // #1550 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire[20:0] io_enq_data5; // #1551 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire io_enq_ready10; // #1554 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire io_deq_valid13; // #1555 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire[20:0] io_deq_data16; // #1556 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire io_deq_ready21; // #1559 /home/blaise/dev/cash/src/htl/pipe.h(9)
-    wire[20:0] ch_pipe_data_t23; // #1560 /home/blaise/dev/cash/src/htl/pipe.h(17)
-    wire proxy26; // #1563 /home/blaise/dev/cash/src/htl/pipe.h(18)
-    wire[20:0] ch_pipe_data_t28; // #1564 /home/blaise/dev/cash/src/htl/pipe.h(20)
-    wire proxy32; // #1567 /home/blaise/dev/cash/src/htl/pipe.h(21)
-    wire[20:0] proxy33; // #1568 /home/blaise/dev/cash/src/htl/pipe.h(22)
+    wire io_enq_valid2; // #1662 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire[20:0] io_enq_data5; // #1663 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire io_enq_ready10; // #1666 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire io_deq_valid13; // #1667 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire[20:0] io_deq_data16; // #1668 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire io_deq_ready21; // #1671 /home/blaise/dev/cash/src/htl/pipe.h(9)
+    wire[20:0] ch_pipe_data_t23; // #1672 /home/blaise/dev/cash/src/htl/pipe.h(17)
+    wire proxy26; // #1675 /home/blaise/dev/cash/src/htl/pipe.h(18)
+    wire[20:0] ch_pipe_data_t28; // #1676 /home/blaise/dev/cash/src/htl/pipe.h(20)
+    wire proxy32; // #1679 /home/blaise/dev/cash/src/htl/pipe.h(21)
+    wire[20:0] proxy33; // #1680 /home/blaise/dev/cash/src/htl/pipe.h(22)
     wire[20:0] sel36;
     reg[20:0] reg44;
-    wire[20:0] proxy45; // #1575 unknown(0)
-    wire proxy48; // #1578 /home/blaise/dev/cash/src/htl/pipe.h(23)
+    wire[20:0] proxy45; // #1687 unknown(0)
+    wire proxy48; // #1690 /home/blaise/dev/cash/src/htl/pipe.h(23)
     wire sel49;
     reg reg53;
-    wire proxy54; // #1581 unknown(0)
-    wire[20:0] ch_pipe_data_t56; // #1582 /home/blaise/dev/cash/src/htl/pipe.h(20)
-    wire proxy60; // #1585 /home/blaise/dev/cash/src/htl/pipe.h(21)
-    wire[20:0] proxy61; // #1586 /home/blaise/dev/cash/src/htl/pipe.h(22)
+    wire proxy54; // #1693 unknown(0)
+    wire[20:0] ch_pipe_data_t56; // #1694 /home/blaise/dev/cash/src/htl/pipe.h(20)
+    wire proxy60; // #1697 /home/blaise/dev/cash/src/htl/pipe.h(21)
+    wire[20:0] proxy61; // #1698 /home/blaise/dev/cash/src/htl/pipe.h(22)
     wire[20:0] sel64;
     reg[20:0] reg69;
-    wire[20:0] proxy70; // #1593 unknown(0)
-    wire proxy73; // #1596 /home/blaise/dev/cash/src/htl/pipe.h(23)
+    wire[20:0] proxy70; // #1705 unknown(0)
+    wire proxy73; // #1708 /home/blaise/dev/cash/src/htl/pipe.h(23)
     wire sel74;
     reg reg77;
-    wire proxy78; // #1599 unknown(0)
-    wire[20:0] ch_pipe_data_t80; // #1600 /home/blaise/dev/cash/src/htl/pipe.h(20)
-    wire proxy84; // #1603 /home/blaise/dev/cash/src/htl/pipe.h(21)
-    wire[20:0] proxy85; // #1604 /home/blaise/dev/cash/src/htl/pipe.h(22)
+    wire proxy78; // #1711 unknown(0)
+    wire[20:0] ch_pipe_data_t80; // #1712 /home/blaise/dev/cash/src/htl/pipe.h(20)
+    wire proxy84; // #1715 /home/blaise/dev/cash/src/htl/pipe.h(21)
+    wire[20:0] proxy85; // #1716 /home/blaise/dev/cash/src/htl/pipe.h(22)
     wire[20:0] sel88;
     reg[20:0] reg93;
-    wire[20:0] proxy94; // #1611 unknown(0)
-    wire proxy97; // #1614 /home/blaise/dev/cash/src/htl/pipe.h(23)
+    wire[20:0] proxy94; // #1723 unknown(0)
+    wire proxy97; // #1726 /home/blaise/dev/cash/src/htl/pipe.h(23)
     wire sel98;
     reg reg101;
-    wire proxy102; // #1617 unknown(0)
+    wire proxy102; // #1729 unknown(0)
 
     assign io_enq_valid2 = io_enq_valid;
     assign io_enq_data5 = io_enq_data;
@@ -1749,92 +1888,92 @@ module spmv_pe(
     wire[63:0] lit135 = 64'h0;
     wire[479:0] lit498 = 480'h0;
     wire[511:0] lit529 = 512'h0;
-    wire[84:0] io_req_data5; // #1534 pe.cpp(14)
-    wire[19:0] io_req_data_a_rowind6; // #1535 pe.cpp(14)
-    wire[31:0] io_req_data_a_value7; // #1536 pe.cpp(14)
-    wire[31:0] io_req_data_x_value8; // #1537 pe.cpp(14)
-    wire io_req_data_is_end9; // #1538 pe.cpp(14)
-    wire io_req_ready12; // #1539 pe.cpp(14)
-    wire[533:0] io_lsu_wr_req_data18; // #1541 pe.cpp(14)
-    wire[63:0] io_stats27; // #1546 pe.cpp(14)
-    wire io_is_idle32; // #1549 pe.cpp(14)
-    wire proxy35; // #1618 /home/blaise/dev/cash/src/module.h(33)
+    wire[84:0] io_req_data5; // #1646 pe.cpp(14)
+    wire[19:0] io_req_data_a_rowind6; // #1647 pe.cpp(14)
+    wire[31:0] io_req_data_a_value7; // #1648 pe.cpp(14)
+    wire[31:0] io_req_data_x_value8; // #1649 pe.cpp(14)
+    wire io_req_data_is_end9; // #1650 pe.cpp(14)
+    wire io_req_ready12; // #1651 pe.cpp(14)
+    wire[533:0] io_lsu_wr_req_data18; // #1653 pe.cpp(14)
+    wire[63:0] io_stats27; // #1658 pe.cpp(14)
+    wire io_is_idle32; // #1661 pe.cpp(14)
+    wire proxy35; // #1730 /home/blaise/dev/cash/src/module.h(33)
     wire bindin38;
     wire bindin40;
     wire bindin41;
-    wire[20:0] proxy43; // #1619 /home/blaise/dev/cash/src/module.h(33)
+    wire[20:0] proxy43; // #1731 /home/blaise/dev/cash/src/module.h(33)
     wire[20:0] bindin46;
-    wire proxy48; // #1622 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy48; // #1734 /home/blaise/dev/cash/src/module.h(33)
     wire bindout49;
     wire bindout52;
-    wire[20:0] proxy54; // #1624 /home/blaise/dev/cash/src/module.h(33)
-    wire[19:0] proxy_a_rowind55; // #1625 /home/blaise/dev/cash/src/module.h(33)
-    wire proxy_is_end56; // #1626 /home/blaise/dev/cash/src/module.h(33)
+    wire[20:0] proxy54; // #1736 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy_a_rowind55; // #1737 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy_is_end56; // #1738 /home/blaise/dev/cash/src/module.h(33)
     wire[20:0] bindout57;
-    wire proxy59; // #1627 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy59; // #1739 /home/blaise/dev/cash/src/module.h(33)
     wire bindin60;
-    wire proxy62; // #1696 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy62; // #1808 /home/blaise/dev/cash/src/module.h(33)
     wire bindin64;
     wire bindin65;
     wire bindin66;
-    wire[20:0] proxy68; // #1697 /home/blaise/dev/cash/src/module.h(33)
-    wire proxy_is_end70; // #1699 /home/blaise/dev/cash/src/module.h(33)
+    wire[20:0] proxy68; // #1809 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy_is_end70; // #1811 /home/blaise/dev/cash/src/module.h(33)
     wire[20:0] bindin71;
     wire bindout77;
-    wire[20:0] proxy79; // #1702 /home/blaise/dev/cash/src/module.h(33)
-    wire[19:0] proxy_a_rowind80; // #1703 /home/blaise/dev/cash/src/module.h(33)
-    wire proxy_is_end81; // #1704 /home/blaise/dev/cash/src/module.h(33)
+    wire[20:0] proxy79; // #1814 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy_a_rowind80; // #1815 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy_is_end81; // #1816 /home/blaise/dev/cash/src/module.h(33)
     wire[20:0] bindout82;
-    wire proxy84; // #1705 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy84; // #1817 /home/blaise/dev/cash/src/module.h(33)
     wire bindin85;
     reg[31:0] mem86[0:31];
-    reg[31:0] reg93; // #1706 pe.cpp(14)
-    wire[31:0] proxy95; // #1709 pe.cpp(14)
-    reg[31:0] reg99; // #1709 pe.cpp(14)
-    reg[31:0] reg105; // #1712 pe.cpp(14)
-    reg[31:0] reg111; // #1715 pe.cpp(14)
-    wire[4:0] proxy115; // #1719 pe.cpp(14)
-    wire[4:0] proxy117; // #1720 pe.cpp(14)
-    reg[19:0] reg126; // #1722 pe.cpp(14)
-    wire[63:0] proxy128; // #1725 pe.cpp(14)
-    wire[31:0] proxy_write_value_stalls129; // #1726 pe.cpp(14)
-    wire[31:0] proxy_write_mask_stalls130; // #1727 pe.cpp(14)
-    wire[63:0] ch_pe_stats_t132; // #1728 /home/blaise/dev/cash/src/seq.h(17)
-    reg[63:0] reg137; // #1725 pe.cpp(14)
+    reg[31:0] reg93; // #1818 pe.cpp(14)
+    wire[31:0] proxy95; // #1821 pe.cpp(14)
+    reg[31:0] reg99; // #1821 pe.cpp(14)
+    reg[31:0] reg105; // #1824 pe.cpp(14)
+    reg[31:0] reg111; // #1827 pe.cpp(14)
+    wire[4:0] proxy115; // #1831 pe.cpp(14)
+    wire[4:0] proxy117; // #1832 pe.cpp(14)
+    reg[19:0] reg126; // #1834 pe.cpp(14)
+    wire[63:0] proxy128; // #1837 pe.cpp(14)
+    wire[31:0] proxy_write_value_stalls129; // #1838 pe.cpp(14)
+    wire[31:0] proxy_write_mask_stalls130; // #1839 pe.cpp(14)
+    wire[63:0] ch_pe_stats_t132; // #1840 /home/blaise/dev/cash/src/seq.h(17)
+    reg[63:0] reg137; // #1837 pe.cpp(14)
     wire[31:0] proxy139;
     wire[31:0] sel140;
-    reg[1:0] reg147; // #1733 pe.cpp(32)
+    reg[1:0] reg147; // #1845 pe.cpp(32)
     wire[31:0] sll150;
     wire[31:0] sll153;
     wire inv155;
     wire eq158;
     wire or160;
-    wire proxy161; // #1743 unknown(0)
+    wire proxy161; // #1855 unknown(0)
     wire inv162;
     wire[31:0] and164;
     wire eq167;
     wire and169;
     wire or171;
-    wire proxy172; // #1749 unknown(0)
+    wire proxy172; // #1861 unknown(0)
     wire eq174;
     wire eq177;
     wire and179;
-    wire proxy180; // #1754 unknown(0)
+    wire proxy180; // #1866 unknown(0)
     wire[31:0] and182;
     wire ne185;
     wire[31:0] sel188;
     wire and190;
-    wire proxy191; // #1761 unknown(0)
-    wire[31:0] proxy192; // #1762 pe.cpp(63)
-    wire[31:0] proxy193; // #1763 pe.cpp(63)
+    wire proxy191; // #1873 unknown(0)
+    wire[31:0] proxy192; // #1874 pe.cpp(63)
+    wire[31:0] proxy193; // #1875 pe.cpp(63)
     wire[31:0] fmult194;
     wire and196;
-    wire proxy197; // #1765 unknown(0)
+    wire proxy197; // #1877 unknown(0)
     wire[19:0] and200;
-    wire[19:0] proxy201; // #1767 unknown(0)
-    wire[4:0] proxy202; // #1768 unknown(0)
+    wire[19:0] proxy201; // #1879 unknown(0)
+    wire[4:0] proxy202; // #1880 unknown(0)
     wire[31:0] fadd203;
-    wire proxy205; // #1770 pe.cpp(75)
+    wire proxy205; // #1882 pe.cpp(75)
     wire eq207;
     wire and209;
     wire inv211;
@@ -1874,8 +2013,8 @@ module spmv_pe(
     wire and270;
     wire sel272;
     wire[19:0] and274;
-    wire[19:0] proxy275; // #1800 unknown(0)
-    wire[4:0] proxy276; // #1801 unknown(0)
+    wire[19:0] proxy275; // #1912 unknown(0)
+    wire[4:0] proxy276; // #1913 unknown(0)
     wire[4:0] sel277;
     wire[31:0] sel278;
     wire[31:0] or279;
@@ -1887,23 +2026,23 @@ module spmv_pe(
     wire[31:0] sel287;
     wire[1:0] sel289;
     wire eq291;
-    wire[511:0] proxy293; // #1805 pe.cpp(125)
-    wire[4:0] proxy295; // #1806 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy299; // #1809 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy303; // #1812 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy307; // #1815 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy311; // #1818 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy315; // #1821 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy319; // #1824 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy323; // #1827 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy327; // #1830 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy331; // #1833 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy335; // #1836 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy339; // #1839 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy343; // #1842 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy347; // #1845 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy351; // #1848 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy355; // #1851 /home/blaise/dev/cash/src/bit.h(282)
+    wire[511:0] proxy293; // #1917 pe.cpp(125)
+    wire[4:0] proxy295; // #1918 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy299; // #1921 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy303; // #1924 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy307; // #1927 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy311; // #1930 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy315; // #1933 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy319; // #1936 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy323; // #1939 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy327; // #1942 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy331; // #1945 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy335; // #1948 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy339; // #1951 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy343; // #1954 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy347; // #1957 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy351; // #1960 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy355; // #1963 /home/blaise/dev/cash/src/bit.h(282)
     wire inv358;
     wire and359;
     wire[1:0] sel361;
@@ -1920,23 +2059,23 @@ module spmv_pe(
     wire[31:0] proxy384;
     wire[31:0] sel385;
     wire eq387;
-    wire[511:0] proxy389; // #1861 pe.cpp(144)
-    wire[4:0] proxy391; // #1862 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy395; // #1865 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy399; // #1868 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy403; // #1871 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy407; // #1874 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy411; // #1877 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy415; // #1880 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy419; // #1883 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy423; // #1886 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy427; // #1889 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy431; // #1892 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy435; // #1895 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy439; // #1898 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy443; // #1901 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy447; // #1904 /home/blaise/dev/cash/src/bit.h(282)
-    wire[4:0] proxy451; // #1907 /home/blaise/dev/cash/src/bit.h(282)
+    wire[511:0] proxy389; // #1973 pe.cpp(144)
+    wire[4:0] proxy391; // #1974 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy395; // #1977 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy399; // #1980 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy403; // #1983 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy407; // #1986 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy411; // #1989 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy415; // #1992 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy419; // #1995 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy423; // #1998 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy427; // #2001 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy431; // #2004 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy435; // #2007 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy439; // #2010 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy443; // #2013 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy447; // #2016 /home/blaise/dev/cash/src/bit.h(282)
+    wire[4:0] proxy451; // #2019 /home/blaise/dev/cash/src/bit.h(282)
     wire or454;
     wire inv455;
     wire and456;
@@ -1963,8 +2102,8 @@ module spmv_pe(
     wire[19:0] sll492;
     wire[19:0] srl495;
     wire[19:0] sel497;
-    wire[479:0] proxy499; // #1925 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[511:0] proxy501; // #1926 pe.cpp(165)
+    wire[479:0] proxy499; // #2037 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[511:0] proxy501; // #2038 pe.cpp(165)
     wire[19:0] srl503;
     wire[19:0] and507;
     wire[19:0] sll510;
@@ -2220,20 +2359,20 @@ module ch_hxbar(
     input wire[71:0] io_in,
     output wire[23:0] io_out
 );
-    wire[2:0] io_sel2; // #2472 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[71:0] io_in5; // #2473 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[23:0] proxy6; // #2474 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[23:0] proxy7; // #2475 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[23:0] proxy8; // #2476 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[23:0] io_out23; // #2489 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[2:0] proxy31; // #2495 /home/blaise/dev/cash/src/htl/xbar.h(20)
+    wire[2:0] io_sel2; // #2584 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[71:0] io_in5; // #2585 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[23:0] proxy6; // #2586 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[23:0] proxy7; // #2587 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[23:0] proxy8; // #2588 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[23:0] io_out23; // #2601 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[2:0] proxy31; // #2607 /home/blaise/dev/cash/src/htl/xbar.h(20)
     wire eq40;
     wire[23:0] sel41;
     wire eq42;
     wire[23:0] sel43;
     wire eq44;
     wire[23:0] sel45;
-    wire[23:0] proxy46; // #2500 unknown(0)
+    wire[23:0] proxy46; // #2612 unknown(0)
 
     assign io_sel2 = io_sel;
     assign io_in5 = io_in;
@@ -2260,66 +2399,66 @@ module ch_rrArbiter(
     input wire[2:0] io_in,
     output wire[2:0] io_grant
 );
-    wire[2:0] io_in2; // #2528 /home/blaise/dev/cash/src/htl/arbiter.h(13)
-    wire proxy3; // #2529 /home/blaise/dev/cash/src/htl/arbiter.h(13)
-    wire proxy4; // #2530 /home/blaise/dev/cash/src/htl/arbiter.h(13)
-    wire proxy5; // #2531 /home/blaise/dev/cash/src/htl/arbiter.h(13)
-    wire[2:0] io_grant8; // #2532 /home/blaise/dev/cash/src/htl/arbiter.h(13)
-    wire proxy22; // #2537 /home/blaise/dev/cash/src/seq.h(17)
-    reg reg24; // #2536 /home/blaise/dev/cash/src/htl/arbiter.h(20)
-    wire proxy28; // #2540 /home/blaise/dev/cash/src/seq.h(17)
-    reg reg30; // #2539 /home/blaise/dev/cash/src/htl/arbiter.h(20)
-    wire proxy46; // #2549 /home/blaise/dev/cash/src/seq.h(17)
-    reg reg48; // #2548 /home/blaise/dev/cash/src/htl/arbiter.h(20)
-    wire[2:0] proxy68; // #2560 /home/blaise/dev/cash/src/htl/arbiter.h(21)
-    wire[2:0] proxy70; // #2561 /home/blaise/dev/cash/src/htl/arbiter.h(21)
-    wire[2:0] proxy72; // #2562 /home/blaise/dev/cash/src/htl/arbiter.h(21)
-    wire[2:0] proxy74; // #2563 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire[2:0] io_in2; // #2640 /home/blaise/dev/cash/src/htl/arbiter.h(13)
+    wire proxy3; // #2641 /home/blaise/dev/cash/src/htl/arbiter.h(13)
+    wire proxy4; // #2642 /home/blaise/dev/cash/src/htl/arbiter.h(13)
+    wire proxy5; // #2643 /home/blaise/dev/cash/src/htl/arbiter.h(13)
+    wire[2:0] io_grant8; // #2644 /home/blaise/dev/cash/src/htl/arbiter.h(13)
+    wire proxy22; // #2649 /home/blaise/dev/cash/src/seq.h(17)
+    reg reg24; // #2648 /home/blaise/dev/cash/src/htl/arbiter.h(20)
+    wire proxy28; // #2652 /home/blaise/dev/cash/src/seq.h(17)
+    reg reg30; // #2651 /home/blaise/dev/cash/src/htl/arbiter.h(20)
+    wire proxy46; // #2661 /home/blaise/dev/cash/src/seq.h(17)
+    reg reg48; // #2660 /home/blaise/dev/cash/src/htl/arbiter.h(20)
+    wire[2:0] proxy68; // #2672 /home/blaise/dev/cash/src/htl/arbiter.h(21)
+    wire[2:0] proxy70; // #2673 /home/blaise/dev/cash/src/htl/arbiter.h(21)
+    wire[2:0] proxy72; // #2674 /home/blaise/dev/cash/src/htl/arbiter.h(21)
+    wire[2:0] proxy74; // #2675 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire and75;
-    wire proxy76; // #2564 unknown(0)
+    wire proxy76; // #2676 unknown(0)
     wire and78;
-    wire proxy79; // #2566 unknown(0)
+    wire proxy79; // #2678 unknown(0)
     wire orr82;
     wire inv84;
     wire and86;
-    wire proxy87; // #2571 unknown(0)
-    wire proxy89; // #2573 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy87; // #2683 unknown(0)
+    wire proxy89; // #2685 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire inv90;
-    wire proxy92; // #2575 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy92; // #2687 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire or93;
     wire and95;
-    wire proxy96; // #2577 unknown(0)
-    wire proxy97; // #2578 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy96; // #2689 unknown(0)
+    wire proxy97; // #2690 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire inv98;
-    wire proxy100; // #2580 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy100; // #2692 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire or101;
     wire and103;
-    wire proxy104; // #2582 unknown(0)
+    wire proxy104; // #2694 unknown(0)
     wire and105;
-    wire proxy106; // #2583 unknown(0)
+    wire proxy106; // #2695 unknown(0)
     wire inv109;
     wire and111;
-    wire proxy112; // #2587 unknown(0)
+    wire proxy112; // #2699 unknown(0)
     wire orr114;
     wire inv116;
     wire and118;
-    wire proxy119; // #2591 unknown(0)
-    wire proxy121; // #2593 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy119; // #2703 unknown(0)
+    wire proxy121; // #2705 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire inv122;
-    wire proxy124; // #2595 /home/blaise/dev/cash/src/htl/arbiter.h(22)
+    wire proxy124; // #2707 /home/blaise/dev/cash/src/htl/arbiter.h(22)
     wire or125;
     wire and127;
-    wire proxy128; // #2597 unknown(0)
+    wire proxy128; // #2709 unknown(0)
     wire inv130;
     wire and132;
-    wire proxy133; // #2600 unknown(0)
+    wire proxy133; // #2712 unknown(0)
     wire inv135;
     wire and137;
-    wire proxy138; // #2603 unknown(0)
+    wire proxy138; // #2715 unknown(0)
     wire orr140;
     wire inv142;
     wire and144;
-    wire proxy145; // #2607 unknown(0)
+    wire proxy145; // #2719 unknown(0)
 
     assign io_in2 = io_in;
     assign proxy3 = io_in2[2];
@@ -2403,42 +2542,42 @@ module ch_xbar_switch(
     output wire[22:0] io_out_data,
     output wire[2:0] io_out_grant
 );
-    wire io_in_0_valid2; // #2451 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[22:0] io_in_0_data5; // #2452 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_0_ready10; // #2455 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_1_valid13; // #2456 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[22:0] io_in_1_data16; // #2457 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_1_ready21; // #2460 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_2_valid24; // #2461 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[22:0] io_in_2_data27; // #2462 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_2_ready32; // #2465 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_out_valid35; // #2466 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[22:0] io_out_data38; // #2467 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[2:0] io_out_grant46; // #2471 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[2:0] proxy49; // #2505 /home/blaise/dev/cash/src/module.h(33)
+    wire io_in_0_valid2; // #2563 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[22:0] io_in_0_data5; // #2564 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_0_ready10; // #2567 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_1_valid13; // #2568 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[22:0] io_in_1_data16; // #2569 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_1_ready21; // #2572 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_2_valid24; // #2573 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[22:0] io_in_2_data27; // #2574 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_2_ready32; // #2577 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_out_valid35; // #2578 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[22:0] io_out_data38; // #2579 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[2:0] io_out_grant46; // #2583 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[2:0] proxy49; // #2617 /home/blaise/dev/cash/src/module.h(33)
     wire[2:0] bindin51;
-    wire[71:0] proxy53; // #2506 /home/blaise/dev/cash/src/module.h(33)
+    wire[71:0] proxy53; // #2618 /home/blaise/dev/cash/src/module.h(33)
     wire[71:0] bindin69;
-    wire[23:0] proxy71; // #2522 /home/blaise/dev/cash/src/module.h(33)
-    wire[23:0] proxy72; // #2523 /home/blaise/dev/cash/src/module.h(33)
-    wire proxy_valid73; // #2524 /home/blaise/dev/cash/src/module.h(33)
-    wire[22:0] proxy_data74; // #2525 /home/blaise/dev/cash/src/module.h(33)
+    wire[23:0] proxy71; // #2634 /home/blaise/dev/cash/src/module.h(33)
+    wire[23:0] proxy72; // #2635 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy_valid73; // #2636 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy_data74; // #2637 /home/blaise/dev/cash/src/module.h(33)
     wire[23:0] bindout77;
-    wire[2:0] proxy79; // #2609 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy79; // #2721 /home/blaise/dev/cash/src/module.h(33)
     wire bindin85;
     wire bindin87;
     wire[2:0] bindin88;
-    wire[2:0] proxy90; // #2613 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy90; // #2725 /home/blaise/dev/cash/src/module.h(33)
     wire[2:0] bindout91;
     wire eq111;
     wire and113;
-    wire proxy114; // #2625 unknown(0)
+    wire proxy114; // #2737 unknown(0)
     wire eq117;
     wire and119;
-    wire proxy120; // #2628 unknown(0)
+    wire proxy120; // #2740 unknown(0)
     wire eq123;
     wire and125;
-    wire proxy126; // #2631 unknown(0)
+    wire proxy126; // #2743 unknown(0)
 
     assign io_in_0_valid2 = io_in_0_valid;
     assign io_in_0_data5 = io_in_0_data;
@@ -2492,20 +2631,20 @@ module ch_hxbar_0(
     output wire[534:0] io_out
 );
     wire[534:0] lit42 = 535'b0;
-    wire[2:0] io_sel2; // #2678 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[1604:0] io_in5; // #2679 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[534:0] proxy6; // #2680 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[534:0] proxy7; // #2681 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[534:0] proxy8; // #2682 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[534:0] io_out26; // #2698 /home/blaise/dev/cash/src/htl/xbar.h(12)
-    wire[2:0] proxy35; // #2705 /home/blaise/dev/cash/src/htl/xbar.h(20)
+    wire[2:0] io_sel2; // #2790 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[1604:0] io_in5; // #2791 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[534:0] proxy6; // #2792 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[534:0] proxy7; // #2793 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[534:0] proxy8; // #2794 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[534:0] io_out26; // #2810 /home/blaise/dev/cash/src/htl/xbar.h(12)
+    wire[2:0] proxy35; // #2817 /home/blaise/dev/cash/src/htl/xbar.h(20)
     wire eq44;
     wire[534:0] sel45;
     wire eq46;
     wire[534:0] sel47;
     wire eq48;
     wire[534:0] sel49;
-    wire[534:0] proxy50; // #2710 unknown(0)
+    wire[534:0] proxy50; // #2822 unknown(0)
 
     assign io_sel2 = io_sel;
     assign io_in5 = io_in;
@@ -2544,42 +2683,42 @@ module ch_xbar_switch_0(
     output wire[533:0] io_out_data,
     output wire[2:0] io_out_grant
 );
-    wire io_in_0_valid2; // #2653 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[533:0] io_in_0_data5; // #2654 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_0_ready11; // #2658 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_1_valid14; // #2659 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[533:0] io_in_1_data17; // #2660 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_1_ready23; // #2664 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_2_valid26; // #2665 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[533:0] io_in_2_data29; // #2666 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_in_2_ready35; // #2670 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire io_out_valid38; // #2671 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[533:0] io_out_data41; // #2672 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[2:0] io_out_grant50; // #2677 /home/blaise/dev/cash/src/htl/arbiter.h(42)
-    wire[2:0] proxy53; // #2716 /home/blaise/dev/cash/src/module.h(33)
+    wire io_in_0_valid2; // #2765 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[533:0] io_in_0_data5; // #2766 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_0_ready11; // #2770 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_1_valid14; // #2771 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[533:0] io_in_1_data17; // #2772 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_1_ready23; // #2776 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_2_valid26; // #2777 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[533:0] io_in_2_data29; // #2778 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_in_2_ready35; // #2782 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire io_out_valid38; // #2783 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[533:0] io_out_data41; // #2784 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[2:0] io_out_grant50; // #2789 /home/blaise/dev/cash/src/htl/arbiter.h(42)
+    wire[2:0] proxy53; // #2828 /home/blaise/dev/cash/src/module.h(33)
     wire[2:0] bindin55;
-    wire[1604:0] proxy57; // #2717 /home/blaise/dev/cash/src/module.h(33)
+    wire[1604:0] proxy57; // #2829 /home/blaise/dev/cash/src/module.h(33)
     wire[1604:0] bindin76;
-    wire[534:0] proxy78; // #2736 /home/blaise/dev/cash/src/module.h(33)
-    wire[534:0] proxy79; // #2737 /home/blaise/dev/cash/src/module.h(33)
-    wire proxy_valid80; // #2738 /home/blaise/dev/cash/src/module.h(33)
-    wire[533:0] proxy_data81; // #2739 /home/blaise/dev/cash/src/module.h(33)
+    wire[534:0] proxy78; // #2848 /home/blaise/dev/cash/src/module.h(33)
+    wire[534:0] proxy79; // #2849 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy_valid80; // #2850 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy_data81; // #2851 /home/blaise/dev/cash/src/module.h(33)
     wire[534:0] bindout85;
-    wire[2:0] proxy87; // #2824 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy87; // #2936 /home/blaise/dev/cash/src/module.h(33)
     wire bindin93;
     wire bindin95;
     wire[2:0] bindin96;
-    wire[2:0] proxy98; // #2828 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy98; // #2940 /home/blaise/dev/cash/src/module.h(33)
     wire[2:0] bindout99;
     wire eq119;
     wire and121;
-    wire proxy122; // #2840 unknown(0)
+    wire proxy122; // #2952 unknown(0)
     wire eq125;
     wire and127;
-    wire proxy128; // #2843 unknown(0)
+    wire proxy128; // #2955 unknown(0)
     wire eq131;
     wire and133;
-    wire proxy134; // #2846 unknown(0)
+    wire proxy134; // #2958 unknown(0)
 
     assign io_in_0_valid2 = io_in_0_valid;
     assign io_in_0_data5 = io_in_0_data;
@@ -2642,74 +2781,74 @@ module spmv_write_cache(
     wire[511:0] lit394 = 512'h0;
     reg[21:0] mem1[0:1];
     reg[511:0] mem3[0:1];
-    reg reg11; // #2872 wrcache.h(58)
-    reg[19:0] reg18; // #2875 wrcache.h(58)
-    wire proxy20; // #2878 wrcache.h(58)
-    wire proxy22; // #2879 wrcache.h(58)
-    reg reg38; // #2886 wrcache.h(58)
-    wire io_enq_valid40; // #2889 wrcache.h(58)
-    wire[533:0] io_enq_data43; // #2890 wrcache.h(58)
-    wire[1:0] io_enq_data_owner44; // #2891 wrcache.h(58)
-    wire[19:0] io_enq_data_tag45; // #2892 wrcache.h(58)
-    wire[511:0] io_enq_data_data46; // #2893 wrcache.h(58)
-    wire io_enq_ready49; // #2894 wrcache.h(58)
-    wire[533:0] io_evict_data55; // #2896 wrcache.h(58)
+    reg reg11; // #2984 wrcache.h(58)
+    reg[19:0] reg18; // #2987 wrcache.h(58)
+    wire proxy20; // #2990 wrcache.h(58)
+    wire proxy22; // #2991 wrcache.h(58)
+    reg reg38; // #2998 wrcache.h(58)
+    wire io_enq_valid40; // #3001 wrcache.h(58)
+    wire[533:0] io_enq_data43; // #3002 wrcache.h(58)
+    wire[1:0] io_enq_data_owner44; // #3003 wrcache.h(58)
+    wire[19:0] io_enq_data_tag45; // #3004 wrcache.h(58)
+    wire[511:0] io_enq_data_data46; // #3005 wrcache.h(58)
+    wire io_enq_ready49; // #3006 wrcache.h(58)
+    wire[533:0] io_evict_data55; // #3008 wrcache.h(58)
     wire[511:0] proxy67;
     wire[511:0] sel68;
     wire[21:0] proxy72;
     wire[21:0] sel73;
-    reg[2:0] reg80; // #2906 wrcache.h(72)
-    wire[533:0] proxy82; // #2909 wrcache.h(73)
-    wire[1:0] proxy_owner83; // #2910 wrcache.h(73)
-    wire[19:0] proxy_tag84; // #2911 wrcache.h(73)
-    wire[511:0] proxy_data85; // #2912 wrcache.h(73)
-    reg[533:0] reg93; // #2909 wrcache.h(73)
-    wire proxy94; // #2918 wrcache.h(76)
-    wire proxy95; // #2919 wrcache.h(77)
-    wire proxy97; // #2920 wrcache.h(78)
-    wire proxy98; // #2921 wrcache.h(79)
-    wire[533:0] entry_t99; // #2922 wrcache.h(84)
-    wire[1:0] entry_t_owner100; // #2923 wrcache.h(84)
-    wire[19:0] entry_t_tag101; // #2924 wrcache.h(84)
-    wire proxy104; // #2927 /home/blaise/dev/cash/src/bit.h(282)
-    wire[1:0] memport_owners106; // #2929 unknown(0)
+    reg[2:0] reg80; // #3018 wrcache.h(72)
+    wire[533:0] proxy82; // #3021 wrcache.h(73)
+    wire[1:0] proxy_owner83; // #3022 wrcache.h(73)
+    wire[19:0] proxy_tag84; // #3023 wrcache.h(73)
+    wire[511:0] proxy_data85; // #3024 wrcache.h(73)
+    reg[533:0] reg93; // #3021 wrcache.h(73)
+    wire proxy94; // #3030 wrcache.h(76)
+    wire proxy95; // #3031 wrcache.h(77)
+    wire proxy97; // #3032 wrcache.h(78)
+    wire proxy98; // #3033 wrcache.h(79)
+    wire[533:0] entry_t99; // #3034 wrcache.h(84)
+    wire[1:0] entry_t_owner100; // #3035 wrcache.h(84)
+    wire[19:0] entry_t_tag101; // #3036 wrcache.h(84)
+    wire proxy104; // #3039 /home/blaise/dev/cash/src/bit.h(282)
+    wire[1:0] memport_owners106; // #3041 unknown(0)
     wire ne110;
-    wire proxy112; // #2933 /home/blaise/dev/cash/src/bit.h(282)
-    wire[19:0] memport_tag115; // #2936 unknown(0)
+    wire proxy112; // #3045 /home/blaise/dev/cash/src/bit.h(282)
+    wire[19:0] memport_tag115; // #3048 unknown(0)
     wire eq116;
     wire and118;
     wire sel121;
-    wire proxy122; // #2940 unknown(0)
-    wire proxy124; // #2942 /home/blaise/dev/cash/src/bit.h(282)
-    wire[1:0] memport_owners126; // #2944 unknown(0)
+    wire proxy122; // #3052 unknown(0)
+    wire proxy124; // #3054 /home/blaise/dev/cash/src/bit.h(282)
+    wire[1:0] memport_owners126; // #3056 unknown(0)
     wire[1:0] and128;
     wire ne131;
     wire sel134;
-    wire proxy135; // #2950 unknown(0)
-    wire proxy137; // #2952 /home/blaise/dev/cash/src/bit.h(282)
-    wire[1:0] memport_owners139; // #2954 unknown(0)
+    wire proxy135; // #3062 unknown(0)
+    wire proxy137; // #3064 /home/blaise/dev/cash/src/bit.h(282)
+    wire[1:0] memport_owners139; // #3066 unknown(0)
     wire eq142;
     wire sel145;
-    wire proxy146; // #2959 unknown(0)
-    wire proxy147; // #2960 wrcache.h(97)
+    wire proxy146; // #3071 unknown(0)
+    wire proxy147; // #3072 wrcache.h(97)
     reg reg149;
-    wire proxy150; // #2962 unknown(0)
-    wire proxy151; // #2963 wrcache.h(98)
+    wire proxy150; // #3074 unknown(0)
+    wire proxy151; // #3075 wrcache.h(98)
     reg reg153;
-    wire proxy154; // #2965 unknown(0)
-    wire proxy155; // #2966 wrcache.h(99)
+    wire proxy154; // #3077 unknown(0)
+    wire proxy155; // #3078 wrcache.h(99)
     reg reg157;
-    wire proxy158; // #2968 unknown(0)
-    wire proxy159; // #2969 wrcache.h(100)
+    wire proxy158; // #3080 unknown(0)
+    wire proxy159; // #3081 wrcache.h(100)
     reg reg161;
-    wire proxy162; // #2971 unknown(0)
+    wire proxy162; // #3083 unknown(0)
     wire eq164;
-    wire proxy165; // #2973 unknown(0)
-    reg reg171; // #2974 wrcache.h(106)
+    wire proxy165; // #3085 unknown(0)
+    reg reg171; // #3086 wrcache.h(106)
     wire eq173;
     wire and174;
     wire sel175;
-    wire[1:0] memport_owners176; // #2979 unknown(0)
+    wire[1:0] memport_owners176; // #3091 unknown(0)
     wire[1:0] and178;
     wire ne181;
     wire eq183;
@@ -2719,11 +2858,11 @@ module spmv_write_cache(
     wire sel189;
     wire[511:0] or190;
     wire[511:0] sel192;
-    wire[1:0] memport_owners193; // #2989 unknown(0)
+    wire[1:0] memport_owners193; // #3101 unknown(0)
     wire[1:0] or195;
-    wire[1:0] proxy196; // #2991 unknown(0)
-    wire[19:0] memport_tag198; // #2994 unknown(0)
-    wire[21:0] tag_t200; // #2995 wrcache.h(119)
+    wire[1:0] proxy196; // #3103 unknown(0)
+    wire[19:0] memport_tag198; // #3106 unknown(0)
+    wire[21:0] tag_t200; // #3107 wrcache.h(119)
     wire[21:0] sel203;
     wire inv204;
     wire and205;
@@ -2739,9 +2878,9 @@ module spmv_write_cache(
     wire and218;
     wire and219;
     wire sel220;
-    wire[19:0] memport_tag223; // #3001 unknown(0)
+    wire[19:0] memport_tag223; // #3113 unknown(0)
     wire eq224;
-    wire[1:0] memport_owners226; // #3004 unknown(0)
+    wire[1:0] memport_owners226; // #3116 unknown(0)
     wire ne229;
     wire and231;
     wire and233;
@@ -2750,11 +2889,11 @@ module spmv_write_cache(
     wire sel236;
     wire[511:0] or237;
     wire[511:0] sel239;
-    wire[1:0] memport_owners240; // #3012 unknown(0)
+    wire[1:0] memport_owners240; // #3124 unknown(0)
     wire[1:0] or242;
-    wire[1:0] proxy243; // #3014 unknown(0)
-    wire[19:0] memport_tag245; // #3017 unknown(0)
-    wire[21:0] tag_t247; // #3018 wrcache.h(143)
+    wire[1:0] proxy243; // #3126 unknown(0)
+    wire[19:0] memport_tag245; // #3129 unknown(0)
+    wire[21:0] tag_t247; // #3130 wrcache.h(143)
     wire[21:0] sel250;
     wire[19:0] sel251;
     wire sel252;
@@ -2771,7 +2910,7 @@ module spmv_write_cache(
     wire sel265;
     wire sel266;
     wire[511:0] sel267;
-    wire[21:0] tag_t269; // #3022 wrcache.h(163)
+    wire[21:0] tag_t269; // #3134 wrcache.h(163)
     wire[21:0] sel272;
     wire[19:0] sel273;
     wire sel274;
@@ -2787,16 +2926,16 @@ module spmv_write_cache(
     wire inv286;
     wire and287;
     wire sel288;
-    wire[1:0] memport_owners289; // #3028 unknown(0)
+    wire[1:0] memport_owners289; // #3140 unknown(0)
     wire eq291;
     wire and293;
     wire sel294;
-    wire[19:0] memport_tag296; // #3033 unknown(0)
-    wire[21:0] tag_t298; // #3034 wrcache.h(186)
-    wire[1:0] proxy301; // #3037 wrcache.h(29)
+    wire[19:0] memport_tag296; // #3145 unknown(0)
+    wire[21:0] tag_t298; // #3146 wrcache.h(186)
+    wire[1:0] proxy301; // #3149 wrcache.h(29)
     wire[21:0] sel302;
     wire[2:0] sel304;
-    wire[1:0] memport_owners305; // #3039 unknown(0)
+    wire[1:0] memport_owners305; // #3151 unknown(0)
     wire[1:0] and307;
     wire ne310;
     wire inv312;
@@ -2804,11 +2943,11 @@ module spmv_write_cache(
     wire and314;
     wire sel315;
     wire[1:0] inv316;
-    wire[1:0] memport_owners318; // #3046 unknown(0)
+    wire[1:0] memport_owners318; // #3158 unknown(0)
     wire[1:0] and320;
-    wire[1:0] proxy321; // #3048 unknown(0)
-    wire[19:0] memport_tag323; // #3051 unknown(0)
-    wire[21:0] tag_t325; // #3052 wrcache.h(194)
+    wire[1:0] proxy321; // #3160 unknown(0)
+    wire[19:0] memport_tag323; // #3163 unknown(0)
+    wire[21:0] tag_t325; // #3164 wrcache.h(194)
     wire[21:0] sel328;
     wire[2:0] sel329;
     wire eq331;
@@ -2818,7 +2957,7 @@ module spmv_write_cache(
     wire and335;
     wire sel336;
     wire[1:0] sel338;
-    wire[19:0] memport_tag340; // #3058 unknown(0)
+    wire[19:0] memport_tag340; // #3170 unknown(0)
     wire[19:0] sel342;
     wire[511:0] sel344;
     wire sel345;
@@ -2831,11 +2970,11 @@ module spmv_write_cache(
     wire inv353;
     wire and354;
     wire sel355;
-    wire[1:0] memport_owners356; // #3062 unknown(0)
+    wire[1:0] memport_owners356; // #3174 unknown(0)
     wire ne359;
     wire and361;
     wire[1:0] sel362;
-    wire[19:0] memport_tag364; // #3068 unknown(0)
+    wire[19:0] memport_tag364; // #3180 unknown(0)
     wire[19:0] sel365;
     wire[511:0] sel366;
     wire sel367;
@@ -3120,140 +3259,140 @@ module spmv_lsu(
 );
     wire[533:0] lit420 = 534'b0;
     wire[511:0] lit464 = 512'h0;
-    wire[19:0] io_qpi_rd_req_addr5; // #2374 lsu.cpp(19)
-    wire[13:0] io_qpi_rd_req_mdata8; // #2375 lsu.cpp(19)
-    wire io_qpi_rd_req_valid11; // #2376 lsu.cpp(19)
-    wire[13:0] io_qpi_rd_rsp_mdata14; // #2377 lsu.cpp(19)
-    wire[511:0] io_qpi_rd_rsp_data17; // #2378 lsu.cpp(19)
-    wire[19:0] io_qpi_wr_req_addr26; // #2381 lsu.cpp(19)
-    wire[13:0] io_qpi_wr_req_mdata29; // #2382 lsu.cpp(19)
-    wire[511:0] io_qpi_wr_req_data32; // #2383 lsu.cpp(19)
-    wire io_qpi_wr_req_valid35; // #2384 lsu.cpp(19)
-    wire[511:0] io_ctx50; // #2389 lsu.cpp(19)
-    wire[131:0] io_ctx_a51; // #2390 lsu.cpp(19)
-    wire[19:0] io_ctx_a_col_ptr53; // #2392 lsu.cpp(19)
-    wire[19:0] io_ctx_a_col_ind54; // #2393 lsu.cpp(19)
-    wire[19:0] io_ctx_a_row_ptr55; // #2394 lsu.cpp(19)
-    wire[19:0] io_ctx_a_row_ind56; // #2395 lsu.cpp(19)
-    wire[19:0] io_ctx_a_values57; // #2396 lsu.cpp(19)
-    wire[39:0] io_ctx_x58; // #2397 lsu.cpp(19)
-    wire[19:0] io_ctx_x_values59; // #2398 lsu.cpp(19)
-    wire[19:0] io_ctx_x_masks60; // #2399 lsu.cpp(19)
-    wire[39:0] io_ctx_y61; // #2400 lsu.cpp(19)
-    wire[19:0] io_ctx_y_values62; // #2401 lsu.cpp(19)
-    wire[19:0] io_ctx_y_masks63; // #2402 lsu.cpp(19)
-    wire[19:0] io_ctx_stats64; // #2403 lsu.cpp(19)
-    wire io_ctrl_rd_req_valid68; // #2405 lsu.cpp(19)
-    wire[22:0] io_ctrl_rd_req_data71; // #2406 lsu.cpp(19)
-    wire io_ctrl_rd_req_ready76; // #2409 lsu.cpp(19)
-    wire io_ctrl_wr_req_valid79; // #2410 lsu.cpp(19)
-    wire[533:0] io_ctrl_wr_req_data82; // #2411 lsu.cpp(19)
-    wire io_ctrl_wr_req_ready88; // #2415 lsu.cpp(19)
-    wire io_ctrl_rd_rsp_valid91; // #2416 lsu.cpp(19)
-    wire[514:0] io_ctrl_rd_rsp_data94; // #2417 lsu.cpp(19)
-    wire[31:0] io_ctrl_outstanding_writes99; // #2420 lsu.cpp(19)
-    wire io_walkers_0_rd_req_valid102; // #2421 lsu.cpp(19)
-    wire[22:0] io_walkers_0_rd_req_data105; // #2422 lsu.cpp(19)
-    wire io_walkers_0_rd_req_ready110; // #2425 lsu.cpp(19)
-    wire io_walkers_0_rd_rsp_valid113; // #2426 lsu.cpp(19)
-    wire[514:0] io_walkers_0_rd_rsp_data116; // #2427 lsu.cpp(19)
-    wire io_walkers_1_rd_req_valid121; // #2430 lsu.cpp(19)
-    wire[22:0] io_walkers_1_rd_req_data124; // #2431 lsu.cpp(19)
-    wire io_walkers_1_rd_req_ready129; // #2434 lsu.cpp(19)
-    wire io_walkers_1_rd_rsp_valid132; // #2435 lsu.cpp(19)
-    wire[514:0] io_walkers_1_rd_rsp_data135; // #2436 lsu.cpp(19)
-    wire io_PEs_0_wr_req_valid140; // #2439 lsu.cpp(19)
-    wire[533:0] io_PEs_0_wr_req_data143; // #2440 lsu.cpp(19)
-    wire io_PEs_0_wr_req_ready149; // #2444 lsu.cpp(19)
-    wire io_PEs_1_wr_req_valid152; // #2445 lsu.cpp(19)
-    wire[533:0] io_PEs_1_wr_req_data155; // #2446 lsu.cpp(19)
-    wire io_PEs_1_wr_req_ready161; // #2450 lsu.cpp(19)
-    wire proxy164; // #2632 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] io_qpi_rd_req_addr5; // #2486 lsu.cpp(19)
+    wire[13:0] io_qpi_rd_req_mdata8; // #2487 lsu.cpp(19)
+    wire io_qpi_rd_req_valid11; // #2488 lsu.cpp(19)
+    wire[13:0] io_qpi_rd_rsp_mdata14; // #2489 lsu.cpp(19)
+    wire[511:0] io_qpi_rd_rsp_data17; // #2490 lsu.cpp(19)
+    wire[19:0] io_qpi_wr_req_addr26; // #2493 lsu.cpp(19)
+    wire[13:0] io_qpi_wr_req_mdata29; // #2494 lsu.cpp(19)
+    wire[511:0] io_qpi_wr_req_data32; // #2495 lsu.cpp(19)
+    wire io_qpi_wr_req_valid35; // #2496 lsu.cpp(19)
+    wire[511:0] io_ctx50; // #2501 lsu.cpp(19)
+    wire[131:0] io_ctx_a51; // #2502 lsu.cpp(19)
+    wire[19:0] io_ctx_a_col_ptr53; // #2504 lsu.cpp(19)
+    wire[19:0] io_ctx_a_col_ind54; // #2505 lsu.cpp(19)
+    wire[19:0] io_ctx_a_row_ptr55; // #2506 lsu.cpp(19)
+    wire[19:0] io_ctx_a_row_ind56; // #2507 lsu.cpp(19)
+    wire[19:0] io_ctx_a_values57; // #2508 lsu.cpp(19)
+    wire[39:0] io_ctx_x58; // #2509 lsu.cpp(19)
+    wire[19:0] io_ctx_x_values59; // #2510 lsu.cpp(19)
+    wire[19:0] io_ctx_x_masks60; // #2511 lsu.cpp(19)
+    wire[39:0] io_ctx_y61; // #2512 lsu.cpp(19)
+    wire[19:0] io_ctx_y_values62; // #2513 lsu.cpp(19)
+    wire[19:0] io_ctx_y_masks63; // #2514 lsu.cpp(19)
+    wire[19:0] io_ctx_stats64; // #2515 lsu.cpp(19)
+    wire io_ctrl_rd_req_valid68; // #2517 lsu.cpp(19)
+    wire[22:0] io_ctrl_rd_req_data71; // #2518 lsu.cpp(19)
+    wire io_ctrl_rd_req_ready76; // #2521 lsu.cpp(19)
+    wire io_ctrl_wr_req_valid79; // #2522 lsu.cpp(19)
+    wire[533:0] io_ctrl_wr_req_data82; // #2523 lsu.cpp(19)
+    wire io_ctrl_wr_req_ready88; // #2527 lsu.cpp(19)
+    wire io_ctrl_rd_rsp_valid91; // #2528 lsu.cpp(19)
+    wire[514:0] io_ctrl_rd_rsp_data94; // #2529 lsu.cpp(19)
+    wire[31:0] io_ctrl_outstanding_writes99; // #2532 lsu.cpp(19)
+    wire io_walkers_0_rd_req_valid102; // #2533 lsu.cpp(19)
+    wire[22:0] io_walkers_0_rd_req_data105; // #2534 lsu.cpp(19)
+    wire io_walkers_0_rd_req_ready110; // #2537 lsu.cpp(19)
+    wire io_walkers_0_rd_rsp_valid113; // #2538 lsu.cpp(19)
+    wire[514:0] io_walkers_0_rd_rsp_data116; // #2539 lsu.cpp(19)
+    wire io_walkers_1_rd_req_valid121; // #2542 lsu.cpp(19)
+    wire[22:0] io_walkers_1_rd_req_data124; // #2543 lsu.cpp(19)
+    wire io_walkers_1_rd_req_ready129; // #2546 lsu.cpp(19)
+    wire io_walkers_1_rd_rsp_valid132; // #2547 lsu.cpp(19)
+    wire[514:0] io_walkers_1_rd_rsp_data135; // #2548 lsu.cpp(19)
+    wire io_PEs_0_wr_req_valid140; // #2551 lsu.cpp(19)
+    wire[533:0] io_PEs_0_wr_req_data143; // #2552 lsu.cpp(19)
+    wire io_PEs_0_wr_req_ready149; // #2556 lsu.cpp(19)
+    wire io_PEs_1_wr_req_valid152; // #2557 lsu.cpp(19)
+    wire[533:0] io_PEs_1_wr_req_data155; // #2558 lsu.cpp(19)
+    wire io_PEs_1_wr_req_ready161; // #2562 lsu.cpp(19)
+    wire proxy164; // #2744 /home/blaise/dev/cash/src/module.h(33)
     wire bindin167;
     wire bindin169;
     wire bindin170;
-    wire[22:0] proxy172; // #2633 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy172; // #2745 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin175;
-    wire proxy177; // #2636 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy177; // #2748 /home/blaise/dev/cash/src/module.h(33)
     wire bindout178;
-    wire proxy180; // #2637 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy180; // #2749 /home/blaise/dev/cash/src/module.h(33)
     wire bindin181;
-    wire[22:0] proxy183; // #2638 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy183; // #2750 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin186;
-    wire proxy188; // #2641 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy188; // #2753 /home/blaise/dev/cash/src/module.h(33)
     wire bindout189;
-    wire proxy191; // #2642 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy191; // #2754 /home/blaise/dev/cash/src/module.h(33)
     wire bindin192;
-    wire[22:0] proxy194; // #2643 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy194; // #2755 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin197;
-    wire proxy199; // #2646 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy199; // #2758 /home/blaise/dev/cash/src/module.h(33)
     wire bindout200;
-    wire proxy202; // #2647 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy202; // #2759 /home/blaise/dev/cash/src/module.h(33)
     wire bindout203;
-    wire[22:0] proxy205; // #2648 /home/blaise/dev/cash/src/module.h(33)
-    wire[2:0] proxy_type206; // #2649 /home/blaise/dev/cash/src/module.h(33)
-    wire[19:0] proxy_addr207; // #2650 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy205; // #2760 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy_type206; // #2761 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy_addr207; // #2762 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindout208;
-    wire proxy210; // #2651 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy210; // #2763 /home/blaise/dev/cash/src/module.h(33)
     wire bindin211;
-    wire[2:0] proxy213; // #2652 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy213; // #2764 /home/blaise/dev/cash/src/module.h(33)
     wire[2:0] bindout214;
-    wire proxy216; // #2847 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy216; // #2959 /home/blaise/dev/cash/src/module.h(33)
     wire bindin218;
     wire bindin219;
     wire bindin220;
-    wire[533:0] proxy222; // #2848 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy222; // #2960 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin226;
-    wire proxy228; // #2852 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy228; // #2964 /home/blaise/dev/cash/src/module.h(33)
     wire bindout229;
-    wire proxy231; // #2853 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy231; // #2965 /home/blaise/dev/cash/src/module.h(33)
     wire bindin232;
-    wire[533:0] proxy234; // #2854 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy234; // #2966 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin238;
-    wire proxy240; // #2858 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy240; // #2970 /home/blaise/dev/cash/src/module.h(33)
     wire bindout241;
-    wire proxy243; // #2859 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy243; // #2971 /home/blaise/dev/cash/src/module.h(33)
     wire bindin244;
-    wire[533:0] proxy246; // #2860 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy246; // #2972 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin250;
-    wire proxy252; // #2864 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy252; // #2976 /home/blaise/dev/cash/src/module.h(33)
     wire bindout253;
     wire bindout256;
-    wire[533:0] proxy258; // #2866 /home/blaise/dev/cash/src/module.h(33)
-    wire[1:0] proxy_type259; // #2867 /home/blaise/dev/cash/src/module.h(33)
-    wire[19:0] proxy_addr260; // #2868 /home/blaise/dev/cash/src/module.h(33)
-    wire[511:0] proxy_data261; // #2869 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy258; // #2978 /home/blaise/dev/cash/src/module.h(33)
+    wire[1:0] proxy_type259; // #2979 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy_addr260; // #2980 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy_data261; // #2981 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindout262;
-    wire proxy264; // #2870 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy264; // #2982 /home/blaise/dev/cash/src/module.h(33)
     wire bindin265;
     wire[2:0] bindout268;
     wire bindin272;
     wire bindin273;
     wire bindin274;
-    wire[533:0] proxy276; // #3079 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy276; // #3191 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin280;
     wire bindout283;
     wire bindout286;
-    wire[533:0] proxy288; // #3085 /home/blaise/dev/cash/src/module.h(33)
-    wire[1:0] proxy_owner289; // #3086 /home/blaise/dev/cash/src/module.h(33)
-    wire[19:0] proxy_tag290; // #3087 /home/blaise/dev/cash/src/module.h(33)
-    wire[511:0] proxy_data291; // #3088 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy288; // #3197 /home/blaise/dev/cash/src/module.h(33)
+    wire[1:0] proxy_owner289; // #3198 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy_tag290; // #3199 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy_data291; // #3200 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindout292;
-    wire proxy294; // #3089 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy294; // #3201 /home/blaise/dev/cash/src/module.h(33)
     wire bindin295;
     wire bindin298;
     wire inv299;
-    wire proxy300; // #3091 unknown(0)
-    wire proxy302; // #3092 lsu.cpp(47)
-    wire proxy304; // #3093 /home/blaise/dev/cash/src/seq.h(17)
-    reg reg307; // #3092 lsu.cpp(47)
-    wire[19:0] proxy309; // #3095 lsu.cpp(48)
-    wire[19:0] proxy311; // #3096 /home/blaise/dev/cash/src/seq.h(17)
-    reg[19:0] reg314; // #3095 lsu.cpp(48)
-    wire[13:0] proxy316; // #3098 lsu.cpp(49)
-    wire[13:0] proxy318; // #3099 /home/blaise/dev/cash/src/seq.h(17)
-    reg[13:0] reg321; // #3098 lsu.cpp(49)
-    wire[2:0] proxy322; // #3101 lsu.cpp(53)
+    wire proxy300; // #3203 unknown(0)
+    wire proxy302; // #3204 lsu.cpp(47)
+    wire proxy304; // #3205 /home/blaise/dev/cash/src/seq.h(17)
+    reg reg307; // #3204 lsu.cpp(47)
+    wire[19:0] proxy309; // #3207 lsu.cpp(48)
+    wire[19:0] proxy311; // #3208 /home/blaise/dev/cash/src/seq.h(17)
+    reg[19:0] reg314; // #3207 lsu.cpp(48)
+    wire[13:0] proxy316; // #3210 lsu.cpp(49)
+    wire[13:0] proxy318; // #3211 /home/blaise/dev/cash/src/seq.h(17)
+    reg[13:0] reg321; // #3210 lsu.cpp(49)
+    wire[2:0] proxy322; // #3213 lsu.cpp(53)
     wire eq327;
     wire[19:0] sel328;
     wire eq331;
@@ -3287,44 +3426,44 @@ module spmv_lsu(
     wire and367;
     wire[19:0] sel368;
     wire[19:0] add375;
-    wire[19:0] proxy376; // #3109 unknown(0)
-    wire[5:0] ch_rd_mdata_t378; // #3110 lsu.cpp(55)
-    wire[2:0] proxy381; // #3113 lsu.h(39)
-    wire[7:0] proxy383; // #3114 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[13:0] proxy385; // #3115 lsu.cpp(55)
-    reg[2:0] reg391; // #3116 lsu.cpp(70)
-    reg reg397; // #3119 lsu.cpp(71)
+    wire[19:0] proxy376; // #3221 unknown(0)
+    wire[5:0] ch_rd_mdata_t378; // #3222 lsu.cpp(55)
+    wire[2:0] proxy381; // #3225 lsu.h(39)
+    wire[7:0] proxy383; // #3226 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[13:0] proxy385; // #3227 lsu.cpp(55)
+    reg[2:0] reg391; // #3228 lsu.cpp(70)
+    reg reg397; // #3231 lsu.cpp(71)
     wire eq401;
     wire eq404;
-    wire proxy405; // #3126 unknown(0)
+    wire proxy405; // #3238 unknown(0)
     wire inv406;
     wire and408;
-    wire proxy409; // #3128 unknown(0)
-    wire[533:0] proxy411; // #3129 lsu.cpp(81)
-    wire[1:0] proxy_type412; // #3130 lsu.cpp(81)
-    wire[19:0] proxy_addr413; // #3131 lsu.cpp(81)
-    wire[511:0] proxy_data414; // #3132 lsu.cpp(81)
-    wire[533:0] ch_lsu_wr_req_t416; // #3133 /home/blaise/dev/cash/src/seq.h(17)
-    reg[533:0] reg422; // #3129 lsu.cpp(81)
-    wire[2:0] proxy424; // #3138 lsu.cpp(82)
-    reg[2:0] reg428; // #3138 lsu.cpp(82)
+    wire proxy409; // #3240 unknown(0)
+    wire[533:0] proxy411; // #3241 lsu.cpp(81)
+    wire[1:0] proxy_type412; // #3242 lsu.cpp(81)
+    wire[19:0] proxy_addr413; // #3243 lsu.cpp(81)
+    wire[511:0] proxy_data414; // #3244 lsu.cpp(81)
+    wire[533:0] ch_lsu_wr_req_t416; // #3245 /home/blaise/dev/cash/src/seq.h(17)
+    reg[533:0] reg422; // #3241 lsu.cpp(81)
+    wire[2:0] proxy424; // #3250 lsu.cpp(82)
+    reg[2:0] reg428; // #3250 lsu.cpp(82)
     wire and429;
     wire or433;
     wire[31:0] sel439;
     wire[31:0] sel440;
-    wire[31:0] proxy443; // #3147 lsu.cpp(89)
-    reg[31:0] reg447; // #3147 lsu.cpp(89)
-    wire proxy449; // #3150 lsu.cpp(91)
-    reg reg453; // #3150 lsu.cpp(91)
-    wire[19:0] proxy455; // #3153 lsu.cpp(92)
-    reg[19:0] reg459; // #3153 lsu.cpp(92)
-    wire[511:0] proxy461; // #3156 lsu.cpp(93)
-    reg[511:0] reg466; // #3156 lsu.cpp(93)
-    wire[13:0] proxy468; // #3159 lsu.cpp(94)
-    reg[13:0] reg472; // #3159 lsu.cpp(94)
+    wire[31:0] proxy443; // #3259 lsu.cpp(89)
+    reg[31:0] reg447; // #3259 lsu.cpp(89)
+    wire proxy449; // #3262 lsu.cpp(91)
+    reg reg453; // #3262 lsu.cpp(91)
+    wire[19:0] proxy455; // #3265 lsu.cpp(92)
+    reg[19:0] reg459; // #3265 lsu.cpp(92)
+    wire[511:0] proxy461; // #3268 lsu.cpp(93)
+    reg[511:0] reg466; // #3268 lsu.cpp(93)
+    wire[13:0] proxy468; // #3271 lsu.cpp(94)
+    reg[13:0] reg472; // #3271 lsu.cpp(94)
     wire eq474;
-    wire[4:0] ch_wr_mdata_t476; // #3163 lsu.cpp(100)
-    wire[1:0] proxy479; // #3166 lsu.cpp(101)
+    wire[4:0] ch_wr_mdata_t476; // #3275 lsu.cpp(100)
+    wire[1:0] proxy479; // #3278 lsu.cpp(101)
     wire eq484;
     wire[19:0] sel485;
     wire eq488;
@@ -3335,14 +3474,14 @@ module spmv_lsu(
     wire and496;
     wire[19:0] sel497;
     wire[511:0] sel498;
-    wire[8:0] proxy500; // #3171 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[13:0] proxy502; // #3172 lsu.cpp(103)
+    wire[8:0] proxy500; // #3283 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[13:0] proxy502; // #3284 lsu.cpp(103)
     wire[13:0] sel503;
     wire sel505;
-    wire proxy506; // #3173 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[2:0] proxy508; // #3174 lsu.cpp(109)
-    wire[4:0] ch_wr_mdata_t510; // #3175 lsu.cpp(110)
-    wire[1:0] proxy513; // #3178 lsu.h(44)
+    wire proxy506; // #3285 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[2:0] proxy508; // #3286 lsu.cpp(109)
+    wire[4:0] ch_wr_mdata_t510; // #3287 lsu.cpp(110)
+    wire[1:0] proxy513; // #3290 lsu.h(44)
     wire eq518;
     wire[19:0] sel519;
     wire eq521;
@@ -3355,8 +3494,8 @@ module spmv_lsu(
     wire and531;
     wire[19:0] sel532;
     wire[511:0] sel533;
-    wire[8:0] proxy534; // #3184 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[13:0] proxy536; // #3185 lsu.cpp(113)
+    wire[8:0] proxy534; // #3296 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[13:0] proxy536; // #3297 lsu.cpp(113)
     wire[13:0] sel537;
     wire sel538;
     wire eq540;
@@ -3397,7 +3536,7 @@ module spmv_lsu(
     wire and588;
     wire[2:0] sel589;
     wire eq591;
-    wire[1:0] proxy593; // #3199 lsu.cpp(173)
+    wire[1:0] proxy593; // #3311 lsu.cpp(173)
     wire or594;
     wire inv595;
     wire and596;
@@ -3423,18 +3562,18 @@ module spmv_lsu(
     wire and621;
     wire and622;
     wire[2:0] sel623;
-    wire[5:0] proxy629; // #3202 lsu.cpp(19)
-    wire[2:0] proxy_type630; // #3203 lsu.cpp(19)
-    wire[2:0] proxy_owner631; // #3204 lsu.cpp(19)
+    wire[5:0] proxy629; // #3314 lsu.cpp(19)
+    wire[2:0] proxy_type630; // #3315 lsu.cpp(19)
+    wire[2:0] proxy_owner631; // #3316 lsu.cpp(19)
     wire eq633;
     wire and635;
-    wire proxy636; // #3207 unknown(0)
+    wire proxy636; // #3319 unknown(0)
     wire eq638;
     wire and640;
-    wire proxy641; // #3210 unknown(0)
+    wire proxy641; // #3322 unknown(0)
     wire eq643;
     wire and645;
-    wire proxy646; // #3213 unknown(0)
+    wire proxy646; // #3325 unknown(0)
 
     assign io_qpi_rd_req_addr5 = proxy309;
     assign io_qpi_rd_req_mdata8 = proxy316;
@@ -3774,39 +3913,39 @@ module ch_queue_1(
     output wire[511:0] io_deq_data,
     output wire[2:0] io_size
 );
-    wire io_enq_ready8; // #3294 /home/blaise/dev/cash/src/htl/queue.h(12)
-    wire io_deq_valid11; // #3295 /home/blaise/dev/cash/src/htl/queue.h(12)
-    wire[511:0] io_deq_data14; // #3296 /home/blaise/dev/cash/src/htl/queue.h(12)
-    wire[2:0] io_size20; // #3298 /home/blaise/dev/cash/src/htl/queue.h(12)
-    wire[2:0] proxy23; // #3299 /home/blaise/dev/cash/src/htl/queue.h(25)
-    wire[2:0] proxy25; // #3300 /home/blaise/dev/cash/src/seq.h(17)
-    reg[2:0] reg30; // #3299 /home/blaise/dev/cash/src/htl/queue.h(25)
-    wire[2:0] proxy32; // #3302 /home/blaise/dev/cash/src/htl/queue.h(25)
-    wire[2:0] proxy34; // #3303 /home/blaise/dev/cash/src/seq.h(17)
-    reg[2:0] reg36; // #3302 /home/blaise/dev/cash/src/htl/queue.h(25)
-    wire[1:0] proxy38; // #3305 /home/blaise/dev/cash/src/htl/queue.h(27)
-    wire[1:0] proxy40; // #3306 /home/blaise/dev/cash/src/htl/queue.h(28)
+    wire io_enq_ready8; // #3406 /home/blaise/dev/cash/src/htl/queue.h(12)
+    wire io_deq_valid11; // #3407 /home/blaise/dev/cash/src/htl/queue.h(12)
+    wire[511:0] io_deq_data14; // #3408 /home/blaise/dev/cash/src/htl/queue.h(12)
+    wire[2:0] io_size20; // #3410 /home/blaise/dev/cash/src/htl/queue.h(12)
+    wire[2:0] proxy23; // #3411 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire[2:0] proxy25; // #3412 /home/blaise/dev/cash/src/seq.h(17)
+    reg[2:0] reg30; // #3411 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire[2:0] proxy32; // #3414 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire[2:0] proxy34; // #3415 /home/blaise/dev/cash/src/seq.h(17)
+    reg[2:0] reg36; // #3414 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire[1:0] proxy38; // #3417 /home/blaise/dev/cash/src/htl/queue.h(27)
+    wire[1:0] proxy40; // #3418 /home/blaise/dev/cash/src/htl/queue.h(28)
     wire and41;
     wire and43;
     wire[2:0] add47;
     wire[2:0] sel49;
-    wire[2:0] proxy50; // #3311 unknown(0)
+    wire[2:0] proxy50; // #3423 unknown(0)
     wire[2:0] add52;
     wire[2:0] sel54;
-    wire[2:0] proxy55; // #3314 unknown(0)
+    wire[2:0] proxy55; // #3426 unknown(0)
     reg[511:0] mem56[0:3];
     wire[511:0] proxy58;
     wire[511:0] sel59;
     wire ne61;
-    wire proxy62; // #3317 unknown(0)
-    wire proxy63; // #3318 /home/blaise/dev/cash/src/htl/queue.h(25)
-    wire proxy64; // #3319 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire proxy62; // #3429 unknown(0)
+    wire proxy63; // #3430 /home/blaise/dev/cash/src/htl/queue.h(25)
+    wire proxy64; // #3431 /home/blaise/dev/cash/src/htl/queue.h(25)
     wire eq65;
     wire ne67;
     wire or69;
-    wire proxy70; // #3322 unknown(0)
+    wire proxy70; // #3434 unknown(0)
     wire[2:0] sub71;
-    wire[2:0] proxy72; // #3323 unknown(0)
+    wire[2:0] proxy72; // #3435 unknown(0)
 
     assign io_enq_ready8 = proxy70;
     assign io_deq_valid11 = proxy62;
@@ -3873,12 +4012,12 @@ module spmv_device(
     output wire io_done
 );
     wire[543:0] lit468 = 544'h0;
-    wire[95:0] lit521 = 96'h0;
-    wire[63:0] lit531 = 64'h0;
-    wire[63:0] lit534 = 64'h1;
-    wire[415:0] lit695 = 416'h0;
-    wire[511:0] lit783 = 512'h0;
-    wire[543:0] lit832 = 544'h20;
+    wire[95:0] lit515 = 96'h0;
+    wire[63:0] lit528 = 64'h0;
+    wire[63:0] lit531 = 64'h1;
+    wire[415:0] lit692 = 416'h0;
+    wire[511:0] lit780 = 512'h0;
+    wire[543:0] lit835 = 544'h20;
     wire io_qpi_rd_req_almostfull2; // #1 aal.h(74)
     wire[19:0] io_qpi_rd_req_addr5; // #2 aal.h(74)
     wire[13:0] io_qpi_rd_req_mdata8; // #3 aal.h(74)
@@ -3904,414 +4043,416 @@ module spmv_device(
     wire bindin80;
     wire[63:0] bindin86;
     wire bindout89;
-    wire[63:0] proxy91; // #755 /home/blaise/dev/cash/src/module.h(33)
+    wire[63:0] proxy91; // #811 /home/blaise/dev/cash/src/module.h(33)
     wire[63:0] bindin92;
-    wire[351:0] proxy94; // #756 /home/blaise/dev/cash/src/module.h(33)
+    wire[351:0] proxy94; // #812 /home/blaise/dev/cash/src/module.h(33)
     wire[351:0] bindout106;
-    wire proxy108; // #768 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy108; // #824 /home/blaise/dev/cash/src/module.h(33)
     wire bindout109;
-    wire[22:0] proxy111; // #769 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy111; // #825 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindout114;
-    wire proxy116; // #772 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy116; // #828 /home/blaise/dev/cash/src/module.h(33)
     wire bindin117;
-    wire proxy119; // #773 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy119; // #829 /home/blaise/dev/cash/src/module.h(33)
     wire bindin120;
-    wire[514:0] proxy122; // #774 /home/blaise/dev/cash/src/module.h(33)
+    wire[514:0] proxy122; // #830 /home/blaise/dev/cash/src/module.h(33)
     wire[514:0] bindin125;
-    wire proxy127; // #777 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy127; // #833 /home/blaise/dev/cash/src/module.h(33)
     wire bindout128;
-    wire[84:0] proxy130; // #778 /home/blaise/dev/cash/src/module.h(33)
+    wire[84:0] proxy130; // #834 /home/blaise/dev/cash/src/module.h(33)
     wire[84:0] bindout135;
-    wire proxy137; // #783 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy137; // #839 /home/blaise/dev/cash/src/module.h(33)
     wire bindin138;
     wire bindin142;
     wire bindin143;
     wire bindin144;
     wire[63:0] bindin150;
     wire bindout153;
-    wire[63:0] proxy155; // #1504 /home/blaise/dev/cash/src/module.h(33)
+    wire[63:0] proxy155; // #1616 /home/blaise/dev/cash/src/module.h(33)
     wire[63:0] bindin156;
-    wire[351:0] proxy158; // #1505 /home/blaise/dev/cash/src/module.h(33)
+    wire[351:0] proxy158; // #1617 /home/blaise/dev/cash/src/module.h(33)
     wire[351:0] bindout170;
-    wire proxy172; // #1517 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy172; // #1629 /home/blaise/dev/cash/src/module.h(33)
     wire bindout173;
-    wire[22:0] proxy175; // #1518 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy175; // #1630 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindout178;
-    wire proxy180; // #1521 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy180; // #1633 /home/blaise/dev/cash/src/module.h(33)
     wire bindin181;
-    wire proxy183; // #1522 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy183; // #1634 /home/blaise/dev/cash/src/module.h(33)
     wire bindin184;
-    wire[514:0] proxy186; // #1523 /home/blaise/dev/cash/src/module.h(33)
+    wire[514:0] proxy186; // #1635 /home/blaise/dev/cash/src/module.h(33)
     wire[514:0] bindin189;
-    wire proxy191; // #1526 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy191; // #1638 /home/blaise/dev/cash/src/module.h(33)
     wire bindout192;
-    wire[84:0] proxy194; // #1527 /home/blaise/dev/cash/src/module.h(33)
+    wire[84:0] proxy194; // #1639 /home/blaise/dev/cash/src/module.h(33)
     wire[84:0] bindout199;
-    wire proxy201; // #1532 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy201; // #1644 /home/blaise/dev/cash/src/module.h(33)
     wire bindin202;
-    wire proxy204; // #1936 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy204; // #2048 /home/blaise/dev/cash/src/module.h(33)
     wire bindin206;
     wire bindin207;
     wire bindin208;
-    wire[84:0] proxy210; // #1937 /home/blaise/dev/cash/src/module.h(33)
+    wire[84:0] proxy210; // #2049 /home/blaise/dev/cash/src/module.h(33)
     wire[84:0] bindin215;
-    wire proxy217; // #1942 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy217; // #2054 /home/blaise/dev/cash/src/module.h(33)
     wire bindout218;
-    wire proxy220; // #1943 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy220; // #2055 /home/blaise/dev/cash/src/module.h(33)
     wire bindout221;
-    wire[533:0] proxy223; // #1944 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy223; // #2056 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindout227;
-    wire proxy229; // #1948 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy229; // #2060 /home/blaise/dev/cash/src/module.h(33)
     wire bindin230;
-    wire[63:0] proxy232; // #1949 /home/blaise/dev/cash/src/module.h(33)
+    wire[63:0] proxy232; // #2061 /home/blaise/dev/cash/src/module.h(33)
     wire[63:0] bindout235;
     wire bindout238;
-    wire proxy240; // #2356 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy240; // #2468 /home/blaise/dev/cash/src/module.h(33)
     wire bindin242;
     wire bindin243;
     wire bindin244;
-    wire[84:0] proxy246; // #2357 /home/blaise/dev/cash/src/module.h(33)
+    wire[84:0] proxy246; // #2469 /home/blaise/dev/cash/src/module.h(33)
     wire[84:0] bindin251;
-    wire proxy253; // #2362 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy253; // #2474 /home/blaise/dev/cash/src/module.h(33)
     wire bindout254;
-    wire proxy256; // #2363 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy256; // #2475 /home/blaise/dev/cash/src/module.h(33)
     wire bindout257;
-    wire[533:0] proxy259; // #2364 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy259; // #2476 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindout263;
-    wire proxy265; // #2368 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy265; // #2480 /home/blaise/dev/cash/src/module.h(33)
     wire bindin266;
-    wire[63:0] proxy268; // #2369 /home/blaise/dev/cash/src/module.h(33)
+    wire[63:0] proxy268; // #2481 /home/blaise/dev/cash/src/module.h(33)
     wire[63:0] bindout271;
     wire bindout274;
-    wire proxy276; // #3214 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy276; // #3326 /home/blaise/dev/cash/src/module.h(33)
     wire bindin278;
     wire bindin279;
     wire bindin280;
-    wire[19:0] proxy282; // #3215 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy282; // #3327 /home/blaise/dev/cash/src/module.h(33)
     wire[19:0] bindout283;
-    wire[13:0] proxy285; // #3216 /home/blaise/dev/cash/src/module.h(33)
+    wire[13:0] proxy285; // #3328 /home/blaise/dev/cash/src/module.h(33)
     wire[13:0] bindout286;
-    wire proxy288; // #3217 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy288; // #3329 /home/blaise/dev/cash/src/module.h(33)
     wire bindout289;
-    wire[13:0] proxy291; // #3218 /home/blaise/dev/cash/src/module.h(33)
+    wire[13:0] proxy291; // #3330 /home/blaise/dev/cash/src/module.h(33)
     wire[13:0] bindin292;
-    wire[511:0] proxy294; // #3219 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy294; // #3331 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindin295;
-    wire proxy297; // #3220 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy297; // #3332 /home/blaise/dev/cash/src/module.h(33)
     wire bindin298;
-    wire proxy300; // #3221 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy300; // #3333 /home/blaise/dev/cash/src/module.h(33)
     wire bindin301;
-    wire[19:0] proxy303; // #3222 /home/blaise/dev/cash/src/module.h(33)
+    wire[19:0] proxy303; // #3334 /home/blaise/dev/cash/src/module.h(33)
     wire[19:0] bindout304;
-    wire[13:0] proxy306; // #3223 /home/blaise/dev/cash/src/module.h(33)
+    wire[13:0] proxy306; // #3335 /home/blaise/dev/cash/src/module.h(33)
     wire[13:0] bindout307;
-    wire[511:0] proxy309; // #3224 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy309; // #3336 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindout310;
-    wire proxy312; // #3225 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy312; // #3337 /home/blaise/dev/cash/src/module.h(33)
     wire bindout313;
-    wire[13:0] proxy315; // #3226 /home/blaise/dev/cash/src/module.h(33)
+    wire[13:0] proxy315; // #3338 /home/blaise/dev/cash/src/module.h(33)
     wire[13:0] bindin316;
-    wire proxy318; // #3227 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy318; // #3339 /home/blaise/dev/cash/src/module.h(33)
     wire bindin319;
-    wire[13:0] proxy321; // #3228 /home/blaise/dev/cash/src/module.h(33)
+    wire[13:0] proxy321; // #3340 /home/blaise/dev/cash/src/module.h(33)
     wire[13:0] bindin322;
-    wire proxy324; // #3229 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy324; // #3341 /home/blaise/dev/cash/src/module.h(33)
     wire bindin325;
-    wire[511:0] proxy327; // #3230 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy327; // #3342 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindin343;
     wire bindin346;
-    wire[22:0] proxy348; // #3247 /home/blaise/dev/cash/src/module.h(33)
-    wire[2:0] proxy_type349; // #3248 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy348; // #3359 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy_type349; // #3360 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin351;
     wire bindout354;
     wire bindin357;
-    wire[533:0] proxy359; // #3252 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy359; // #3364 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin363;
     wire bindout366;
     wire bindout369;
-    wire[514:0] proxy371; // #3258 /home/blaise/dev/cash/src/module.h(33)
-    wire[2:0] proxy_type372; // #3259 /home/blaise/dev/cash/src/module.h(33)
-    wire[511:0] proxy_data373; // #3260 /home/blaise/dev/cash/src/module.h(33)
+    wire[514:0] proxy371; // #3370 /home/blaise/dev/cash/src/module.h(33)
+    wire[2:0] proxy_type372; // #3371 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy_data373; // #3372 /home/blaise/dev/cash/src/module.h(33)
     wire[514:0] bindout374;
     wire[31:0] bindout377;
-    wire proxy379; // #3262 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy379; // #3374 /home/blaise/dev/cash/src/module.h(33)
     wire bindin380;
-    wire[22:0] proxy382; // #3263 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy382; // #3375 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin385;
-    wire proxy387; // #3266 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy387; // #3378 /home/blaise/dev/cash/src/module.h(33)
     wire bindout388;
-    wire proxy390; // #3267 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy390; // #3379 /home/blaise/dev/cash/src/module.h(33)
     wire bindout391;
-    wire[514:0] proxy393; // #3268 /home/blaise/dev/cash/src/module.h(33)
+    wire[514:0] proxy393; // #3380 /home/blaise/dev/cash/src/module.h(33)
     wire[514:0] bindout396;
-    wire proxy398; // #3271 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy398; // #3383 /home/blaise/dev/cash/src/module.h(33)
     wire bindin399;
-    wire[22:0] proxy401; // #3272 /home/blaise/dev/cash/src/module.h(33)
+    wire[22:0] proxy401; // #3384 /home/blaise/dev/cash/src/module.h(33)
     wire[22:0] bindin404;
-    wire proxy406; // #3275 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy406; // #3387 /home/blaise/dev/cash/src/module.h(33)
     wire bindout407;
-    wire proxy409; // #3276 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy409; // #3388 /home/blaise/dev/cash/src/module.h(33)
     wire bindout410;
-    wire[514:0] proxy412; // #3277 /home/blaise/dev/cash/src/module.h(33)
+    wire[514:0] proxy412; // #3389 /home/blaise/dev/cash/src/module.h(33)
     wire[514:0] bindout415;
-    wire proxy417; // #3280 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy417; // #3392 /home/blaise/dev/cash/src/module.h(33)
     wire bindin418;
-    wire[533:0] proxy420; // #3281 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy420; // #3393 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin424;
-    wire proxy426; // #3285 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy426; // #3397 /home/blaise/dev/cash/src/module.h(33)
     wire bindout427;
-    wire proxy429; // #3286 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy429; // #3398 /home/blaise/dev/cash/src/module.h(33)
     wire bindin430;
-    wire[533:0] proxy432; // #3287 /home/blaise/dev/cash/src/module.h(33)
+    wire[533:0] proxy432; // #3399 /home/blaise/dev/cash/src/module.h(33)
     wire[533:0] bindin436;
-    wire proxy438; // #3291 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy438; // #3403 /home/blaise/dev/cash/src/module.h(33)
     wire bindout439;
-    wire proxy441; // #3324 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy441; // #3436 /home/blaise/dev/cash/src/module.h(33)
     wire bindin443;
     wire bindin444;
     wire bindin445;
-    wire[511:0] proxy447; // #3325 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy447; // #3437 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindin448;
     wire bindout454;
-    wire[511:0] proxy456; // #3328 /home/blaise/dev/cash/src/module.h(33)
+    wire[511:0] proxy456; // #3440 /home/blaise/dev/cash/src/module.h(33)
     wire[511:0] bindout457;
-    wire proxy459; // #3329 /home/blaise/dev/cash/src/module.h(33)
+    wire proxy459; // #3441 /home/blaise/dev/cash/src/module.h(33)
     wire bindin460;
-    wire[543:0] proxy465; // #3331 spmv.cpp(15)
-    wire[543:0] proxy467; // #3332 /home/blaise/dev/cash/src/seq.h(17)
-    reg[543:0] reg470; // #3331 spmv.cpp(15)
-    reg[4:0] reg477; // #3334 spmv.cpp(15)
-    wire[31:0] proxy481; // #3338 /home/blaise/dev/cash/src/seq.h(17)
-    reg[31:0] reg484; // #3337 spmv.cpp(15)
-    reg[19:0] reg491; // #3340 spmv.cpp(15)
-    reg[19:0] reg497; // #3343 spmv.cpp(15)
-    reg[19:0] reg503; // #3346 spmv.cpp(15)
-    wire[1:0] proxy505; // #3349 spmv.cpp(15)
-    reg[1:0] reg510; // #3349 spmv.cpp(15)
-    wire[95:0] proxy512; // #3352 spmv.cpp(15)
-    wire[31:0] proxy_a_colptr_stalls513; // #3353 spmv.cpp(15)
-    wire[95:0] ch_ctrl_stats_t517; // #3356 /home/blaise/dev/cash/src/seq.h(17)
-    reg[95:0] reg523; // #3352 spmv.cpp(15)
-    wire[19:0] proxy525; // #3361 spmv.cpp(15)
-    wire[19:0] proxy526; // #3362 aal.h(74)
-    wire[63:0] proxy528; // #3363 spmv.cpp(35)
-    wire[63:0] proxy530; // #3364 /home/blaise/dev/cash/src/seq.h(17)
-    reg[63:0] reg533; // #3363 spmv.cpp(35)
-    wire[63:0] add536;
-    wire[63:0] proxy537; // #3367 unknown(0)
-    reg[2:0] reg544; // #3368 spmv.cpp(49)
-    wire proxy546; // #3371 spmv.cpp(52)
-    reg reg551; // #3371 spmv.cpp(52)
-    wire eq553;
-    wire and555;
-    wire proxy556; // #3376 unknown(0)
-    wire[30:0] proxy558; // #3377 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[31:0] proxy560; // #3378 spmv.cpp(64)
-    wire eq562;
-    wire and564;
-    wire and566;
-    wire proxy567; // #3382 unknown(0)
-    wire[30:0] proxy568; // #3383 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[31:0] proxy570; // #3384 spmv.cpp(63)
-    wire[31:0] add571;
-    wire[31:0] sub573;
-    wire[31:0] proxy574; // #3386 unknown(0)
+    wire[543:0] proxy465; // #3443 spmv.cpp(15)
+    wire[543:0] proxy467; // #3444 /home/blaise/dev/cash/src/seq.h(17)
+    reg[543:0] reg470; // #3443 spmv.cpp(15)
+    reg[4:0] reg477; // #3446 spmv.cpp(15)
+    wire[31:0] proxy481; // #3450 /home/blaise/dev/cash/src/seq.h(17)
+    reg[31:0] reg484; // #3449 spmv.cpp(15)
+    wire[19:0] proxy486; // #3452 spmv.cpp(15)
+    reg[19:0] reg491; // #3452 spmv.cpp(15)
+    reg[19:0] reg497; // #3455 spmv.cpp(15)
+    wire[1:0] proxy499; // #3458 spmv.cpp(15)
+    reg[1:0] reg504; // #3458 spmv.cpp(15)
+    wire[95:0] proxy506; // #3461 spmv.cpp(15)
+    wire[31:0] proxy_a_colptr_stalls507; // #3462 spmv.cpp(15)
+    wire[95:0] ch_ctrl_stats_t511; // #3465 /home/blaise/dev/cash/src/seq.h(17)
+    reg[95:0] reg517; // #3461 spmv.cpp(15)
+    reg[19:0] reg523; // #3470 spmv.cpp(15)
+    wire[63:0] proxy525; // #3473 spmv.cpp(32)
+    wire[63:0] proxy527; // #3474 /home/blaise/dev/cash/src/seq.h(17)
+    reg[63:0] reg530; // #3473 spmv.cpp(32)
+    wire[63:0] add533;
+    wire[63:0] proxy534; // #3477 unknown(0)
+    reg[2:0] reg541; // #3478 spmv.cpp(46)
+    wire proxy543; // #3481 spmv.cpp(49)
+    reg reg548; // #3481 spmv.cpp(49)
+    wire eq550;
+    wire and552;
+    wire proxy553; // #3486 unknown(0)
+    wire[30:0] proxy555; // #3487 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[31:0] proxy557; // #3488 spmv.cpp(61)
+    wire eq559;
+    wire and561;
+    wire and563;
+    wire proxy564; // #3492 unknown(0)
+    wire[30:0] proxy565; // #3493 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[31:0] proxy567; // #3494 spmv.cpp(60)
+    wire[31:0] add568;
+    wire[31:0] sub570;
+    wire[31:0] proxy571; // #3496 unknown(0)
+    wire and572;
+    wire proxy573; // #3497 unknown(0)
     wire and575;
-    wire proxy576; // #3387 unknown(0)
-    wire and578;
-    wire and580;
-    wire proxy581; // #3390 unknown(0)
-    wire eq583;
-    wire ne585;
-    wire and587;
-    wire and588;
-    wire[19:0] sel589;
-    wire[31:0] add592;
-    wire[31:0] sll596;
-    wire[31:0] add600;
-    wire[31:0] srl604;
-    wire[31:0] proxy605; // #3401 unknown(0)
-    wire[19:0] proxy606; // #3402 unknown(0)
-    wire[19:0] sel607;
-    wire sel608;
-    wire[2:0] sel610;
-    wire inv612;
-    wire and613;
-    wire sel614;
-    wire eq616;
-    wire inv617;
-    wire and618;
-    wire[2:0] sel620;
-    wire[19:0] sel622;
-    wire ne625;
-    wire and627;
-    wire sel628;
-    wire[19:0] add631;
-    wire and633;
-    wire[19:0] sel634;
-    wire eq635;
-    wire and638;
-    wire[2:0] sel639;
-    wire[31:0] add641;
-    wire inv643;
-    wire and644;
-    wire[31:0] proxy645;
-    wire[31:0] sel646;
-    wire[31:0] add648;
-    wire inv650;
-    wire and651;
-    wire[31:0] sel652;
-    wire eq654;
-    wire eq655;
-    wire and657;
-    wire or660;
-    wire inv661;
-    wire and662;
-    wire and663;
-    wire[2:0] sel664;
-    wire eq666;
-    wire or668;
-    wire or669;
-    wire inv670;
-    wire and671;
-    wire[1:0] sel673;
-    wire sel674;
-    wire and676;
-    wire[2:0] sel677;
-    wire eq679;
-    wire or681;
-    wire or682;
-    wire or683;
-    wire inv684;
-    wire and685;
-    wire[1:0] sel686;
-    wire[17:0] proxy688; // #3418 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[19:0] proxy690; // #3419 /home/blaise/dev/cash/src/bit.h(417)
-    wire[19:0] proxy691; // #3420 spmv.cpp(131)
-    wire[19:0] sel693;
-    wire[1:0] proxy694; // #3421 spmv.cpp(132)
-    wire[415:0] proxy696; // #3422 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[511:0] proxy698; // #3423 /home/blaise/dev/cash/src/bit.h(417)
-    wire[511:0] proxy699; // #3424 spmv.cpp(254)
-    wire[415:0] ch_stats_t702; // #3426 spmv.cpp(256)
-    wire[95:0] proxy718; // #3442 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[511:0] proxy720; // #3443 /home/blaise/dev/cash/src/bit.h(417)
-    wire[511:0] proxy721; // #3444 spmv.cpp(259)
-    wire[415:0] ch_stats_t724; // #3446 spmv.cpp(261)
-    wire[95:0] proxy740; // #3462 /home/blaise/dev/cash/src/bit.h(1020)
-    wire[511:0] proxy742; // #3463 /home/blaise/dev/cash/src/bit.h(417)
-    wire[511:0] proxy743; // #3464 spmv.cpp(264)
-    wire eq744;
-    wire[511:0] sel745;
-    wire eq746;
+    wire and577;
+    wire proxy578; // #3500 unknown(0)
+    wire eq580;
+    wire ne582;
+    wire and584;
+    wire and585;
+    wire[19:0] sel586;
+    wire[31:0] add589;
+    wire[31:0] sll593;
+    wire[31:0] add597;
+    wire[31:0] srl601;
+    wire[31:0] proxy602; // #3511 unknown(0)
+    wire[19:0] proxy603; // #3512 unknown(0)
+    wire[19:0] sub606;
+    wire[19:0] sel608;
+    wire sel609;
+    wire[2:0] sel611;
+    wire inv613;
+    wire and614;
+    wire sel615;
+    wire eq617;
+    wire ne620;
+    wire inv622;
+    wire and623;
+    wire and624;
+    wire sel625;
+    wire[19:0] add627;
+    wire and629;
+    wire[19:0] sel630;
+    wire eq631;
+    wire and634;
+    wire[2:0] sel635;
+    wire[31:0] add637;
+    wire inv639;
+    wire and640;
+    wire[31:0] proxy641;
+    wire[31:0] sel642;
+    wire[31:0] add644;
+    wire inv646;
+    wire and647;
+    wire[31:0] sel648;
+    wire eq650;
+    wire eq652;
+    wire and654;
+    wire or657;
+    wire inv658;
+    wire and659;
+    wire and660;
+    wire[2:0] sel661;
+    wire eq663;
+    wire or665;
+    wire or666;
+    wire inv667;
+    wire and668;
+    wire[1:0] sel670;
+    wire sel671;
+    wire and673;
+    wire[2:0] sel674;
+    wire eq676;
+    wire or678;
+    wire or679;
+    wire or680;
+    wire inv681;
+    wire and682;
+    wire[1:0] sel683;
+    wire[17:0] proxy685; // #3531 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[19:0] proxy687; // #3532 /home/blaise/dev/cash/src/bit.h(417)
+    wire[19:0] proxy688; // #3533 spmv.cpp(130)
+    wire[19:0] sel690;
+    wire[1:0] proxy691; // #3534 spmv.cpp(131)
+    wire[415:0] proxy693; // #3535 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[511:0] proxy695; // #3536 /home/blaise/dev/cash/src/bit.h(417)
+    wire[511:0] proxy696; // #3537 spmv.cpp(254)
+    wire[415:0] ch_stats_t699; // #3539 spmv.cpp(256)
+    wire[95:0] proxy715; // #3555 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[511:0] proxy717; // #3556 /home/blaise/dev/cash/src/bit.h(417)
+    wire[511:0] proxy718; // #3557 spmv.cpp(259)
+    wire[415:0] ch_stats_t721; // #3559 spmv.cpp(261)
+    wire[95:0] proxy737; // #3575 /home/blaise/dev/cash/src/bit.h(1020)
+    wire[511:0] proxy739; // #3576 /home/blaise/dev/cash/src/bit.h(417)
+    wire[511:0] proxy740; // #3577 spmv.cpp(264)
+    wire eq741;
+    wire[511:0] sel742;
+    wire eq743;
+    wire[511:0] sel744;
     wire[511:0] sel747;
-    wire[511:0] sel750;
-    wire sel751;
-    wire[1:0] add753;
-    wire and755;
-    wire[1:0] sel756;
-    wire eq758;
-    wire and761;
-    wire[2:0] sel762;
-    wire eq764;
-    wire eq766;
+    wire sel748;
+    wire[1:0] add750;
+    wire and752;
+    wire[1:0] sel753;
+    wire eq755;
+    wire and758;
+    wire[2:0] sel759;
+    wire eq761;
+    wire eq763;
+    wire or765;
+    wire or766;
+    wire or767;
     wire or768;
-    wire or769;
-    wire or770;
-    wire or771;
-    wire inv772;
-    wire and773;
-    wire and774;
-    wire[2:0] sel775;
-    wire sel776;
-    reg[1:0] reg789; // #3473 spmv.cpp(175)
-    wire eq791;
-    wire and792;
-    wire sel793;
-    wire eq795;
-    wire and798;
-    wire[511:0] proxy799;
-    wire[4:0] sel802;
-    wire[479:0] proxy804;
-    wire[31:0] proxy805;
-    wire[31:0] proxy806;
-    wire[31:0] sel807;
-    wire[479:0] proxy808;
-    wire[479:0] proxy809;
-    wire[479:0] sel810;
-    wire inv811;
-    wire and812;
+    wire inv769;
+    wire and770;
+    wire and771;
+    wire[2:0] sel772;
+    wire sel773;
+    reg[1:0] reg786; // #3586 spmv.cpp(172)
+    wire eq788;
+    wire and789;
+    wire sel790;
+    wire eq792;
+    wire[19:0] proxy794; // #3592 aal.h(74)
+    wire and795;
+    wire[19:0] sel796;
+    wire eq798;
+    wire and801;
+    wire[511:0] proxy802;
+    wire[4:0] sel805;
+    wire[479:0] proxy807;
+    wire[31:0] proxy808;
+    wire[31:0] proxy809;
+    wire[31:0] sel810;
+    wire[479:0] proxy811;
+    wire[479:0] proxy812;
     wire[479:0] sel813;
-    wire[31:0] proxy814;
-    wire[31:0] proxy815;
-    wire[31:0] sel816;
-    wire[4:0] sel818;
-    wire[1:0] sel819;
-    wire eq821;
-    wire[63:0] proxy822; // #3482 spmv.cpp(15)
-    wire[63:0] proxy823; // #3483 spmv.cpp(203)
-    wire[63:0] ch_dcsc_part_t824; // #3484 spmv.cpp(203)
-    wire inv827;
-    wire and828;
-    wire and829;
-    wire[63:0] sel830;
-    wire sel831;
-    wire[543:0] srl834;
-    wire[543:0] proxy835; // #3488 unknown(0)
-    wire[31:0] proxy836;
-    wire[31:0] sel837;
-    wire[479:0] proxy838;
-    wire[479:0] sel839;
-    wire[31:0] proxy840;
-    wire[31:0] sel841;
-    wire[19:0] add843;
-    wire[19:0] sel845;
-    wire[4:0] sub848;
-    wire[4:0] sel850;
-    wire ne852;
-    wire ne854;
-    wire and856;
-    wire and858;
-    wire[1:0] sel859;
-    wire inv860;
-    wire and861;
-    wire[1:0] sel862;
-    wire inv863;
-    wire and864;
-    wire[1:0] sel865;
-    wire eq867;
-    wire[63:0] proxy868; // #3498 spmv.cpp(15)
-    wire[63:0] proxy869; // #3499 spmv.cpp(203)
-    wire[63:0] ch_dcsc_part_t870; // #3500 spmv.cpp(203)
-    wire or873;
-    wire inv874;
-    wire and875;
-    wire and876;
-    wire[63:0] sel877;
-    wire sel878;
-    wire[543:0] srl880;
-    wire[543:0] proxy881; // #3504 unknown(0)
-    wire[31:0] proxy882;
-    wire[31:0] sel883;
-    wire[479:0] proxy884;
-    wire[479:0] sel885;
+    wire inv814;
+    wire and815;
+    wire[479:0] sel816;
+    wire[31:0] proxy817;
+    wire[31:0] proxy818;
+    wire[31:0] sel819;
+    wire[4:0] sel821;
+    wire[1:0] sel822;
+    wire eq824;
+    wire[63:0] proxy825; // #3598 spmv.cpp(15)
+    wire[63:0] proxy826; // #3599 spmv.cpp(203)
+    wire[63:0] ch_dcsc_part_t827; // #3600 spmv.cpp(203)
+    wire inv830;
+    wire and831;
+    wire and832;
+    wire[63:0] sel833;
+    wire sel834;
+    wire[543:0] srl837;
+    wire[543:0] proxy838; // #3604 unknown(0)
+    wire[31:0] proxy839;
+    wire[31:0] sel840;
+    wire[479:0] proxy841;
+    wire[479:0] sel842;
+    wire[31:0] proxy843;
+    wire[31:0] sel844;
+    wire[19:0] sub846;
+    wire[19:0] sel848;
+    wire[4:0] sub851;
+    wire[4:0] sel853;
+    wire ne855;
+    wire ne858;
+    wire and860;
+    wire and862;
+    wire[1:0] sel863;
+    wire inv864;
+    wire and865;
+    wire[1:0] sel866;
+    wire inv867;
+    wire and868;
+    wire[1:0] sel869;
+    wire eq871;
+    wire[63:0] proxy872; // #3615 spmv.cpp(15)
+    wire[63:0] proxy873; // #3616 spmv.cpp(203)
+    wire[63:0] ch_dcsc_part_t874; // #3617 spmv.cpp(203)
+    wire or877;
+    wire inv878;
+    wire and879;
+    wire and880;
+    wire[63:0] sel881;
+    wire sel882;
+    wire[543:0] srl884;
+    wire[543:0] proxy885; // #3621 unknown(0)
     wire[31:0] proxy886;
     wire[31:0] sel887;
-    wire[19:0] add889;
-    wire[19:0] sel891;
-    wire[4:0] sub893;
-    wire[4:0] sel895;
-    wire ne897;
-    wire ne899;
-    wire and901;
-    wire and903;
-    wire[1:0] sel904;
-    wire inv905;
+    wire[479:0] proxy888;
+    wire[479:0] sel889;
+    wire[31:0] proxy890;
+    wire[31:0] sel891;
+    wire[19:0] sub893;
+    wire[19:0] sel895;
+    wire[4:0] sub897;
+    wire[4:0] sel899;
+    wire ne901;
+    wire ne904;
     wire and906;
-    wire[1:0] sel907;
-    wire inv908;
-    wire and909;
-    wire[1:0] sel910;
+    wire and908;
+    wire[1:0] sel909;
+    wire inv910;
+    wire and911;
+    wire[1:0] sel912;
+    wire inv913;
+    wire and914;
+    wire[1:0] sel915;
 
     assign io_qpi_rd_req_almostfull2 = io_qpi_rd_req_almostfull;
     assign io_qpi_rd_req_addr5 = proxy282;
@@ -4332,13 +4473,13 @@ module spmv_device(
     assign io_ctx50 = io_ctx;
     assign io_ctx_a51 = io_ctx50[131:0];
     assign io_ctx_a_num_parts52 = io_ctx_a51[31:0];
-    assign io_done71 = proxy546;
+    assign io_done71 = proxy543;
     assign bindin77 = clk;
     assign bindin79 = reset;
     spmv_dcsc_walk __module1__(.clk(bindin77), .reset(bindin79), .io_ctrl_start_valid(bindin80), .io_ctrl_start_data(bindin86), .io_ctrl_timer(bindin92), .io_lsu_rd_req_ready(bindin117), .io_lsu_rd_rsp_valid(bindin120), .io_lsu_rd_rsp_data(bindin125), .io_pe_ready(bindin138), .io_ctrl_start_ready(bindout89), .io_ctrl_stats(bindout106), .io_lsu_rd_req_valid(bindout109), .io_lsu_rd_req_data(bindout114), .io_pe_valid(bindout128), .io_pe_data(bindout135));
-    assign bindin80 = sel831;
-    assign bindin86 = sel830;
-    assign proxy91 = proxy528;
+    assign bindin80 = sel834;
+    assign bindin86 = sel833;
+    assign proxy91 = proxy525;
     assign bindin92 = proxy91;
     assign proxy94 = bindout106;
     assign proxy108 = bindout109;
@@ -4356,9 +4497,9 @@ module spmv_device(
     assign bindin142 = clk;
     assign bindin143 = reset;
     spmv_dcsc_walk __module8__(.clk(bindin142), .reset(bindin143), .io_ctrl_start_valid(bindin144), .io_ctrl_start_data(bindin150), .io_ctrl_timer(bindin156), .io_lsu_rd_req_ready(bindin181), .io_lsu_rd_rsp_valid(bindin184), .io_lsu_rd_rsp_data(bindin189), .io_pe_ready(bindin202), .io_ctrl_start_ready(bindout153), .io_ctrl_stats(bindout170), .io_lsu_rd_req_valid(bindout173), .io_lsu_rd_req_data(bindout178), .io_pe_valid(bindout192), .io_pe_data(bindout199));
-    assign bindin144 = sel878;
-    assign bindin150 = sel877;
-    assign proxy155 = proxy528;
+    assign bindin144 = sel882;
+    assign bindin150 = sel881;
+    assign proxy155 = proxy525;
     assign bindin156 = proxy155;
     assign proxy158 = bindout170;
     assign proxy172 = bindout173;
@@ -4429,12 +4570,12 @@ module spmv_device(
     assign bindin325 = proxy324;
     assign proxy327 = io_ctx50;
     assign bindin343 = proxy327;
-    assign bindin346 = sel628;
-    assign proxy348 = {sel622, sel620};
+    assign bindin346 = sel625;
+    assign proxy348 = {proxy486, 3'b0};
     assign proxy_type349 = proxy348[2:0];
     assign bindin351 = proxy348;
-    assign bindin357 = sel751;
-    assign proxy359 = {sel750, sel693, sel686};
+    assign bindin357 = sel748;
+    assign proxy359 = {sel747, sel690, sel683};
     assign bindin363 = proxy359;
     assign proxy371 = bindout374;
     assign proxy_type372 = proxy371[2:0];
@@ -4463,7 +4604,7 @@ module spmv_device(
     assign proxy432 = proxy259;
     assign bindin436 = proxy432;
     assign proxy438 = bindout439;
-    assign proxy441 = proxy556;
+    assign proxy441 = proxy553;
     assign bindin443 = clk;
     assign bindin444 = reset;
     ch_queue_1 __module29__(.clk(bindin443), .reset(bindin444), .io_enq_valid(bindin445), .io_enq_data(bindin448), .io_deq_ready(bindin460), .io_deq_valid(bindout454), .io_deq_data(bindout457));
@@ -4471,243 +4612,245 @@ module spmv_device(
     assign proxy447 = proxy_data373;
     assign bindin448 = proxy447;
     assign proxy456 = bindout457;
-    assign proxy459 = sel793;
+    assign proxy459 = sel790;
     assign bindin460 = proxy459;
     assign proxy465 = reg470;
-    assign proxy467 = {sel887, sel885, sel883};
+    assign proxy467 = {sel891, sel889, sel887};
     always @ (posedge clk) reg470 <= reset ? lit468 : proxy467;
-    always @ (posedge clk) reg477 <= reset ? 5'b0 : sel895;
-    assign proxy481 = proxy574;
+    always @ (posedge clk) reg477 <= reset ? 5'b0 : sel899;
+    assign proxy481 = proxy571;
     always @ (posedge clk) reg484 <= reset ? 32'h0 : proxy481;
-    always @ (posedge clk) reg491 <= reset ? 20'h0 : sel634;
-    always @ (posedge clk) reg497 <= reset ? 20'h0 : sel607;
-    always @ (posedge clk) reg503 <= reset ? 20'h0 : sel891;
-    assign proxy505 = reg510;
-    always @ (posedge clk) reg510 <= reset ? 2'b0 : sel756;
-    assign proxy512 = reg523;
-    assign proxy_a_colptr_stalls513 = proxy512[31:0];
-    assign ch_ctrl_stats_t517 = {proxy512[95:32], sel652};
-    always @ (posedge clk) reg523 <= reset ? lit521 : ch_ctrl_stats_t517;
-    assign proxy525 = proxy526;
-    assign proxy526 = io_ctx_a_num_parts52[19:0];
-    assign proxy528 = reg533;
-    assign proxy530 = proxy537;
-    always @ (posedge clk) reg533 <= reset ? lit531 : proxy530;
-    assign add536 = proxy528 + lit534;
-    assign proxy537 = add536;
-    always @ (posedge clk) reg544 <= reset ? 3'b0 : sel775;
-    assign proxy546 = reg551;
-    always @ (posedge clk) reg551 <= reset ? 1'b0 : sel776;
-    assign eq553 = proxy_type372 == 3'b0;
-    assign and555 = bindout369 & eq553;
-    assign proxy556 = and555;
-    assign proxy558 = 31'b0;
-    assign proxy560 = {proxy558, proxy459};
-    assign eq562 = proxy_type349 == 3'b0;
-    assign and564 = sel628 & bindout354;
-    assign and566 = and564 & eq562;
-    assign proxy567 = and566;
-    assign proxy568 = 31'b0;
-    assign proxy570 = {proxy568, proxy567};
-    assign add571 = reg484 + proxy570;
-    assign sub573 = add571 - proxy560;
-    assign proxy574 = sub573;
-    assign and575 = bindout89 & bindout238;
-    assign proxy576 = proxy581;
-    assign and578 = and575 & bindout153;
-    assign and580 = and578 & bindout274;
-    assign proxy581 = and580;
-    assign eq583 = reg544 == 3'b0;
-    assign ne585 = io_ctx_a_num_parts52 != 32'h0;
-    assign and587 = eq583 & io_start;
-    assign and588 = and587 & ne585;
-    assign sel589 = and588 ? 20'h0 : reg491;
-    assign add592 = io_ctx_a_num_parts52 + 32'h1;
-    assign sll596 = add592 << 32'h2;
-    assign add600 = sll596 + 32'h3f;
-    assign srl604 = add600 >> 32'h6;
-    assign proxy605 = srl604;
-    assign proxy606 = proxy605[19:0];
-    assign sel607 = and588 ? proxy606 : reg497;
-    assign sel608 = and588 ? 1'b0 : proxy546;
-    assign sel610 = and588 ? 3'b1 : reg544;
-    assign inv612 = ~ne585;
-    assign and613 = and587 & inv612;
-    assign sel614 = and613 ? 1'b1 : sel608;
-    assign eq616 = reg544 == 3'b1;
-    assign inv617 = ~eq583;
-    assign and618 = inv617 & eq616;
-    assign sel620 = and618 ? 3'b0 : 3'b0;
-    assign sel622 = and618 ? reg491 : 20'h0;
-    assign ne625 = reg484 != 32'h4;
-    assign and627 = and618 & ne625;
-    assign sel628 = and627 ? 1'b1 : 1'b0;
-    assign add631 = reg491 + 20'h1;
-    assign and633 = and627 & bindout354;
-    assign sel634 = and633 ? add631 : sel589;
-    assign eq635 = reg491 == reg497;
-    assign and638 = and633 & eq635;
-    assign sel639 = and638 ? 3'b10 : sel610;
-    assign add641 = proxy_a_colptr_stalls513 + 32'h1;
-    assign inv643 = ~bindout354;
-    assign and644 = and627 & inv643;
-    assign proxy645 = proxy512[31:0];
-    assign sel646 = and644 ? add641 : proxy645;
-    assign add648 = proxy_a_colptr_stalls513 + 32'h1;
-    assign inv650 = ~ne625;
-    assign and651 = and618 & inv650;
-    assign sel652 = and651 ? add648 : sel646;
-    assign eq654 = reg544 == 3'b10;
-    assign eq655 = reg503 == proxy525;
-    assign and657 = eq655 & proxy576;
-    assign or660 = eq616 | eq583;
-    assign inv661 = ~or660;
-    assign and662 = inv661 & eq654;
-    assign and663 = and662 & and657;
-    assign sel664 = and663 ? 3'b11 : sel639;
-    assign eq666 = reg544 == 3'b11;
-    assign or668 = eq654 | eq616;
-    assign or669 = or668 | eq583;
-    assign inv670 = ~or669;
-    assign and671 = inv670 & eq666;
-    assign sel673 = and671 ? 2'b1 : 2'b0;
-    assign sel674 = and671 ? 1'b1 : 1'b0;
-    assign and676 = and671 & bindout366;
-    assign sel677 = and676 ? 3'b100 : sel664;
-    assign eq679 = reg544 == 3'b100;
-    assign or681 = eq666 | eq654;
-    assign or682 = or681 | eq616;
-    assign or683 = or682 | eq583;
-    assign inv684 = ~or683;
-    assign and685 = inv684 & eq679;
-    assign sel686 = and685 ? 2'b10 : sel673;
-    assign proxy688 = 18'b0;
-    assign proxy690 = {proxy688, proxy505};
-    assign proxy691 = proxy690;
-    assign sel693 = and685 ? proxy691 : 20'h0;
-    assign proxy694 = proxy505;
-    assign proxy696 = lit695;
-    assign proxy698 = {proxy696, proxy512};
-    assign proxy699 = proxy698;
-    assign ch_stats_t702 = {proxy232, proxy94};
-    assign proxy718 = lit521;
-    assign proxy720 = {proxy718, ch_stats_t702};
-    assign proxy721 = proxy720;
-    assign ch_stats_t724 = {proxy268, proxy158};
-    assign proxy740 = lit521;
-    assign proxy742 = {proxy740, ch_stats_t724};
-    assign proxy743 = proxy742;
-    assign eq744 = proxy694 == 2'b1;
-    assign sel745 = eq744 ? proxy721 : proxy743;
-    assign eq746 = proxy694 == 2'b0;
-    assign sel747 = eq746 ? proxy699 : sel745;
-    assign sel750 = and685 ? sel747 : lit783;
-    assign sel751 = and685 ? 1'b1 : sel674;
-    assign add753 = proxy505 + 2'b1;
-    assign and755 = and685 & bindout366;
-    assign sel756 = and755 ? add753 : proxy505;
-    assign eq758 = proxy505 == 2'b10;
-    assign and761 = and755 & eq758;
-    assign sel762 = and761 ? 3'b101 : sel677;
-    assign eq764 = reg544 == 3'b101;
-    assign eq766 = bindout377 == 32'h0;
-    assign or768 = eq679 | eq666;
-    assign or769 = or768 | eq654;
-    assign or770 = or769 | eq616;
-    assign or771 = or770 | eq583;
-    assign inv772 = ~or771;
-    assign and773 = inv772 & eq764;
-    assign and774 = and773 & eq766;
-    assign sel775 = and774 ? 3'b0 : sel762;
-    assign sel776 = and774 ? 1'b1 : sel614;
-    always @ (posedge clk) reg789 <= reset ? 2'b0 : sel910;
-    assign eq791 = reg789 == 2'b0;
-    assign and792 = eq791 & bindout454;
-    assign sel793 = and792 ? 1'b1 : 1'b0;
-    assign eq795 = reg477 == 5'b0;
-    assign and798 = and792 & eq795;
-    assign proxy799 = proxy465[511:0];
-    assign sel802 = and798 ? 5'b10000 : reg477;
-    assign proxy804 = proxy456[479:0];
-    assign proxy805 = proxy456[31:0];
-    assign proxy806 = proxy799[31:0];
-    assign sel807 = and798 ? proxy805 : proxy806;
-    assign proxy808 = proxy456[511:32];
-    assign proxy809 = proxy799[511:32];
-    assign sel810 = and798 ? proxy808 : proxy809;
-    assign inv811 = ~eq795;
-    assign and812 = and792 & inv811;
-    assign sel813 = and812 ? proxy804 : sel810;
-    assign proxy814 = proxy456[511:480];
-    assign proxy815 = proxy465[543:512];
-    assign sel816 = and812 ? proxy814 : proxy815;
-    assign sel818 = and812 ? 5'b10001 : sel802;
-    assign sel819 = and792 ? 2'b1 : reg789;
-    assign eq821 = reg789 == 2'b1;
-    assign proxy822 = proxy465[63:0];
-    assign proxy823 = proxy822;
-    assign ch_dcsc_part_t824 = proxy823;
-    assign inv827 = ~eq791;
-    assign and828 = inv827 & eq821;
-    assign and829 = and828 & bindout89;
-    assign sel830 = and829 ? ch_dcsc_part_t824 : lit531;
-    assign sel831 = and829 ? 1'b1 : 1'b0;
-    assign srl834 = proxy465 >> lit832;
-    assign proxy835 = srl834;
-    assign proxy836 = proxy835[31:0];
-    assign sel837 = and829 ? proxy836 : sel807;
-    assign proxy838 = proxy835[511:32];
-    assign sel839 = and829 ? proxy838 : sel813;
-    assign proxy840 = proxy835[543:512];
-    assign sel841 = and829 ? proxy840 : sel816;
-    assign add843 = reg503 + 20'h1;
-    assign sel845 = and829 ? add843 : reg503;
-    assign sub848 = reg477 - 5'b1;
-    assign sel850 = and829 ? sub848 : sel818;
-    assign ne852 = reg477 != 5'b1;
-    assign ne854 = reg503 != proxy525;
-    assign and856 = ne854 & ne852;
-    assign and858 = and829 & and856;
-    assign sel859 = and858 ? 2'b10 : sel819;
-    assign inv860 = ~and856;
-    assign and861 = and829 & inv860;
-    assign sel862 = and861 ? 2'b0 : sel859;
-    assign inv863 = ~bindout89;
-    assign and864 = and828 & inv863;
-    assign sel865 = and864 ? 2'b10 : sel862;
-    assign eq867 = reg789 == 2'b10;
-    assign proxy868 = proxy465[63:0];
-    assign proxy869 = proxy868;
-    assign ch_dcsc_part_t870 = proxy869;
-    assign or873 = eq821 | eq791;
-    assign inv874 = ~or873;
-    assign and875 = inv874 & eq867;
-    assign and876 = and875 & bindout153;
-    assign sel877 = and876 ? ch_dcsc_part_t870 : lit531;
-    assign sel878 = and876 ? 1'b1 : 1'b0;
-    assign srl880 = proxy465 >> lit832;
-    assign proxy881 = srl880;
-    assign proxy882 = proxy881[31:0];
-    assign sel883 = and876 ? proxy882 : sel837;
-    assign proxy884 = proxy881[511:32];
-    assign sel885 = and876 ? proxy884 : sel839;
-    assign proxy886 = proxy881[543:512];
-    assign sel887 = and876 ? proxy886 : sel841;
-    assign add889 = reg503 + 20'h1;
-    assign sel891 = and876 ? add889 : sel845;
-    assign sub893 = reg477 - 5'b1;
-    assign sel895 = and876 ? sub893 : sel850;
-    assign ne897 = reg477 != 5'b1;
-    assign ne899 = reg503 != proxy525;
-    assign and901 = ne899 & ne897;
-    assign and903 = and876 & and901;
-    assign sel904 = and903 ? 2'b1 : sel865;
-    assign inv905 = ~and901;
-    assign and906 = and876 & inv905;
-    assign sel907 = and906 ? 2'b0 : sel904;
-    assign inv908 = ~bindout153;
-    assign and909 = and875 & inv908;
-    assign sel910 = and909 ? 2'b1 : sel907;
+    assign proxy486 = reg491;
+    always @ (posedge clk) reg491 <= reset ? 20'h0 : sel630;
+    always @ (posedge clk) reg497 <= reset ? 20'h0 : sel608;
+    assign proxy499 = reg504;
+    always @ (posedge clk) reg504 <= reset ? 2'b0 : sel753;
+    assign proxy506 = reg517;
+    assign proxy_a_colptr_stalls507 = proxy506[31:0];
+    assign ch_ctrl_stats_t511 = {proxy506[95:32], sel648};
+    always @ (posedge clk) reg517 <= reset ? lit515 : ch_ctrl_stats_t511;
+    always @ (posedge clk) reg523 <= reset ? 20'h0 : sel895;
+    assign proxy525 = reg530;
+    assign proxy527 = proxy534;
+    always @ (posedge clk) reg530 <= reset ? lit528 : proxy527;
+    assign add533 = proxy525 + lit531;
+    assign proxy534 = add533;
+    always @ (posedge clk) reg541 <= reset ? 3'b0 : sel772;
+    assign proxy543 = reg548;
+    always @ (posedge clk) reg548 <= reset ? 1'b0 : sel773;
+    assign eq550 = proxy_type372 == 3'b0;
+    assign and552 = bindout369 & eq550;
+    assign proxy553 = and552;
+    assign proxy555 = 31'b0;
+    assign proxy557 = {proxy555, proxy459};
+    assign eq559 = proxy_type349 == 3'b0;
+    assign and561 = sel625 & bindout354;
+    assign and563 = and561 & eq559;
+    assign proxy564 = and563;
+    assign proxy565 = 31'b0;
+    assign proxy567 = {proxy565, proxy564};
+    assign add568 = reg484 + proxy567;
+    assign sub570 = add568 - proxy557;
+    assign proxy571 = sub570;
+    assign and572 = bindout89 & bindout238;
+    assign proxy573 = proxy578;
+    assign and575 = and572 & bindout153;
+    assign and577 = and575 & bindout274;
+    assign proxy578 = and577;
+    assign eq580 = reg541 == 3'b0;
+    assign ne582 = io_ctx_a_num_parts52 != 32'h0;
+    assign and584 = eq580 & io_start;
+    assign and585 = and584 & ne582;
+    assign sel586 = and585 ? 20'h0 : proxy486;
+    assign add589 = io_ctx_a_num_parts52 + 32'h1;
+    assign sll593 = add589 << 32'h2;
+    assign add597 = sll593 + 32'h3f;
+    assign srl601 = add597 >> 32'h6;
+    assign proxy602 = srl601;
+    assign proxy603 = proxy602[19:0];
+    assign sub606 = proxy603 - 20'h1;
+    assign sel608 = and585 ? sub606 : reg497;
+    assign sel609 = and585 ? 1'b0 : proxy543;
+    assign sel611 = and585 ? 3'b1 : reg541;
+    assign inv613 = ~ne582;
+    assign and614 = and584 & inv613;
+    assign sel615 = and614 ? 1'b1 : sel609;
+    assign eq617 = reg541 == 3'b1;
+    assign ne620 = reg484 != 32'h4;
+    assign inv622 = ~eq580;
+    assign and623 = inv622 & eq617;
+    assign and624 = and623 & ne620;
+    assign sel625 = and624 ? 1'b1 : 1'b0;
+    assign add627 = proxy486 + 20'h1;
+    assign and629 = and624 & bindout354;
+    assign sel630 = and629 ? add627 : sel586;
+    assign eq631 = proxy486 == reg497;
+    assign and634 = and629 & eq631;
+    assign sel635 = and634 ? 3'b10 : sel611;
+    assign add637 = proxy_a_colptr_stalls507 + 32'h1;
+    assign inv639 = ~bindout354;
+    assign and640 = and624 & inv639;
+    assign proxy641 = proxy506[31:0];
+    assign sel642 = and640 ? add637 : proxy641;
+    assign add644 = proxy_a_colptr_stalls507 + 32'h1;
+    assign inv646 = ~ne620;
+    assign and647 = and623 & inv646;
+    assign sel648 = and647 ? add644 : sel642;
+    assign eq650 = reg541 == 3'b10;
+    assign eq652 = 20'h0 == reg523;
+    assign and654 = eq652 & proxy573;
+    assign or657 = eq617 | eq580;
+    assign inv658 = ~or657;
+    assign and659 = inv658 & eq650;
+    assign and660 = and659 & and654;
+    assign sel661 = and660 ? 3'b11 : sel635;
+    assign eq663 = reg541 == 3'b11;
+    assign or665 = eq650 | eq617;
+    assign or666 = or665 | eq580;
+    assign inv667 = ~or666;
+    assign and668 = inv667 & eq663;
+    assign sel670 = and668 ? 2'b1 : 2'b0;
+    assign sel671 = and668 ? 1'b1 : 1'b0;
+    assign and673 = and668 & bindout366;
+    assign sel674 = and673 ? 3'b100 : sel661;
+    assign eq676 = reg541 == 3'b100;
+    assign or678 = eq663 | eq650;
+    assign or679 = or678 | eq617;
+    assign or680 = or679 | eq580;
+    assign inv681 = ~or680;
+    assign and682 = inv681 & eq676;
+    assign sel683 = and682 ? 2'b10 : sel670;
+    assign proxy685 = 18'b0;
+    assign proxy687 = {proxy685, proxy499};
+    assign proxy688 = proxy687;
+    assign sel690 = and682 ? proxy688 : 20'h0;
+    assign proxy691 = proxy499;
+    assign proxy693 = lit692;
+    assign proxy695 = {proxy693, proxy506};
+    assign proxy696 = proxy695;
+    assign ch_stats_t699 = {proxy232, proxy94};
+    assign proxy715 = lit515;
+    assign proxy717 = {proxy715, ch_stats_t699};
+    assign proxy718 = proxy717;
+    assign ch_stats_t721 = {proxy268, proxy158};
+    assign proxy737 = lit515;
+    assign proxy739 = {proxy737, ch_stats_t721};
+    assign proxy740 = proxy739;
+    assign eq741 = proxy691 == 2'b1;
+    assign sel742 = eq741 ? proxy718 : proxy740;
+    assign eq743 = proxy691 == 2'b0;
+    assign sel744 = eq743 ? proxy696 : sel742;
+    assign sel747 = and682 ? sel744 : lit780;
+    assign sel748 = and682 ? 1'b1 : sel671;
+    assign add750 = proxy499 + 2'b1;
+    assign and752 = and682 & bindout366;
+    assign sel753 = and752 ? add750 : proxy499;
+    assign eq755 = proxy499 == 2'b10;
+    assign and758 = and752 & eq755;
+    assign sel759 = and758 ? 3'b101 : sel674;
+    assign eq761 = reg541 == 3'b101;
+    assign eq763 = bindout377 == 32'h0;
+    assign or765 = eq676 | eq663;
+    assign or766 = or765 | eq650;
+    assign or767 = or766 | eq617;
+    assign or768 = or767 | eq580;
+    assign inv769 = ~or768;
+    assign and770 = inv769 & eq761;
+    assign and771 = and770 & eq763;
+    assign sel772 = and771 ? 3'b0 : sel759;
+    assign sel773 = and771 ? 1'b1 : sel615;
+    always @ (posedge clk) reg786 <= reset ? 2'b0 : sel915;
+    assign eq788 = reg786 == 2'b0;
+    assign and789 = eq788 & bindout454;
+    assign sel790 = and789 ? 1'b1 : 1'b0;
+    assign eq792 = 20'h0 == reg523;
+    assign proxy794 = io_ctx_a_num_parts52[19:0];
+    assign and795 = and789 & eq792;
+    assign sel796 = and795 ? proxy794 : reg523;
+    assign eq798 = 5'b0 == reg477;
+    assign and801 = and789 & eq798;
+    assign proxy802 = proxy465[511:0];
+    assign sel805 = and801 ? 5'b1111 : reg477;
+    assign proxy807 = proxy456[479:0];
+    assign proxy808 = proxy456[31:0];
+    assign proxy809 = proxy802[31:0];
+    assign sel810 = and801 ? proxy808 : proxy809;
+    assign proxy811 = proxy456[511:32];
+    assign proxy812 = proxy802[511:32];
+    assign sel813 = and801 ? proxy811 : proxy812;
+    assign inv814 = ~eq798;
+    assign and815 = and789 & inv814;
+    assign sel816 = and815 ? proxy807 : sel813;
+    assign proxy817 = proxy456[511:480];
+    assign proxy818 = proxy465[543:512];
+    assign sel819 = and815 ? proxy817 : proxy818;
+    assign sel821 = and815 ? 5'b10000 : sel805;
+    assign sel822 = and789 ? 2'b1 : reg786;
+    assign eq824 = reg786 == 2'b1;
+    assign proxy825 = proxy465[63:0];
+    assign proxy826 = proxy825;
+    assign ch_dcsc_part_t827 = proxy826;
+    assign inv830 = ~eq788;
+    assign and831 = inv830 & eq824;
+    assign and832 = and831 & bindout89;
+    assign sel833 = and832 ? ch_dcsc_part_t827 : lit528;
+    assign sel834 = and832 ? 1'b1 : 1'b0;
+    assign srl837 = proxy465 >> lit835;
+    assign proxy838 = srl837;
+    assign proxy839 = proxy838[31:0];
+    assign sel840 = and832 ? proxy839 : sel810;
+    assign proxy841 = proxy838[511:32];
+    assign sel842 = and832 ? proxy841 : sel816;
+    assign proxy843 = proxy838[543:512];
+    assign sel844 = and832 ? proxy843 : sel819;
+    assign sub846 = reg523 - 20'h1;
+    assign sel848 = and832 ? sub846 : sel796;
+    assign sub851 = reg477 - 5'b1;
+    assign sel853 = and832 ? sub851 : sel821;
+    assign ne855 = reg477 != 5'b1;
+    assign ne858 = reg523 != 20'h1;
+    assign and860 = ne858 & ne855;
+    assign and862 = and832 & and860;
+    assign sel863 = and862 ? 2'b10 : sel822;
+    assign inv864 = ~and860;
+    assign and865 = and832 & inv864;
+    assign sel866 = and865 ? 2'b0 : sel863;
+    assign inv867 = ~bindout89;
+    assign and868 = and831 & inv867;
+    assign sel869 = and868 ? 2'b10 : sel866;
+    assign eq871 = reg786 == 2'b10;
+    assign proxy872 = proxy465[63:0];
+    assign proxy873 = proxy872;
+    assign ch_dcsc_part_t874 = proxy873;
+    assign or877 = eq824 | eq788;
+    assign inv878 = ~or877;
+    assign and879 = inv878 & eq871;
+    assign and880 = and879 & bindout153;
+    assign sel881 = and880 ? ch_dcsc_part_t874 : lit528;
+    assign sel882 = and880 ? 1'b1 : 1'b0;
+    assign srl884 = proxy465 >> lit835;
+    assign proxy885 = srl884;
+    assign proxy886 = proxy885[31:0];
+    assign sel887 = and880 ? proxy886 : sel840;
+    assign proxy888 = proxy885[511:32];
+    assign sel889 = and880 ? proxy888 : sel842;
+    assign proxy890 = proxy885[543:512];
+    assign sel891 = and880 ? proxy890 : sel844;
+    assign sub893 = reg523 - 20'h1;
+    assign sel895 = and880 ? sub893 : sel848;
+    assign sub897 = reg477 - 5'b1;
+    assign sel899 = and880 ? sub897 : sel853;
+    assign ne901 = reg477 != 5'b1;
+    assign ne904 = reg523 != 20'h1;
+    assign and906 = ne904 & ne901;
+    assign and908 = and880 & and906;
+    assign sel909 = and908 ? 2'b1 : sel869;
+    assign inv910 = ~and906;
+    assign and911 = and880 & inv910;
+    assign sel912 = and911 ? 2'b0 : sel909;
+    assign inv913 = ~bindout153;
+    assign and914 = and879 & inv913;
+    assign sel915 = and914 ? 2'b1 : sel912;
 
     assign io_qpi_rd_req_addr = io_qpi_rd_req_addr5;
     assign io_qpi_rd_req_mdata = io_qpi_rd_req_mdata8;
