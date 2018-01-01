@@ -115,7 +115,7 @@ void spmv_dcsc_walk::describe() {
   row_blk_end_.next   = CEIL_INT32_TO_BLOCK_ADDR(row_end_) - 1;
 
   //--
-  row_blk_cnt_.next  = (row_blk_end - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
+  row_blk_cnt_.next  = (row_blk_end_ - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
 
   //--
   col_end_.next = io.ctrl.start.data.part.end.slice<ch_width_v<ch_ptr>>() - 1;
