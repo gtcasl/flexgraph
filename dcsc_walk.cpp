@@ -112,13 +112,13 @@ void spmv_dcsc_walk::describe() {
   avbuf_.io.deq.ready = false;
   
   //--
-  row_blk_end_.next   = CEIL_INT32_TO_BLOCK_ADDR(row_end_) - 1;
+  row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_) - 1;
 
   //--
-  row_blk_cnt_.next  = (row_blk_end_ - row_blk_curr_.next).slice<ch_width_v<decltype(row_blk_cnt_)>>();
+  row_blk_cnt_.next = ch_slice<decltype(row_blk_cnt_)>(row_blk_end_ - row_blk_curr_.next);
 
   //--
-  col_end_.next = io.ctrl.start.data.part.end.slice<ch_width_v<ch_ptr>>() - 1;
+  col_end_.next = ch_slice<ch_ptr>(io.ctrl.start.data.part.end) - 1;
 
   // ch_walk_state FSM
   __switch (state)
@@ -126,7 +126,7 @@ void spmv_dcsc_walk::describe() {
     // wait for partition data
     __if (io.ctrl.start.valid) {
       // get partition columns data
-      col_curr_.next = io.ctrl.start.data.part.start.slice<ch_width_v<ch_ptr>>();
+      col_curr_.next = ch_slice<ch_ptr>(io.ctrl.start.data.part.start);
 
       // profiling
       prof_start_.next = io.ctrl.timer;
@@ -182,12 +182,12 @@ void spmv_dcsc_walk::describe() {
 
       //--
       asblock_.next  = asbuf_.io.deq.data;
-      row_curr_.next = (asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_)).slice<ch_width_v<ch_ptr>>();
+      row_curr_.next = ch_slice<ch_ptr>(asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
       asbuf_deq.next = true;
 
       //--
       __if ((col_curr_ & 0xf) != 0xf) {
-        row_end_.next  = (asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1)).slice<ch_width_v<ch_ptr>>();
+        row_end_.next  = ch_slice<ch_ptr>(asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
         // check the vertex mask
         state.next = ch_walk_state::check_x_mask;
       } __else {
@@ -222,7 +222,7 @@ void spmv_dcsc_walk::describe() {
       // get the returned block
       auto asblock = asbuf_.io.deq.data;
       asbuf_deq.next = true;
-      row_end_.next = asblock.slice<ch_width_v<ch_ptr>>(); // no offset needed because the value will be at the begining of block
+      row_end_.next = ch_slice<ch_ptr>(asblock); // no offset needed because the value will be at the begining of block
       // check the vertex mask
       state.next = ch_walk_state::check_x_mask;
     } __else {
@@ -236,7 +236,7 @@ void spmv_dcsc_walk::describe() {
     ch_ptr x_mask_addr = INT32_TO_BLOCK_ADDR(x_mask_index);
     __if (x_mask_addr == xmblock_addr_) {
       // check if the index is valid
-      ch_bit32 mask = (xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
+      ch_bit32 mask = ch_slice<32>(xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index));
       __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
         // go to check_x_mask2
         state.next = ch_walk_state::check_x_mask2;
@@ -293,7 +293,7 @@ void spmv_dcsc_walk::describe() {
       xmbuf_deq.next = true;
       // check if the index is valid
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
-      ch_bit32 mask = (xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)).slice<32>();
+      ch_bit32 mask = ch_slice<32>(xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index));
       __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
         // go to wait_for_x_mask2
         state.next = ch_walk_state::wait_for_x_mask2;
@@ -390,15 +390,15 @@ void spmv_dcsc_walk::describe() {
     // wait for all a_rowind and a_value blocks to arrive
     // read requests are returned in order, so
     // we only need to wait on the requested last buffer
-    //__if (avbuf_.io.size == row_blk_cnt_) {
+    //=__if (avbuf_.io.size == row_blk_cnt_) {
       __if (xvbuf_.io.deq.valid) {
         // fetch x_value block
         xvblock_.next = xvbuf_.io.deq.data;
         xvbuf_deq.next = true;
-        x_value_.next = (xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
+        x_value_.next = ch_slice<ch_float32>(xvblock_.next >> INT32_TO_BLOCK_BITSHIFT(a_colidx_));
       } __else {
         // get x_value from local storage
-        x_value_.next = (xvblock_ >> INT32_TO_BLOCK_BITSHIFT(a_colidx_)).slice<32>().as<ch_float32>();
+        x_value_.next = ch_slice<ch_float32>(xvblock_ >> INT32_TO_BLOCK_BITSHIFT(a_colidx_));
       };
       // go to execute
       state.next = ch_walk_state::execute;
@@ -409,8 +409,8 @@ void spmv_dcsc_walk::describe() {
   }
   __case (ch_walk_state::execute) {
     // push data to PE
-    pe_data.next.a_rowind = (arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<ch_width_v<ch_ptr>>();
-    pe_data.next.a_value  = (avbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_)).slice<32>().as<ch_float32>();
+    pe_data.next.a_rowind = ch_slice<ch_ptr>(arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_));
+    pe_data.next.a_value  = ch_slice<ch_float32>(avbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(row_curr_));
     pe_data.next.x_value  = x_value_.as<ch_float32>();
     pe_data.next.is_end   = false;
     pe_valid.next         = true;
@@ -447,12 +447,12 @@ void spmv_dcsc_walk::describe() {
       // check if not last entry in block
       __if ((col_curr_ & 0xf) != 0xf) {
         // get the next a_index
-        a_colidx_.next = (acblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_width_v<ch_ptr>>();
+        a_colidx_.next = ch_slice<ch_ptr>(acblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next));
         // get the next row_curr
-        row_curr_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next)).slice<ch_width_v<ch_ptr>>();
+        row_curr_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next));
         // get the next row_end
         __if ((col_curr_ & 0xf) != 0xf) { //=col_curr_.next
-          row_end_.next = (asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1)).slice<ch_width_v<ch_ptr>>();
+          row_end_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1));
           // check the vertex mask
           state.next = ch_walk_state::check_x_mask;
         } __else {

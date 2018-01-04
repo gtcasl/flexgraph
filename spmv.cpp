@@ -73,7 +73,7 @@ void spmv_device::main_thread() {
   lsu_.io.ctrl.rd_req.data.addr = part_blk_curr_;
 
   //--
-  part_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1).slice<ch_width_v<ch_ptr>>() - 1;
+  part_blk_end_.next = ch_slice<ch_ptr>(CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1)) - 1;
       
   //--
   __switch (state)
@@ -181,15 +181,15 @@ void spmv_device::dispatch_thread() {
       __if (pbuf_.io.deq.valid) {
         pbuf_.io.deq.ready = true;
         __if (0 == num_parts_) {
-          num_parts_.next = io.ctx.a.num_parts.slice<ch_width_v<ch_ptr>>();
+          num_parts_.next = ch_slice<ch_ptr>(io.ctx.a.num_parts);
         };
         __if (0 == part_buf_size_) {
           // get whole partition block
-          part_buf_.next.slice<ch_width_v<ch_block>>(0) = pbuf_.io.deq.data;
+          part_buf_.next.slice<ch_block>(0) = pbuf_.io.deq.data;
           part_buf_size_.next = PARTITIONS_PER_BLOCK - 1;
         } __else {
           // append partition block
-          part_buf_.next.slice<ch_width_v<ch_block>>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
+          part_buf_.next.slice<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
           part_buf_size_.next = PARTITIONS_PER_BLOCK;
         };
         // submit partition to next ready PE starting with PE0
@@ -202,7 +202,7 @@ void spmv_device::dispatch_thread() {
         // check if PE is ready
         __if (walkers_[i].io.ctrl.start.ready) {
           // dispatch partition to PE
-          ch_dcsc_part_t part(part_buf_.slice<ch_width_v<ch_dcsc_part_t>>());
+          auto part = ch_slice<ch_dcsc_part_t>(part_buf_);
           walkers_[i].io.ctrl.start.data.part = part;
           walkers_[i].io.ctrl.start.valid = true;
           // advance counters
