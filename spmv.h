@@ -52,7 +52,9 @@ protected:
 
   ch_seq<ch_ctrl_stats_t> stats_;
 
-  ch_seq<ch_ptr> num_parts_;
+  ch_ptr num_parts_;
+  ch_seq<ch_ptr> part_curr_;
+  ch_seq<ch_ptr> part_end_;
 };
 
 }

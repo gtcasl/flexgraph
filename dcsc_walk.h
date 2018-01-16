@@ -58,12 +58,14 @@ private:
   ch_seq<ch_ptr> a_colidx_;
 
   ch_seq<ch_ptr> row_curr_;
+  ch_seq<ch_ptr> row_endp_;
   ch_seq<ch_ptr> row_end_;
 
   ch_seq<ch_ptr> xmblock_addr_;
   ch_seq<ch_ptr> xvblock_addr_;
 
   ch_seq<ch_ptr>  row_blk_curr_;
+  ch_seq<ch_ptr>  row_blk_endp_;
   ch_seq<ch_ptr>  row_blk_end_;
   ch_seq<ch_bit<6>> row_blk_cnt_;
 
@@ -88,6 +90,7 @@ private:
   ch_seq<ch_block> xmblock_;
   ch_seq<ch_block> xvblock_;
 
+  ch_seq<ch_bit32> runtime_;
   ch_seq<ch_bit64> prof_start_;
   ch_seq<ch_walker_stats_t> stats_;
 };

@@ -130,7 +130,7 @@ void spmv_lsu::write_req_thread() {
 
     //--
     if (verbose) {
-      ch_print("{0}: qpi_wr: state={1}, valid={2}, addr={3}, data={4}, mdata={5}",
+      ch_print("{0}: qpi_wr: state={1:s}, valid={2}, addr={3}, data={4}, mdata={5}",
              ch_getTick(),
              qw_state,
              io.qpi.wr_req.valid,
@@ -210,7 +210,7 @@ void spmv_lsu::write_req_thread() {
     
   //--
   if (verbose) {
-    ch_print("{0}: lsu_wr_req: state={1}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
+    ch_print("{0}: lsu_wr_req: state={1:s}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
            ch_getTick(),
            state,
            wr_req_arb_.io.out.valid,

@@ -28,6 +28,10 @@ spmv_device::~spmv_device() {
 }
 
 void spmv_device::describe() {  
+  //--
+  num_parts_ = ch_slice<ch_ptr>(io.ctx.a.num_parts);
+  part_end_.next = num_parts_ - 1;
+
   // timer
   ch_seq<ch_bit64> timer;
   timer.next = timer + 1;
@@ -40,6 +44,10 @@ void spmv_device::describe() {
     
   // dispatcher
   this->dispatch_thread();
+
+  if (verbose) {
+    ch_print("");
+  }
 }
 
 void spmv_device::main_thread() {
@@ -111,7 +119,7 @@ void spmv_device::main_thread() {
   }
   __case (ch_ctrl_state::wait_for_execute) {
     // wait for the execution to complete
-    __if (0 == num_parts_ && all_PEs_ready) {
+    __if (part_curr_ == num_parts_ && all_PEs_ready) {
       // flush LSU write buffers      
       state.next = ch_ctrl_state::flush_buffers;  
     };
@@ -161,7 +169,7 @@ void spmv_device::main_thread() {
     
   //--
   if (verbose) {
-    ch_print("{0}: ctrl_main: state={1}, start={2}, done={3}, Bc={4}, Be={5}, "
+    ch_print("{0}: ctrl_main: state={1:s}, start={2}, done={3}, Bc={4}, Be={5}, "
            "rq_val={6}, rq_typ={7}, rq_adr={8}, "
            "wr_val={9}, wr_typ={10}, wr_adr={11}",
            ch_getTick(), state, io.start, done, part_blk_curr_, part_blk_end_,
@@ -180,17 +188,14 @@ void spmv_device::dispatch_thread() {
       // wait for partition data
       __if (pbuf_.io.deq.valid) {
         pbuf_.io.deq.ready = true;
-        __if (0 == num_parts_) {
-          num_parts_.next = ch_slice<ch_ptr>(io.ctx.a.num_parts);
-        };
         __if (0 == part_buf_size_) {
           // get whole partition block
           part_buf_.next.slice<ch_block>(0) = pbuf_.io.deq.data;
-          part_buf_size_.next = PARTITIONS_PER_BLOCK - 1;
+          part_buf_size_.next = PARTITIONS_PER_BLOCK;
         } __else {
           // append partition block
           part_buf_.next.slice<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
-          part_buf_size_.next = PARTITIONS_PER_BLOCK;
+          part_buf_size_.next = 1 + PARTITIONS_PER_BLOCK;
         };
         // submit partition to next ready PE starting with PE0
         state.next = 1;
@@ -205,21 +210,22 @@ void spmv_device::dispatch_thread() {
           auto part = ch_slice<ch_dcsc_part_t>(part_buf_);
           walkers_[i].io.ctrl.start.data.part = part;
           walkers_[i].io.ctrl.start.valid = true;
+
           // advance counters
           part_buf_.next = part_buf_ >> PARTITION_VALUE_BITS; // pop one entry
-          num_parts_.next = num_parts_ - 1; // decrement partition count
+          part_curr_.next = part_curr_ + 1; // advance partition
           part_buf_size_.next = part_buf_size_ - 1;
 
           //--
           if (verbose) {
-            ch_print(fstring("{0}: *** assigned partition{1} to PE%d, p_start={2}, p_end={3}", i),
-                     ch_getTick(), num_parts_, part.start, part.end);
+            ch_print(fstring("{0}: *** assigned partition {1} to PE%d, p_start={2}, p_end={3}", i),
+                     ch_getTick(), part_curr_, part.start, part.end);
           }
 
           // check if we can pop another partition from current block
           // we need at least two entries to proceed
-          __if (num_parts_ != 1
-             && part_buf_size_ != 1) {
+          __if (part_curr_ != part_end_
+             && part_buf_size_ != 2) {
             // goto next PE
             state.next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
           } __else {
@@ -243,10 +249,10 @@ void spmv_device::dispatch_thread() {
     
   //--
   if (verbose) {
-    ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, np={3}, pbuf_sz={4}, pbuf={5}, part0={6}",
+    ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, p={3}, pbuf_sz={4}, pbuf={5}, part0={6}",
            ch_getTick(), state, 
            (walkers_[0].io.ctrl.start.valid == walkers_[0].io.ctrl.start.ready),
-           num_parts_, part_buf_size_, part_buf_,
+           part_curr_, part_buf_size_, part_buf_,
            walkers_[0].io.ctrl.start.data.part.asBits());
   }
 }

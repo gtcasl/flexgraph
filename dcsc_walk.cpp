@@ -14,13 +14,17 @@ __enum (ch_walk_state, (
   check_x_mask2,
   get_x_mask,
   wait_for_x_mask,
-  wait_for_x_mask2,
   get_x_value,
+  calc_blk_cnt,
+  calc_blk_cnt2,
   get_a_rowidx,
   get_a_value,
   wait_for_data,
   execute,
+  execute2,
   next_column,
+  next_column2,
+  calc_runtime,
   end_partition
 ));
 
@@ -80,13 +84,13 @@ void spmv_dcsc_walk::describe() {
   emit_pending_size(xmbuf_pending_size_, xmbuf_, ch_rd_request::x_masks);
 
   //--
-  if (verbose && id_ == 2) {
-    ch_print(fstring("{0}: *** Walker%d: state={1}, "
+  if (verbose) {
+    ch_print(fstring("{0}: *** Walker%d: state={1:s}, "
                      "acbuf.enq.val={2}, acbuf.deq.val={3}, acbuf_psz={4}, "
                      "asbuf.enq.val={5}, asbuf.deq.val={6}, asbuf_psz={7}, "
                      "arbuf.enq.val={8}, arbuf.deq.val={9}, arbuf_psz={10}, "
                      "avbuf.enq.val={11}, avbuf.deq.val={12}, avbuf_psz={13}, "
-                     "rowbk_cur={14}, rowbk_end={15}, rowbk_cnt={16}, nparts={17}", id_),
+                     "rbk_cur={14}, rbk_end={15}, rbk_cnt={16}, nparts={17}", id_),
              ch_getTick(), state,
              acbuf_.io.enq.valid, acbuf_.io.deq.valid, acbuf_pending_size_,
              asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_,
@@ -107,19 +111,6 @@ void spmv_dcsc_walk::describe() {
   auto pe_data = io.pe.data.asSeq();
   auto pe_valid = io.pe.valid.asSeq();
 
-  //--
-  arbuf_.io.deq.ready = false;
-  avbuf_.io.deq.ready = false;
-  
-  //--
-  row_blk_end_.next = CEIL_INT32_TO_BLOCK_ADDR(row_end_) - 1;
-
-  //--
-  row_blk_cnt_.next = ch_slice<decltype(row_blk_cnt_)>(row_blk_end_ - row_blk_curr_.next);
-
-  //--
-  col_end_.next = ch_slice<ch_ptr>(io.ctrl.start.data.part.end) - 1;
-
   // ch_walk_state FSM
   __switch (state)
   __case (ch_walk_state::ready) {
@@ -127,6 +118,7 @@ void spmv_dcsc_walk::describe() {
     __if (io.ctrl.start.valid) {
       // get partition columns data
       col_curr_.next = ch_slice<ch_ptr>(io.ctrl.start.data.part.start);
+      col_end_.next = ch_slice<ch_ptr>(io.ctrl.start.data.part.end) - 1;
 
       // profiling
       prof_start_.next = io.ctrl.timer;
@@ -177,17 +169,17 @@ void spmv_dcsc_walk::describe() {
     __if (acbuf_.io.deq.valid && asbuf_.io.deq.valid) {
       //--
       acblock_.next  = acbuf_.io.deq.data;
-      a_colidx_.next = ch_slice<ch_ptr>(acblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
+      a_colidx_.next = ch_slice<ch_ptr>(acbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
       acbuf_deq.next = true;
 
       //--
       asblock_.next  = asbuf_.io.deq.data;
-      row_curr_.next = ch_slice<ch_ptr>(asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
+      row_curr_.next = ch_slice<ch_ptr>(asbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
       asbuf_deq.next = true;
 
       //--
       __if ((col_curr_ & 0xf) != 0xf) {
-        row_end_.next  = ch_slice<ch_ptr>(asblock_.next >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
+        row_endp_.next = ch_slice<ch_ptr>(asbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
         // check the vertex mask
         state.next = ch_walk_state::check_x_mask;
       } __else {
@@ -220,9 +212,8 @@ void spmv_dcsc_walk::describe() {
     // wait for requested block to arrive
     __if (asbuf_.io.deq.valid) {
       // get the returned block
-      auto asblock = asbuf_.io.deq.data;
+      row_endp_.next = ch_slice<ch_ptr>(asbuf_.io.deq.data); // no offset needed because the value will be at the begining of block
       asbuf_deq.next = true;
-      row_end_.next = ch_slice<ch_ptr>(asblock); // no offset needed because the value will be at the begining of block
       // check the vertex mask
       state.next = ch_walk_state::check_x_mask;
     } __else {
@@ -231,6 +222,8 @@ void spmv_dcsc_walk::describe() {
     };
   }
   __case (ch_walk_state::check_x_mask) {
+    // compute row_end
+    row_end_.next = row_endp_ - 1;
     // check if the current mask block is valid
     ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
     ch_ptr x_mask_addr = INT32_TO_BLOCK_ADDR(x_mask_index);
@@ -256,9 +249,7 @@ void spmv_dcsc_walk::describe() {
     ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
     __if (x_value_addr == xvblock_addr_) {
       // calculate rows prefetch iterators
-      row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);      
-      // request a_rowind
-      state.next = ch_walk_state::get_a_rowidx;
+      state.next = ch_walk_state::calc_blk_cnt;
     } __else {
       // save block addr
       xvblock_addr_.next = x_value_addr;
@@ -295,8 +286,8 @@ void spmv_dcsc_walk::describe() {
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = ch_slice<32>(xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index));
       __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
-        // go to wait_for_x_mask2
-        state.next = ch_walk_state::wait_for_x_mask2;
+        // go to check_x_mask2
+        state.next = ch_walk_state::check_x_mask2;
       } __else {
         // go to next column
         state.next = ch_walk_state::next_column;
@@ -306,21 +297,6 @@ void spmv_dcsc_walk::describe() {
       stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
     };
   }
-  __case (ch_walk_state::wait_for_x_mask2) {
-    // check if the current vertex block is valid
-    ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
-    __if (x_value_addr == xvblock_addr_) {
-      // calculate rows prefetch iterators
-      row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
-      // request a_rowind
-      state.next = ch_walk_state::get_a_rowidx;
-    } __else {
-      // save block addr
-      xvblock_addr_.next = x_value_addr;
-      // request x_value
-      state.next = ch_walk_state::get_x_value;
-    };
-  }
   __case (ch_walk_state::get_x_value) {
     // request a_value
     io.lsu.rd_req.data.type = ch_rd_request::x_values;
@@ -328,11 +304,9 @@ void spmv_dcsc_walk::describe() {
     __if (xvbuf_pending_size_ != XVBUF_SIZE) {
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
-      __if (io.lsu.rd_req.ready) {
+      __if (io.lsu.rd_req.ready) {        
         // calculate rows prefetch iterators
-        row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
-        // request a_rowind
-        state.next = ch_walk_state::get_a_rowidx;
+        state.next = ch_walk_state::calc_blk_cnt;
       } __else {
         // profiling
         stats_.next.x_values_stalls = stats_.x_values_stalls + 1;
@@ -341,6 +315,21 @@ void spmv_dcsc_walk::describe() {
       // profiling
       stats_.next.x_values_stalls = stats_.x_values_stalls + 1;
     };
+  }
+  __case(ch_walk_state::calc_blk_cnt) {
+    // calculate rows prefetch iterators
+    row_blk_curr_.next = INT32_TO_BLOCK_ADDR(row_curr_);
+    row_blk_endp_.next = CEIL_INT32_TO_BLOCK_ADDR(row_endp_);
+    // compute row block count
+    state.next = ch_walk_state::calc_blk_cnt2;
+  }
+  __case(ch_walk_state::calc_blk_cnt2) {
+    // compute block count
+    row_blk_cnt_.next = ch_slice<ch_bit<6>>(row_blk_endp_ - row_blk_curr_);
+    // compute row block end
+    row_blk_end_.next = row_blk_endp_ - 1;
+    // request a_rowind
+    state.next = ch_walk_state::get_a_rowidx;
   }
   __case (ch_walk_state::get_a_rowidx) {
     // request a_rowind
@@ -390,7 +379,7 @@ void spmv_dcsc_walk::describe() {
     // wait for all a_rowind and a_value blocks to arrive
     // read requests are returned in order, so
     // we only need to wait on the requested last buffer
-    //=__if (avbuf_.io.size == row_blk_cnt_) {
+    __if (avbuf_.io.size == row_blk_cnt_) {
       __if (xvbuf_.io.deq.valid) {
         // fetch x_value block
         xvblock_.next = xvbuf_.io.deq.data;
@@ -402,10 +391,10 @@ void spmv_dcsc_walk::describe() {
       };
       // go to execute
       state.next = ch_walk_state::execute;
-    //} __else {
-    //  // profiling
-    //  stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
-    //};
+    } __else {
+      // profiling
+      stats_.next.a_values_stalls = stats_.a_values_stalls + 1;
+    };
   }
   __case (ch_walk_state::execute) {
     // push data to PE
@@ -420,12 +409,14 @@ void spmv_dcsc_walk::describe() {
       // advance row
       row_curr_.next = row_curr_ + 1;
       // check if not last row
-      __if (row_curr_ != row_end_) { //=row_curr_.next
+      __if (row_curr_ != row_end_) {
         // check if last entry in block
         __if ((row_curr_ & 0xf) == 0xf) {
           // pop fifo
           arbuf_deq.next = true;
           avbuf_deq.next = true;
+          // go next
+          state.next = ch_walk_state::execute2;
         };
       } __else {
         // pop fifo
@@ -434,52 +425,65 @@ void spmv_dcsc_walk::describe() {
         // go to next column
         state.next = ch_walk_state::next_column;
       };
+
     } __else {
       // profiling
       stats_.next.execute_stalls = stats_.execute_stalls + 1;
     };
   }
+  __case (ch_walk_state::execute2) {
+    // go next
+    state.next = ch_walk_state::execute;
+  }
   __case (ch_walk_state::next_column) {
     // advance to next column
     col_curr_.next = col_curr_ + 1;
     // check if not last column
-    __if (col_curr_ != col_end_) { //=col_curr_.next
+    __if (col_curr_ != col_end_) {
       // check if not last entry in block
       __if ((col_curr_ & 0xf) != 0xf) {
-        // get the next a_index
-        a_colidx_.next = ch_slice<ch_ptr>(acblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next));
-        // get the next row_curr
-        row_curr_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next));
-        // get the next row_end
-        __if ((col_curr_ & 0xf) != 0xf) { //=col_curr_.next
-          row_end_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_.next + 1));
-          // check the vertex mask
-          state.next = ch_walk_state::check_x_mask;
-        } __else {
-          // need to get row_end from next block
-          state.next = ch_walk_state::get_a_rend;
-        };
+        // goto next_column2
+        state.next = ch_walk_state::next_column2;
       } __else {
         // get the next axblock
         state.next = ch_walk_state::get_a_colidx;
       };
     } __else {
-      // end the partition
-      state.next = ch_walk_state::end_partition;
+      // compute runtime
+      state.next = ch_walk_state::calc_runtime;
     };
+  }
+  __case (ch_walk_state::next_column2) {    
+    // get the next a_index
+    a_colidx_.next = ch_slice<ch_ptr>(acblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
+    // get the next row_curr
+    row_curr_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
+    // get the next row_end
+    __if ((col_curr_ & 0xf) != 0xf) {
+      row_endp_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
+      // check the vertex mask
+      state.next = ch_walk_state::check_x_mask;
+    } __else {
+      // need to get row_end from next block
+      state.next = ch_walk_state::get_a_rend;
+    };
+  }
+  __case (ch_walk_state::calc_runtime) {
+    // compute the runtime
+    runtime_.next = (io.ctrl.timer - prof_start_).slice<32>();
+    // end the partition
+    state.next = ch_walk_state::end_partition;
   }
   __case (ch_walk_state::end_partition) {
     // send end-of-partition signal to PE
     pe_data.next.is_end = true;
     pe_valid.next       = true;
-
     // wait for PE ack
     __if (io.pe.ready) {
       // profiling
-      ch_bit32 runtime(0); //=(io.ctrl.timer - prof_start_).slice<32>();
-      stats_.next.min_latency   = ch_select(stats_.min_latency == 0, runtime, ch_min(stats_.min_latency, runtime));
-      stats_.next.max_latency   = ch_max(stats_.min_latency, runtime);
-      stats_.next.total_latency = stats_.total_latency + runtime;
+      stats_.next.min_latency   = ch_select(stats_.min_latency == 0, runtime_, ch_min(stats_.min_latency, runtime_));
+      stats_.next.max_latency   = ch_max(stats_.min_latency, runtime_);
+      stats_.next.total_latency = stats_.total_latency + runtime_;
       stats_.next.num_parts     = stats_.num_parts + 1;
       // return
       state.next = ch_walk_state::ready;
@@ -511,15 +515,15 @@ void spmv_dcsc_walk::describe() {
   };
 
   //--
-  if (verbose && id_ == 2) {
-    ch_print(fstring("{0}: Walker%d: state={1}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
+  if (verbose) {
+    ch_print(fstring("{0}: Walker%d: state={1:s}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
                      "rr_val={5}, rr_typ={6}, "
                      "col_cur={7}, col_end={8}, row_cur={9}, row_end={10}, ax={11}, xv={12}, "
-                     "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}", id_),
+                     "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}, rowidx={18}", id_),
       ch_getTick(), state, io.lsu.rd_req.valid, io.lsu.rd_req.data.type, io.lsu.rd_req.data.addr,
       io.lsu.rd_rsp.valid, io.lsu.rd_rsp.data.type,
       col_curr_, col_end_, row_curr_, row_end_, a_colidx_, x_value_,
-      io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid
+      io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid, ch_slice<ch_ptr>(arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(0x30))
     );
   }
 }

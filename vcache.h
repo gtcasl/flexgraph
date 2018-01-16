@@ -208,16 +208,16 @@ public:
     };
 
     if (verbose) {
-      ch_print("{0}: state={1}, enq_val={2}, enq_tag={3}, enq_own={4}, enq_dat={5}, "
+      ch_print("{0}: vcache: state={1:s}, enq_val={2}, enq_tag={3}, enq_own={4}, enq_dat={5}, "
              "l_val={6}, mb_idx={7}, ob_idx={8}, fb_idx={9}, lu_idx={10}, "
              "flush={11}, evt_val={12}, evt_rdy={13}, evt_dat={14}, evt_cntr={15}",
              ch_getTick(), state, io.enq.valid, io.enq.data.tag, io.enq.data.owner, io.enq.data.data,
              lookup_valid, match_block_idx, owned_block_idx, free_block_idx, last_used_idx_,
              io.flush, io.evict.valid, io.evict.ready, io.evict.data.data, counter_);
-
+    }
+    if (verbose) {
       ch_print("{0}: *** data[0]={1}, data[1]={2}, data[2]={3}, data[3]={4}, tags[0]={5}, tags[1]={6}",
                ch_getTick(), data_[0], data_[1], data_[2], data_[3], tags_[0], tags_[1]);
-      ch_print("");
     }
   }
 };

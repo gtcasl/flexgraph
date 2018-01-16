@@ -117,18 +117,18 @@ void cpu_device::check_output(const float* values,
     y_mask = 0;
     
     // iterate thru all columns in current partition
-    for (int col = matrix_->col_ptr[p],
-         col_end = matrix_->col_ptr[p+1]; col != col_end; ++col) {
-      int col_idx = matrix_->col_ind[col];
+    for (int i = matrix_->col_ptr[p],
+         i_end = matrix_->col_ptr[p+1]; i != i_end; ++i) {
+      int col_idx = matrix_->col_ind[i];
       uint32_t x_mask = vertex_->masks[col_idx >> 5];
       if (x_mask & (1 << (col_idx & 0x1f))) {
          float x_value = *(float*)&vertex_->values[col_idx * 4];
          
          // iterate thru all rows in current column
-         for (int row = matrix_->row_ptr[col],
-              row_end = matrix_->row_ptr[col+1]; row != row_end; ++row) {
-           int row_idx = matrix_->row_ind[row];
-           float a_value = *(float*)&matrix_->values[row * 4];
+         for (int j = matrix_->row_ptr[i],
+              j_end = matrix_->row_ptr[i+1]; j != j_end; ++j) {
+           int row_idx = matrix_->row_ind[j];
+           float a_value = *(float*)&matrix_->values[j * 4];
            // compute y += ax
            float y_value = a_value * x_value + y_values[row_idx & 0x1f];
            y_values[row_idx & 0x1f] = y_value;
@@ -139,8 +139,8 @@ void cpu_device::check_output(const float* values,
            
            // dump output
            if (debug) {
-             printf("col=0x%x, row=0x%x, a_x=x0%x, a_y=0x%x, a_val=%.2f, x_mask=0x%x, x_val=%.2f, y_val=%.2f, y_mask=0x%x\n",
-                  col, row, col_idx, row_idx, a_value, x_mask, x_value, y_value, y_mask);
+             printf("i=0x%x, j=0x%x, a_x=x0%x, a_y=0x%x, a_val=%.2f, x_val=%.2f, x_mask=0x%x, y_val=%.2f, y_mask=0x%x\n",
+                  i, j, col_idx, row_idx, a_value, x_value, x_mask, y_value, y_mask);
            }
          }
       }
@@ -348,7 +348,7 @@ void cpu_device::check_result(ch_tick) {
   auto y_masks_base = (uint32_t)accelerator_.io.ctx.y.masks;
   const float* values = reinterpret_cast<const float*>(shared_mem_ + y_values_base * BLOCK_SIZE);
   const uint32_t* masks = reinterpret_cast<const uint32_t*>(shared_mem_ + y_masks_base * BLOCK_SIZE);
-  check_output(values, masks, false);
+  check_output(values, masks, verbose != 0);
 }
 
 void cpu_device::dump_stats(ch_tick t) {  
