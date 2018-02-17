@@ -100,6 +100,17 @@ void spmv_pe::describe() {
   };
 
   //--
+  io.lsu.wr_req.data.type = ch_wr_request::y_values;
+  io.lsu.wr_req.data.addr = 0;
+  io.lsu.wr_req.data.data = 0;
+  io.lsu.wr_req.valid     = false;
+
+  //--
+  y_wenable_ = false;
+  y_value_   = 0.0f;
+  y_waddr_   = 0;
+
+  //--
   __switch (state)
   __case (ch_pe_state::ready) {
     //--
@@ -172,18 +183,6 @@ void spmv_pe::describe() {
       // profiling
       stats_.next.write_mask_stalls = stats_.write_mask_stalls + 1;
     };
-  }
-  __default {
-    //--
-    io.lsu.wr_req.data.type = ch_wr_request::y_values;
-    io.lsu.wr_req.data.addr = 0;
-    io.lsu.wr_req.data.data = 0;
-    io.lsu.wr_req.valid     = false;
-
-    //--
-    y_wenable_ = false;
-    y_value_   = 0.0f;
-    y_waddr_   = 0;
   };
 
   //--

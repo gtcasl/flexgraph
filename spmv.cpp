@@ -82,6 +82,15 @@ void spmv_device::main_thread() {
 
   //--
   part_blk_end_.next = ch_slice<ch_ptr>(CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1)) - 1;
+
+  //--
+  lsu_.io.ctrl.rd_req.valid = false;
+
+  //--
+  lsu_.io.ctrl.wr_req.data.addr = 0;
+  lsu_.io.ctrl.wr_req.data.type = ch_wr_request::y_values;
+  lsu_.io.ctrl.wr_req.data.data = 0;
+  lsu_.io.ctrl.wr_req.valid     = false;
       
   //--
   __switch (state)
@@ -155,16 +164,6 @@ void spmv_device::main_thread() {
       state.next = ch_ctrl_state::ready;
       done.next = true; // set done signal
     };
-  }
-  __default {
-    //--
-    lsu_.io.ctrl.rd_req.valid = false;
-
-    //--
-    lsu_.io.ctrl.wr_req.data.addr = 0;
-    lsu_.io.ctrl.wr_req.data.type = ch_wr_request::y_values;
-    lsu_.io.ctrl.wr_req.data.data = 0;
-    lsu_.io.ctrl.wr_req.valid     = false;
   };
     
   //--
@@ -180,6 +179,13 @@ void spmv_device::main_thread() {
 
 void spmv_device::dispatch_thread() {
   ch_seq<ch_bit<log2ceil(1+PE_COUNT)>> state;
+
+  //--
+  for (int i = 0; i < PE_COUNT; ++i) {
+    walkers_[i].io.ctrl.start.data.part.asBits() = 0;
+    walkers_[i].io.ctrl.start.valid = false;
+  }
+  pbuf_.io.deq.ready = false; // off by default
   
   // extract partition data from pbuf and assign it to each PE
   {
@@ -237,14 +243,6 @@ void spmv_device::dispatch_thread() {
         };
       };
     }
-
-    sw __default {
-      for (int i = 0; i < PE_COUNT; ++i) {
-        walkers_[i].io.ctrl.start.data.part.asBits() = 0;
-        walkers_[i].io.ctrl.start.valid = false;
-      }
-      pbuf_.io.deq.ready = false; // off by default
-    };
   }
     
   //--

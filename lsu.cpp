@@ -83,15 +83,22 @@ void spmv_lsu::write_req_thread() {
 
   // QPI write thread
   {
+    //--
     auto wr_rsp_cnt = ch_select(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
                                 (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
 
+    //--
     auto outstanding_writes = io.ctrl.outstanding_writes.asSeq();
 
+    //--
     auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
     auto qpi_wr_req_addr  = io.qpi.wr_req.addr.asSeq();
     auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
     auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.asSeq();
+
+    //--
+    qpi_wr_req_valid.next = false; // valid signal is a pulse (goes off the following cycle)
+    outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
 
     __switch (qw_state)
     __case (ch_qpi_write_state::ready) {
@@ -122,10 +129,6 @@ void spmv_lsu::write_req_thread() {
         outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
         qw_state.next = ch_qpi_write_state::ready;
       };
-    }
-    __default {
-      qpi_wr_req_valid.next = false; // valid signal is a pulse (goes off the following cycle)
-      outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
     };
 
     //--
@@ -141,7 +144,17 @@ void spmv_lsu::write_req_thread() {
   }
 
   // control thread
-  {
+  {    
+    //--
+    wr_cache_.io.enq.data.owner = 0;
+    wr_cache_.io.enq.data.tag   = 0;
+    wr_cache_.io.enq.data.data  = 0;
+    wr_cache_.io.enq.valid      = false;
+    wr_cache_.io.flush          = false;
+
+    //--
+    lsu_write_valid = false;
+
     __switch (state)
     __case (ch_wr_req_state::ready) {
       __if (wr_req_arb_.io.out.valid) {
@@ -195,16 +208,6 @@ void spmv_lsu::write_req_thread() {
         // return
         state.next = ch_wr_req_state::ready;
       };
-    }
-    __default {
-      //--
-      wr_cache_.io.enq.data.owner = 0;
-      wr_cache_.io.enq.data.tag   = 0;
-      wr_cache_.io.enq.data.data  = 0;
-      wr_cache_.io.enq.valid      = false;
-      wr_cache_.io.flush          = false;
-      //--
-      lsu_write_valid = false;
     };
   }
     

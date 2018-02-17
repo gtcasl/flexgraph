@@ -105,6 +105,20 @@ public:
 
     ch_seq<ch_idx> evict_block_idx;
 
+    //--
+    io.evict.data.owner = 0;
+    io.evict.data.tag   = 0;
+    io.evict.data.data  = 0;
+    io.evict.valid      = false;
+
+    //--
+    port0_ = 0;
+    port1_ = 0;
+    data_wenable_ = false;
+    tag_wenable_ = false;
+    data_value_.asBits() = 0;
+    tag_value_.asBits() = 0;
+
     // control thread
     __switch (state)
     __case (ch_state::ready) {
@@ -235,20 +249,6 @@ public:
           state.next = ch_state::ready;
         };
       };
-    }
-    __default {
-      //--
-      io.evict.data.owner = 0;
-      io.evict.data.tag   = 0;
-      io.evict.data.data  = 0;
-      io.evict.valid      = false;
-      //--
-      port0_ = 0;
-      port1_ = 0;
-      data_wenable_ = false;
-      tag_wenable_ = false;
-      data_value_.asBits() = 0;
-      tag_value_.asBits() = 0;
     };
 
     /*if (verbose) {

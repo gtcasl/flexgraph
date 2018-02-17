@@ -10,6 +10,7 @@ __enum (ch_walk_state, (
   wait_for_a_rstart,
   get_a_rend,
   wait_for_a_rend,
+  row_end,
   check_x_mask,
   check_x_mask2,
   get_x_mask,
@@ -111,6 +112,26 @@ void spmv_dcsc_walk::describe() {
   auto pe_data = io.pe.data.asSeq();
   auto pe_valid = io.pe.valid.asSeq();
 
+  //--
+  io.lsu.rd_req.data.type = ch_rd_request::a_colptr;
+  io.lsu.rd_req.data.addr = 0;
+  io.lsu.rd_req.valid     = false;
+
+  //--
+  acbuf_deq.next = false;
+  asbuf_deq.next = false;
+  arbuf_deq.next = false;
+  avbuf_deq.next = false;
+  xvbuf_deq.next = false;
+  xmbuf_deq.next = false;
+
+  //--
+  pe_data.next.a_rowind = 0;
+  pe_data.next.a_value  = 0;
+  pe_data.next.x_value  = 0;
+  pe_data.next.is_end   = false;
+  pe_valid.next         = false;
+
   // ch_walk_state FSM
   __switch (state)
   __case (ch_walk_state::ready) {
@@ -179,14 +200,18 @@ void spmv_dcsc_walk::describe() {
 
       //--
       __if ((col_curr_ & 0xf) != 0xf) {
-        row_endp_.next = ch_slice<ch_ptr>(asbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
-        // check the vertex mask
-        state.next = ch_walk_state::check_x_mask;
+        // go next
+        state.next =ch_walk_state::row_end;
       } __else {
         // need to get row_end from next block
         state.next = ch_walk_state::get_a_rend;
       };
     };
+  }
+  __case (ch_walk_state::row_end) {
+    row_endp_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
+    // check the vertex mask
+    state.next = ch_walk_state::check_x_mask;
   }
   __case (ch_walk_state::get_a_rend) {
     // request a_rowptr
@@ -425,7 +450,6 @@ void spmv_dcsc_walk::describe() {
         // go to next column
         state.next = ch_walk_state::next_column;
       };
-
     } __else {
       // profiling
       stats_.next.execute_stalls = stats_.execute_stalls + 1;
@@ -460,9 +484,8 @@ void spmv_dcsc_walk::describe() {
     row_curr_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_));
     // get the next row_end
     __if ((col_curr_ & 0xf) != 0xf) {
-      row_endp_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
-      // check the vertex mask
-      state.next = ch_walk_state::check_x_mask;
+      // go next
+      state.next = ch_walk_state::row_end;
     } __else {
       // need to get row_end from next block
       state.next = ch_walk_state::get_a_rend;
@@ -491,27 +514,6 @@ void spmv_dcsc_walk::describe() {
       // profiling
       stats_.next.execute_stalls = stats_.execute_stalls + 1;
     };
-  }
-  __default {
-    //--
-    io.lsu.rd_req.data.type = ch_rd_request::a_colptr;
-    io.lsu.rd_req.data.addr = 0;
-    io.lsu.rd_req.valid     = false;
-
-    //--
-    acbuf_deq.next = false;
-    asbuf_deq.next = false;
-    arbuf_deq.next = false;
-    avbuf_deq.next = false;
-    xvbuf_deq.next = false;
-    xmbuf_deq.next = false;
-
-    //--
-    pe_data.next.a_rowind = 0;
-    pe_data.next.a_value  = 0;
-    pe_data.next.x_value  = 0;
-    pe_data.next.is_end   = false;
-    pe_valid.next         = false;
   };
 
   //--
@@ -519,11 +521,10 @@ void spmv_dcsc_walk::describe() {
     ch_print(fstring("{0}: Walker%d: state={1:s}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
                      "rr_val={5}, rr_typ={6}, "
                      "col_cur={7}, col_end={8}, row_cur={9}, row_end={10}, ax={11}, xv={12}, "
-                     "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}, rowidx={18}", id_),
+                     "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}", id_),
       ch_getTick(), state, io.lsu.rd_req.valid, io.lsu.rd_req.data.type, io.lsu.rd_req.data.addr,
       io.lsu.rd_rsp.valid, io.lsu.rd_rsp.data.type,
       col_curr_, col_end_, row_curr_, row_end_, a_colidx_, x_value_,
-      io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid, ch_slice<ch_ptr>(arbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(0x30))
-    );
+      io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid);
   }
 }
