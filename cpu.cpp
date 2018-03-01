@@ -36,6 +36,7 @@ cpu_device::cpu_device(const char* mtx_file)
 
   // dump verilog
   ch_toVerilog("flexgraph.v", accelerator_);
+  ch_toFIRRTL("flexgraph.fir", accelerator_);
 }
 
 cpu_device::~cpu_device() {

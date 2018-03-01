@@ -20,9 +20,7 @@ spmv_pe::spmv_pe() {
   io.stats = stats_;
 
   //--
-  __if (y_wenable_) {
-    y_values_[y_waddr_] = y_value_;    
-  };
+  y_values_.write(y_waddr_, y_value_, y_wenable_);
 }
 
 spmv_pe::~spmv_pe() {}
@@ -52,7 +50,7 @@ void spmv_pe::describe() {
 
   // select previous y_value if dirty
   ch_float32 prev_y_value =
-      ch_select(0 != (y_mask_ & y_raddr_mask), y_values_[y_raddr_], 0);
+      ch_select(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
 
   // Multiply pipeline
   mult_pipe_.io.enq.data.a_rowind = io.req.data.a_rowind;
@@ -135,7 +133,7 @@ void spmv_pe::describe() {
     // submit first y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.slice<32>(i*32) = y_values_[i];
+      value.slice<32>(i*32) = y_values_.read(i);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_);
@@ -154,7 +152,7 @@ void spmv_pe::describe() {
     // submit second y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.slice<32>(i*32) = y_values_[i+16];
+      value.slice<32>(i*32) = y_values_.read(i+16);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_) + 1;

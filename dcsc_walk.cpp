@@ -4,29 +4,29 @@ using namespace spmv;
 using namespace spmv::accelerator;
 
 __enum (ch_walk_state, (
-  ready,
-  get_a_colidx,
-  get_a_rstart,
-  wait_for_a_rstart,
-  get_a_rend,
-  wait_for_a_rend,
-  row_end,
-  check_x_mask,
-  check_x_mask2,
-  get_x_mask,
-  wait_for_x_mask,
-  get_x_value,
-  calc_blk_cnt,
-  calc_blk_cnt2,
-  get_a_rowidx,
-  get_a_value,
-  wait_for_data,
-  execute,
-  execute2,
-  next_column,
-  next_column2,
-  calc_runtime,
-  end_partition
+  (ready,           1<<0),
+  (get_acolidx,     1<<1),
+  (get_arstart,     1<<2),
+  (wait_for_arstart,1<<3),
+  (get_arend,       1<<4),
+  (wait_for_arend,  1<<5),
+  (row_end,         1<<6),
+  (check_xmask,     1<<7),
+  (check_xmask2,    1<<8),
+  (get_x_mask,      1<<9),
+  (wait_for_xmask,  1<<10),
+  (get_x_value,     1<<11),
+  (calc_blk_cnt,    1<<12),
+  (calc_blk_cnt2,   1<<13),
+  (get_arowidx,     1<<14),
+  (get_avalue,      1<<15),
+  (wait_for_data,   1<<16),
+  (execute,         1<<17),
+  (execute2,        1<<18),
+  (next_column,     1<<19),
+  (next_column2,    1<<20),
+  (calc_runtime,    1<<21),
+  (end_partition,   1<<22)
 ));
 
 spmv_dcsc_walk::spmv_dcsc_walk()
@@ -144,11 +144,11 @@ void spmv_dcsc_walk::describe() {
       // profiling
       prof_start_.next = io.ctrl.timer;
 
-      // go to get_a_colidx
-      state.next = ch_walk_state::get_a_colidx;
+      // go to get_acolidx
+      state.next = ch_walk_state::get_acolidx;
     };
   }
-  __case (ch_walk_state::get_a_colidx) {
+  __case (ch_walk_state::get_acolidx) {
     // request a_colind
     io.lsu.rd_req.data.type = ch_rd_request::a_colind;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_);
@@ -156,7 +156,7 @@ void spmv_dcsc_walk::describe() {
       io.lsu.rd_req.valid = true;
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
-        state.next = ch_walk_state::get_a_rstart;
+        state.next = ch_walk_state::get_arstart;
       } __else {
         // profiling
         stats_.next.a_colind_stalls = stats_.a_colind_stalls + 1;
@@ -166,7 +166,7 @@ void spmv_dcsc_walk::describe() {
       stats_.next.a_colind_stalls = stats_.a_colind_stalls + 1;
     };
   }
-  __case (ch_walk_state::get_a_rstart) {
+  __case (ch_walk_state::get_arstart) {
     // request a_rowptr
     io.lsu.rd_req.data.type = ch_rd_request::a_rowptr;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_);
@@ -175,7 +175,7 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
         // go wait for data
-        state.next = ch_walk_state::wait_for_a_rstart;
+        state.next = ch_walk_state::wait_for_arstart;
       } __else {
         // profiling
         stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
@@ -185,7 +185,7 @@ void spmv_dcsc_walk::describe() {
       stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     };
   }
-  __case (ch_walk_state::wait_for_a_rstart) {
+  __case (ch_walk_state::wait_for_arstart) {
     // wait for all requested blocks to arrive
     __if (acbuf_.io.deq.valid && asbuf_.io.deq.valid) {
       //--
@@ -204,16 +204,16 @@ void spmv_dcsc_walk::describe() {
         state.next =ch_walk_state::row_end;
       } __else {
         // need to get row_end from next block
-        state.next = ch_walk_state::get_a_rend;
+        state.next = ch_walk_state::get_arend;
       };
     };
   }
   __case (ch_walk_state::row_end) {
     row_endp_.next = ch_slice<ch_ptr>(asblock_ >> INT32_TO_BLOCK_BITSHIFT(col_curr_ + 1));
     // check the vertex mask
-    state.next = ch_walk_state::check_x_mask;
+    state.next = ch_walk_state::check_xmask;
   }
-  __case (ch_walk_state::get_a_rend) {
+  __case (ch_walk_state::get_arend) {
     // request a_rowptr
     io.lsu.rd_req.data.type = ch_rd_request::a_rowptr;
     io.lsu.rd_req.data.addr = INT32_TO_BLOCK_ADDR(col_curr_ + 1);
@@ -223,7 +223,7 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
         // go wait for data
-        state.next = ch_walk_state::wait_for_a_rend;
+        state.next = ch_walk_state::wait_for_arend;
       } __else {
         // profiling
         stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
@@ -233,20 +233,20 @@ void spmv_dcsc_walk::describe() {
       stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     };
   }
-  __case (ch_walk_state::wait_for_a_rend) {
+  __case (ch_walk_state::wait_for_arend) {
     // wait for requested block to arrive
     __if (asbuf_.io.deq.valid) {
       // get the returned block
       row_endp_.next = ch_slice<ch_ptr>(asbuf_.io.deq.data); // no offset needed because the value will be at the begining of block
       asbuf_deq.next = true;
       // check the vertex mask
-      state.next = ch_walk_state::check_x_mask;
+      state.next = ch_walk_state::check_xmask;
     } __else {
       // profiling
       stats_.next.a_rowptr_stalls = stats_.a_rowptr_stalls + 1;
     };
   }
-  __case (ch_walk_state::check_x_mask) {
+  __case (ch_walk_state::check_xmask) {
     // compute row_end
     row_end_.next = row_endp_ - 1;
     // check if the current mask block is valid
@@ -256,8 +256,8 @@ void spmv_dcsc_walk::describe() {
       // check if the index is valid
       ch_bit32 mask = ch_slice<32>(xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index));
       __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
-        // go to check_x_mask2
-        state.next = ch_walk_state::check_x_mask2;
+        // go to check_xmask2
+        state.next = ch_walk_state::check_xmask2;
       } __else {
         // go to next column
         state.next = ch_walk_state::next_column;
@@ -269,7 +269,7 @@ void spmv_dcsc_walk::describe() {
       state.next = ch_walk_state::get_x_mask;
     };
   }  
-  __case (ch_walk_state::check_x_mask2) {
+  __case (ch_walk_state::check_xmask2) {
     // check if the current vertex block is valid
     ch_ptr x_value_addr = INT32_TO_BLOCK_ADDR(a_colidx_);
     __if (x_value_addr == xvblock_addr_) {
@@ -291,7 +291,7 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
         // wait for data
-        state.next = ch_walk_state::wait_for_x_mask;
+        state.next = ch_walk_state::wait_for_xmask;
       } __else {
         // profiling
         stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
@@ -301,7 +301,7 @@ void spmv_dcsc_walk::describe() {
       stats_.next.x_masks_stalls = stats_.x_masks_stalls + 1;
     };
   }
-  __case (ch_walk_state::wait_for_x_mask) {
+  __case (ch_walk_state::wait_for_xmask) {
     // wait for the x_mask block to arrive
     __if (xmbuf_.io.deq.valid) {
       // get the returned block
@@ -311,8 +311,8 @@ void spmv_dcsc_walk::describe() {
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_bit32 mask = ch_slice<32>(xmblock_.next >> INT32_TO_BLOCK_BITSHIFT(x_mask_index));
       __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
-        // go to check_x_mask2
-        state.next = ch_walk_state::check_x_mask2;
+        // go to check_xmask2
+        state.next = ch_walk_state::check_xmask2;
       } __else {
         // go to next column
         state.next = ch_walk_state::next_column;
@@ -354,9 +354,9 @@ void spmv_dcsc_walk::describe() {
     // compute row block end
     row_blk_end_.next = row_blk_endp_ - 1;
     // request a_rowind
-    state.next = ch_walk_state::get_a_rowidx;
+    state.next = ch_walk_state::get_arowidx;
   }
-  __case (ch_walk_state::get_a_rowidx) {
+  __case (ch_walk_state::get_arowidx) {
     // request a_rowind
     io.lsu.rd_req.data.type = ch_rd_request::a_rowind;
     io.lsu.rd_req.data.addr = row_blk_curr_;
@@ -365,7 +365,7 @@ void spmv_dcsc_walk::describe() {
       // wait for LSU ack
       __if (io.lsu.rd_req.ready) {
         // request a_value
-        state.next = ch_walk_state::get_a_value;
+        state.next = ch_walk_state::get_avalue;
       } __else {
         // profiling
         stats_.next.a_rowind_stalls = stats_.a_rowind_stalls + 1;
@@ -375,7 +375,7 @@ void spmv_dcsc_walk::describe() {
       stats_.next.a_rowind_stalls = stats_.a_rowind_stalls + 1;
     };
   }
-  __case (ch_walk_state::get_a_value) {
+  __case (ch_walk_state::get_avalue) {
     // request a_values
     io.lsu.rd_req.data.type = ch_rd_request::a_values;
     io.lsu.rd_req.data.addr = row_blk_curr_;
@@ -386,7 +386,7 @@ void spmv_dcsc_walk::describe() {
         row_blk_curr_.next = row_blk_curr_ + 1;
         __if (row_blk_curr_ != row_blk_end_) {
           // request next a_rowind
-          state.next = ch_walk_state::get_a_rowidx;
+          state.next = ch_walk_state::get_arowidx;
         } __else {
           // goto wait for all data to return
           state.next = ch_walk_state::wait_for_data;
@@ -470,7 +470,7 @@ void spmv_dcsc_walk::describe() {
         state.next = ch_walk_state::next_column2;
       } __else {
         // get the next axblock
-        state.next = ch_walk_state::get_a_colidx;
+        state.next = ch_walk_state::get_acolidx;
       };
     } __else {
       // compute runtime
@@ -488,7 +488,7 @@ void spmv_dcsc_walk::describe() {
       state.next = ch_walk_state::row_end;
     } __else {
       // need to get row_end from next block
-      state.next = ch_walk_state::get_a_rend;
+      state.next = ch_walk_state::get_arend;
     };
   }
   __case (ch_walk_state::calc_runtime) {
