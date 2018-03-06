@@ -152,61 +152,61 @@ module spmv_dcsc_walk(
   wire[511:0] srl733;
   wire[19:0] add874;
   wire[19:0] and707;
-  wire[19:0] sel1109; // dcsc_walk.cpp(238)
+  wire[19:0] sel1104; // dcsc_walk.cpp(238)
   wire[19:0] and1000;
-  wire[511:0] sel1173; // dcsc_walk.cpp(190)
+  wire[511:0] sel1172; // dcsc_walk.cpp(190)
   wire[19:0] srl822;
   wire[19:0] srl877;
   wire eq421;
-  reg[19:0] sel1110; // dcsc_walk.cpp(136)
+  reg[19:0] sel1105; // dcsc_walk.cpp(136)
   wire[19:0] sll710;
   wire[511:0] bindout188;
-  wire sel1056; // dcsc_walk.cpp(439)
+  wire sel1040; // dcsc_walk.cpp(439)
   wire eq1160;
   wire[19:0] sll1003;
   reg[511:0] reg340; // v365 - dcsc_walk.cpp(34)
   wire[19:0] and825;
   wire[511:0] bindout284;
   wire[19:0] and777;
-  wire[19:0] sel1060; // dcsc_walk.cpp(136)
-  wire sel1041; // dcsc_walk.cpp(439)
-  wire eq1044;
+  wire[19:0] sel1058; // dcsc_walk.cpp(136)
+  wire sel1054; // dcsc_walk.cpp(439)
+  wire eq1043;
   wire[19:0] and927;
   wire[19:0] and917;
   wire[511:0] bindout260;
-  wire and1047;
+  wire and1154;
   wire and423;
   wire[19:0] and696;
-  wire sel1057; // dcsc_walk.cpp(437)
+  wire sel1041; // dcsc_walk.cpp(437)
   wire and1161;
   reg[19:0] reg94; // v82 - dcsc_walk.cpp(34)
   wire[511:0] srl712;
   wire eq397;
-  wire sel1042; // dcsc_walk.cpp(437)
-  wire and1045;
-  wire[63:0] sel1168; // dcsc_walk.cpp(139)
-  wire and1049;
+  wire sel1055; // dcsc_walk.cpp(437)
+  wire and1044;
+  wire[63:0] sel1149; // dcsc_walk.cpp(139)
+  wire and1155;
   wire eq409;
   wire[19:0] and990;
-  wire[511:0] sel1159; // dcsc_walk.cpp(190)
-  wire sel1058; // dcsc_walk.cpp(433)
-  wire sel1046; // dcsc_walk.cpp(408)
-  wire sel1169; // dcsc_walk.cpp(190)
+  wire[511:0] sel1167; // dcsc_walk.cpp(190)
+  wire sel1042; // dcsc_walk.cpp(433)
+  wire sel1153; // dcsc_walk.cpp(408)
+  wire sel1159; // dcsc_walk.cpp(190)
   wire[31:0] proxy8; // v39 - end(0)
   wire[511:0] srl1005;
   wire[19:0] add962;
   wire[19:0] sll828;
-  wire[511:0] sel1174; // dcsc_walk.cpp(306)
+  wire[511:0] sel1156; // dcsc_walk.cpp(306)
   wire[19:0] sll780;
   reg[511:0] reg346; // v368 - dcsc_walk.cpp(34)
-  wire eq1062;
+  wire eq1061;
   reg[19:0] reg125; // v97 - dcsc_walk.cpp(34)
-  wire sel1043; // dcsc_walk.cpp(433)
+  wire sel1056; // dcsc_walk.cpp(433)
   wire eq415;
   wire[19:0] sll930;
   reg[511:0] reg352; // v371 - dcsc_walk.cpp(34)
   wire[19:0] sll920;
-  wire[511:0] sel1050; // dcsc_walk.cpp(408)
+  wire[511:0] sel1164; // dcsc_walk.cpp(408)
   wire[19:0] sll700;
   wire[511:0] bindout164;
   wire[2:0] proxy35; // v56 - type(0)
@@ -216,9 +216,9 @@ module spmv_dcsc_walk(
   wire[19:0] and835;
   wire[19:0] and788;
   wire and399;
-  wire and1063;
-  wire sel1176; // dcsc_walk.cpp(238)
-  wire sel1175; // dcsc_walk.cpp(190)
+  wire and1062;
+  wire sel1179; // dcsc_walk.cpp(238)
+  wire sel1178; // dcsc_walk.cpp(190)
   reg[63:0] reg365; // v377 - dcsc_walk.cpp(34)
   wire bindin263;
   wire[511:0] bindin251;
@@ -239,27 +239,27 @@ module spmv_dcsc_walk(
   wire eq442;
   wire and444;
   wire[19:0] sub652;
-  wire eq1112;
-  wire[19:0] sel1171; // dcsc_walk.cpp(433)
-  wire[19:0] sel1170; // dcsc_walk.cpp(190)
+  wire eq1150;
+  wire[19:0] sel1174; // dcsc_walk.cpp(433)
+  wire[19:0] sel1173; // dcsc_walk.cpp(190)
   wire[511:0] srl830;
   wire[511:0] srl782;
-  wire sel1061; // dcsc_walk.cpp(306)
+  wire sel1060; // dcsc_walk.cpp(306)
   wire eq427;
   wire[19:0] sub880;
   reg reg611; // v527 - dcsc_walk.cpp(107)
   wire and417;
-  reg sel1177; // dcsc_walk.cpp(136)
+  reg sel1180; // dcsc_walk.cpp(136)
   wire eq403;
   wire[511:0] srl932;
   wire[511:0] srl922;
   wire[511:0] srl702;
-  wire and1113;
-  wire[19:0] sel1178; // dcsc_walk.cpp(136)
-  reg[19:0] sel1172; // dcsc_walk.cpp(136)
-  wire[19:0] sel1051; // dcsc_walk.cpp(136)
+  wire and1151;
+  wire[19:0] sel1152; // dcsc_walk.cpp(136)
+  reg[19:0] sel1175; // dcsc_walk.cpp(136)
+  wire[19:0] sel1057; // dcsc_walk.cpp(136)
   wire[31:0] sll838;
-  wire[19:0] sel1179; // dcsc_walk.cpp(275)
+  wire[19:0] sel1176; // dcsc_walk.cpp(275)
   wire[31:0] sll791;
   wire[63:0] sub1015;
   wire bindout257;
@@ -284,9 +284,9 @@ module spmv_dcsc_walk(
   wire eq451;
   wire eq456;
   wire and446;
-  wire[19:0] sel1111; // dcsc_walk.cpp(139)
+  wire[19:0] sel1163; // dcsc_walk.cpp(139)
   wire[19:0] and967;
-  wire[19:0] sel1180; // dcsc_walk.cpp(136)
+  wire[19:0] sel1177; // dcsc_walk.cpp(136)
   wire[19:0] sll802;
   wire bindin167;
   wire[511:0] bindin155;
@@ -297,7 +297,7 @@ module spmv_dcsc_walk(
   wire and429;
   reg reg599; // v521 - dcsc_walk.cpp(105)
   wire and405;
-  wire eq1048;
+  wire eq1052;
   wire[19:0] and951;
   wire[19:0] and941;
   wire bindin215;
@@ -314,17 +314,17 @@ module spmv_dcsc_walk(
   wire[31:0] and840;
   wire[31:0] and793;
   wire[19:0] and717;
-  wire[5:0] sel1055; // dcsc_walk.cpp(136)
+  wire[5:0] sel1059; // dcsc_walk.cpp(136)
   wire bindin239;
   wire[511:0] bindin227;
   wire bindin224;
   wire bindin223;
   wire bindin222;
-  wire[31:0] sel1052; // dcsc_walk.cpp(408)
-  wire and1054;
-  wire[19:0] sel1162; // dcsc_walk.cpp(190)
+  wire[31:0] sel1050; // dcsc_walk.cpp(408)
+  wire and1053;
+  wire[19:0] sel1168; // dcsc_walk.cpp(190)
   wire[19:0] sll769;
-  wire[19:0] sel1099; // dcsc_walk.cpp(139)
+  wire[19:0] sel1157; // dcsc_walk.cpp(139)
   wire[7:0] sub537;
   wire and526;
   wire[7:0] add534;
@@ -356,15 +356,15 @@ module spmv_dcsc_walk(
   wire[19:0] srl805;
   wire bindout161;
   wire lt1019;
-  wire[31:0] sel1040; // dcsc_walk.cpp(136)
-  wire[31:0] sel1053; // dcsc_walk.cpp(407)
+  wire[31:0] sel1162; // dcsc_walk.cpp(136)
+  wire[31:0] sel1051; // dcsc_walk.cpp(407)
   wire[19:0] sll954;
   wire[511:0] bindout236;
   wire[19:0] sll944;
   wire[511:0] bindout212;
   wire[19:0] sll864;
-  reg[19:0] sel1163; // dcsc_walk.cpp(136)
-  reg[19:0] sel1100; // dcsc_walk.cpp(136)
+  reg[19:0] sel1169; // dcsc_walk.cpp(136)
+  reg[19:0] sel1158; // dcsc_walk.cpp(136)
   wire ne985;
   wire ne964;
   wire ne905;
@@ -393,7 +393,7 @@ module spmv_dcsc_walk(
   reg[7:0] sel467; // dcsc_walk.cpp(73)
   wire ne1013;
   wire ne979;
-  wire[22:0] sel1091; // dcsc_walk.cpp(439)
+  wire[22:0] sel1096; // dcsc_walk.cpp(439)
   wire eq807;
   wire eq774;
   wire and692;
@@ -415,19 +415,19 @@ module spmv_dcsc_walk(
   reg[19:0] reg82; // v76 - dcsc_walk.cpp(34)
   wire[19:0] add739;
   reg[19:0] reg70; // v70 - dcsc_walk.cpp(34)
-  wire[22:0] sel1094; // dcsc_walk.cpp(468)
-  wire[22:0] sel1092; // dcsc_walk.cpp(437)
-  wire[22:0] sel1088; // dcsc_walk.cpp(387)
-  wire and1065;
-  wire and1087;
+  wire[22:0] sel1099; // dcsc_walk.cpp(468)
+  wire[22:0] sel1097; // dcsc_walk.cpp(437)
+  wire[22:0] sel1092; // dcsc_walk.cpp(387)
+  wire and1094;
+  wire and1091;
+  wire and1089;
+  wire[22:0] sel1086; // dcsc_walk.cpp(313)
   wire and1085;
-  wire[22:0] sel1082; // dcsc_walk.cpp(313)
-  wire and1081;
-  wire[22:0] sel1077; // dcsc_walk.cpp(258)
+  wire[22:0] sel1081; // dcsc_walk.cpp(258)
+  wire and1079;
+  wire[22:0] sel1076; // dcsc_walk.cpp(202)
   wire and1075;
-  wire[22:0] sel1072; // dcsc_walk.cpp(202)
-  wire and1071;
-  wire and1069;
+  wire and1073;
   wire[31:0] add1038;
   wire[31:0] add974;
   wire[31:0] add846;
@@ -443,7 +443,7 @@ module spmv_dcsc_walk(
   wire[31:0] add755;
   wire[31:0] add690;
   wire[31:0] add674;
-  wire[19:0] sel1064; // dcsc_walk.cpp(385)
+  wire[19:0] sel1170; // dcsc_walk.cpp(385)
   wire[19:0] sel1181; // dcsc_walk.cpp(255)
   reg[7:0] reg315; // v353 - dcsc_walk.cpp(34)
   reg[7:0] reg309; // v350 - dcsc_walk.cpp(34)
@@ -451,61 +451,61 @@ module spmv_dcsc_walk(
   reg[7:0] reg327; // v359 - dcsc_walk.cpp(34)
   reg[7:0] reg303; // v347 - dcsc_walk.cpp(34)
   reg[7:0] reg297; // v344 - dcsc_walk.cpp(34)
-  wire[22:0] sel1097; // dcsc_walk.cpp(505)
-  wire[22:0] sel1096; // dcsc_walk.cpp(486)
-  wire[22:0] sel1095; // dcsc_walk.cpp(466)
-  wire[22:0] sel1093; // dcsc_walk.cpp(433)
-  wire[22:0] sel1090; // dcsc_walk.cpp(407)
-  wire[22:0] sel1089; // dcsc_walk.cpp(385)
-  wire[22:0] sel1086; // dcsc_walk.cpp(366)
-  wire[22:0] sel1084; // dcsc_walk.cpp(332)
-  wire[22:0] sel1083; // dcsc_walk.cpp(306)
-  wire[22:0] sel1080; // dcsc_walk.cpp(292)
-  wire[22:0] sel1079; // dcsc_walk.cpp(275)
-  wire[22:0] sel1078; // dcsc_walk.cpp(255)
-  wire[22:0] sel1076; // dcsc_walk.cpp(238)
-  wire[22:0] sel1074; // dcsc_walk.cpp(224)
-  wire[22:0] sel1073; // dcsc_walk.cpp(190)
-  wire[22:0] sel1070; // dcsc_walk.cpp(176)
-  wire[22:0] sel1068; // dcsc_walk.cpp(158)
-  wire[22:0] sel1067; // dcsc_walk.cpp(139)
-  wire[31:0] sel1149; // dcsc_walk.cpp(292)
-  wire[31:0] sel1145; // dcsc_walk.cpp(332)
-  wire[31:0] sel1140; // dcsc_walk.cpp(385)
-  wire[31:0] sel1136; // dcsc_walk.cpp(366)
-  wire[31:0] sel1131; // dcsc_walk.cpp(224)
-  wire[31:0] sel1129; // dcsc_walk.cpp(176)
-  wire[31:0] sel1125; // dcsc_walk.cpp(158)
+  wire[22:0] sel1102; // dcsc_walk.cpp(505)
+  wire[22:0] sel1101; // dcsc_walk.cpp(486)
+  wire[22:0] sel1100; // dcsc_walk.cpp(466)
+  wire[22:0] sel1098; // dcsc_walk.cpp(433)
+  wire[22:0] sel1095; // dcsc_walk.cpp(407)
+  wire[22:0] sel1093; // dcsc_walk.cpp(385)
+  wire[22:0] sel1090; // dcsc_walk.cpp(366)
+  wire[22:0] sel1088; // dcsc_walk.cpp(332)
+  wire[22:0] sel1087; // dcsc_walk.cpp(306)
+  wire[22:0] sel1084; // dcsc_walk.cpp(292)
+  wire[22:0] sel1083; // dcsc_walk.cpp(275)
+  wire[22:0] sel1082; // dcsc_walk.cpp(255)
+  wire[22:0] sel1080; // dcsc_walk.cpp(238)
+  wire[22:0] sel1078; // dcsc_walk.cpp(224)
+  wire[22:0] sel1077; // dcsc_walk.cpp(190)
+  wire[22:0] sel1074; // dcsc_walk.cpp(176)
+  wire[22:0] sel1072; // dcsc_walk.cpp(158)
+  wire[22:0] sel1071; // dcsc_walk.cpp(139)
+  wire[31:0] sel1141; // dcsc_walk.cpp(292)
+  wire[31:0] sel1137; // dcsc_walk.cpp(332)
+  wire[31:0] sel1132; // dcsc_walk.cpp(385)
+  wire[31:0] sel1128; // dcsc_walk.cpp(366)
+  wire[31:0] sel1123; // dcsc_walk.cpp(224)
+  wire[31:0] sel1121; // dcsc_walk.cpp(176)
+  wire[31:0] sel1117; // dcsc_walk.cpp(158)
   wire[31:0] add1032;
   wire[31:0] sel1030;
   wire[31:0] sel1026;
   wire[31:0] add1035;
-  wire eq1116;
-  reg[19:0] sel1066; // dcsc_walk.cpp(136)
+  wire eq1108;
+  reg[19:0] sel1171; // dcsc_walk.cpp(136)
   wire[19:0] sll849;
   wire[19:0] sel1182; // dcsc_walk.cpp(136)
   wire[19:0] sll742;
   wire[19:0] sll677;
   wire[19:0] sll657;
-  reg[22:0] sel1098; // dcsc_walk.cpp(136)
-  wire[31:0] sel1155; // dcsc_walk.cpp(505)
-  wire[31:0] sel1154; // dcsc_walk.cpp(433)
-  wire[31:0] sel1151; // dcsc_walk.cpp(306)
-  wire[31:0] sel1150; // dcsc_walk.cpp(289)
-  wire[31:0] sel1146; // dcsc_walk.cpp(329)
-  wire[31:0] sel1142; // dcsc_walk.cpp(407)
-  wire[31:0] sel1141; // dcsc_walk.cpp(382)
-  wire[31:0] sel1137; // dcsc_walk.cpp(363)
-  wire[31:0] sel1133; // dcsc_walk.cpp(238)
-  wire[31:0] sel1132; // dcsc_walk.cpp(221)
-  wire[31:0] sel1130; // dcsc_walk.cpp(173)
-  wire[31:0] sel1126; // dcsc_walk.cpp(155)
-  wire and1117;
-  wire sel1167; // dcsc_walk.cpp(136)
-  wire[31:0] sel1166; // dcsc_walk.cpp(136)
-  wire[31:0] sel1165; // dcsc_walk.cpp(136)
-  wire[19:0] sel1164; // dcsc_walk.cpp(136)
-  reg sel1059; // dcsc_walk.cpp(136)
+  reg[22:0] sel1103; // dcsc_walk.cpp(136)
+  wire[31:0] sel1147; // dcsc_walk.cpp(505)
+  wire[31:0] sel1146; // dcsc_walk.cpp(433)
+  wire[31:0] sel1143; // dcsc_walk.cpp(306)
+  wire[31:0] sel1142; // dcsc_walk.cpp(289)
+  wire[31:0] sel1138; // dcsc_walk.cpp(329)
+  wire[31:0] sel1134; // dcsc_walk.cpp(407)
+  wire[31:0] sel1133; // dcsc_walk.cpp(382)
+  wire[31:0] sel1129; // dcsc_walk.cpp(363)
+  wire[31:0] sel1125; // dcsc_walk.cpp(238)
+  wire[31:0] sel1124; // dcsc_walk.cpp(221)
+  wire[31:0] sel1122; // dcsc_walk.cpp(173)
+  wire[31:0] sel1118; // dcsc_walk.cpp(155)
+  wire and1109;
+  wire sel1049; // dcsc_walk.cpp(136)
+  wire[31:0] sel1048; // dcsc_walk.cpp(136)
+  wire[31:0] sel1047; // dcsc_walk.cpp(136)
+  wire[19:0] sel1046; // dcsc_walk.cpp(136)
+  reg sel1045; // dcsc_walk.cpp(136)
   wire ne900;
   wire ne890;
   wire ne855;
@@ -513,17 +513,17 @@ module spmv_dcsc_walk(
   wire ne748;
   wire ne683;
   wire ne665;
-  reg[31:0] sel1156; // dcsc_walk.cpp(136)
-  reg[31:0] sel1152; // dcsc_walk.cpp(136)
-  wire[31:0] sel1147; // dcsc_walk.cpp(136)
-  reg[31:0] sel1143; // dcsc_walk.cpp(136)
-  wire[31:0] sel1138; // dcsc_walk.cpp(136)
-  reg[31:0] sel1134; // dcsc_walk.cpp(136)
-  wire[31:0] sel1127; // dcsc_walk.cpp(136)
-  wire[31:0] sel1123; // dcsc_walk.cpp(505)
-  wire[31:0] sel1121; // dcsc_walk.cpp(505)
-  wire[31:0] sel1119; // dcsc_walk.cpp(505)
+  reg[31:0] sel1148; // dcsc_walk.cpp(136)
+  reg[31:0] sel1144; // dcsc_walk.cpp(136)
+  wire[31:0] sel1139; // dcsc_walk.cpp(136)
+  reg[31:0] sel1135; // dcsc_walk.cpp(136)
+  wire[31:0] sel1130; // dcsc_walk.cpp(136)
+  reg[31:0] sel1126; // dcsc_walk.cpp(136)
+  wire[31:0] sel1119; // dcsc_walk.cpp(136)
   wire[31:0] sel1115; // dcsc_walk.cpp(505)
+  wire[31:0] sel1113; // dcsc_walk.cpp(505)
+  wire[31:0] sel1111; // dcsc_walk.cpp(505)
+  wire[31:0] sel1107; // dcsc_walk.cpp(505)
   wire[84:0] ch_pe_req_t631; // v541 - /home/blaise/dev/cash/src/seq.h(17)
   reg[19:0] reg119; // v94 - dcsc_walk.cpp(34)
   wire[19:0] srl852;
@@ -535,18 +535,18 @@ module spmv_dcsc_walk(
   wire[351:0] ch_walker_stats_t380; // v392 - /home/blaise/dev/cash/src/seq.h(17)
   reg[84:0] reg638; // v536 - dcsc_walk.cpp(112)
   reg reg644; // v547 - dcsc_walk.cpp(113)
-  wire sel1107; // dcsc_walk.cpp(382)
-  wire sel1106; // dcsc_walk.cpp(363)
-  wire sel1105; // dcsc_walk.cpp(329)
-  wire sel1104; // dcsc_walk.cpp(289)
-  wire sel1103; // dcsc_walk.cpp(221)
-  wire sel1102; // dcsc_walk.cpp(173)
-  wire sel1101; // dcsc_walk.cpp(155)
+  wire sel1069; // dcsc_walk.cpp(382)
+  wire sel1068; // dcsc_walk.cpp(363)
+  wire sel1067; // dcsc_walk.cpp(329)
+  wire sel1066; // dcsc_walk.cpp(289)
+  wire sel1065; // dcsc_walk.cpp(221)
+  wire sel1064; // dcsc_walk.cpp(173)
+  wire sel1063; // dcsc_walk.cpp(155)
   reg[351:0] reg394; // v380 - dcsc_walk.cpp(34)
   wire eq439;
-  reg[19:0] sel1158; // dcsc_walk.cpp(136)
-  reg[2:0] sel1157; // dcsc_walk.cpp(136)
-  reg sel1108; // dcsc_walk.cpp(136)
+  reg[19:0] sel1166; // dcsc_walk.cpp(136)
+  reg[2:0] sel1165; // dcsc_walk.cpp(136)
+  reg sel1070; // dcsc_walk.cpp(136)
   wire[22:0] io_lsu_rd_req_data34; // v55 - dcsc_walk.cpp(34)
 
   assign add725 = reg70 + 20'h1;
@@ -556,74 +556,74 @@ module spmv_dcsc_walk(
   assign srl733 = reg340 >> sll731;
   assign add874 = sll870 + 20'h3f;
   assign and707 = reg70 & 20'hf;
-  assign sel1109 = bindout185 ? bindout188[19:0] : reg94;
+  assign sel1104 = bindout185 ? bindout188[19:0] : reg94;
   assign and1000 = reg70 & 20'hf;
-  assign sel1173 = and1161 ? bindout188 : reg340;
+  assign sel1172 = and1161 ? bindout188 : reg340;
   assign srl822 = reg82 >> 20'h5;
   assign srl877 = add874 >> 20'h6;
   assign eq421 = io_lsu_rd_rsp_data[2:0] == 3'h5;
   always @(*) begin
     case (reg437)
-      23'h000080: sel1110 = srl733[19:0];
-      23'h000040: sel1110 = sel1109;
-      default: sel1110 = reg94;
+      23'h000080: sel1105 = srl733[19:0];
+      23'h000040: sel1105 = sel1104;
+      default: sel1105 = reg94;
     endcase
   end
   assign sll710 = and707 << 20'h5;
-  assign sel1056 = eq970 ? 1'h1 : 1'h0;
+  assign sel1040 = eq970 ? 1'h1 : 1'h0;
   assign eq1160 = reg437 == 23'h10;
   assign sll1003 = and1000 << 20'h5;
   always @ (posedge clk) begin
-    reg340 <= reset ? lit332 : sel1173;
+    reg340 <= reset ? lit332 : sel1172;
   end
   assign and825 = srl822 & 20'hf;
   assign and777 = srl766 & 20'hf;
-  assign sel1060 = (reg437 == 23'h2000) ? srl877 : reg125;
-  assign sel1041 = eq970 ? 1'h1 : 1'h0;
-  assign eq1044 = reg437 == 23'h40000;
+  assign sel1058 = (reg437 == 23'h2000) ? srl877 : reg125;
+  assign sel1054 = eq970 ? 1'h1 : 1'h0;
+  assign eq1043 = reg437 == 23'h40000;
   assign and927 = reg82 & 20'hf;
   assign and917 = reg82 & 20'hf;
-  assign and1047 = eq914 & bindout257;
+  assign and1154 = eq914 & bindout257;
   assign and423 = io_lsu_rd_rsp_valid & eq421;
   assign and696 = reg70 & 20'hf;
-  assign sel1057 = ne964 ? sel1056 : 1'h1;
+  assign sel1041 = ne964 ? sel1040 : 1'h1;
   assign and1161 = eq1160 & and692;
   always @ (posedge clk) begin
-    reg94 <= reset ? 20'h0 : sel1110;
+    reg94 <= reset ? 20'h0 : sel1105;
   end
   assign srl712 = bindout188 >> sll710;
   assign eq397 = io_lsu_rd_rsp_data[2:0] == 3'h1;
-  assign sel1042 = ne964 ? sel1041 : 1'h1;
-  assign and1045 = eq1044 & io_pe_ready;
-  assign sel1168 = and1113 ? io_ctrl_timer : reg365;
-  assign and1049 = eq1048 & and1047;
+  assign sel1055 = ne964 ? sel1054 : 1'h1;
+  assign and1044 = eq1043 & io_pe_ready;
+  assign sel1149 = and1151 ? io_ctrl_timer : reg365;
+  assign and1155 = eq1052 & and1154;
   assign eq409 = io_lsu_rd_rsp_data[2:0] == 3'h3;
   assign and990 = reg70 & 20'hf;
-  assign sel1159 = and1161 ? bindout164 : reg334;
-  assign sel1058 = and1045 ? sel1057 : 1'h0;
-  assign sel1046 = and1049 ? 1'h1 : 1'h0;
-  assign sel1169 = and1161 ? 1'h1 : 1'h0;
+  assign sel1167 = and1161 ? bindout164 : reg334;
+  assign sel1042 = and1044 ? sel1041 : 1'h0;
+  assign sel1153 = and1155 ? 1'h1 : 1'h0;
+  assign sel1159 = and1161 ? 1'h1 : 1'h0;
   assign proxy8 = io_ctrl_start_data[63:32];
   assign srl1005 = reg340 >> sll1003;
   assign add962 = reg88 + 20'h1;
   assign sll828 = and825 << 20'h5;
-  assign sel1174 = and1063 ? bindout284 : reg346;
+  assign sel1156 = and1062 ? bindout284 : reg346;
   assign sll780 = and777 << 20'h5;
   always @ (posedge clk) begin
-    reg346 <= reset ? lit332 : sel1174;
+    reg346 <= reset ? lit332 : sel1156;
   end
-  assign eq1062 = reg437 == 23'h800;
+  assign eq1061 = reg437 == 23'h800;
   always @ (posedge clk) begin
-    reg125 <= reset ? 20'h0 : sel1060;
+    reg125 <= reset ? 20'h0 : sel1058;
   end
-  assign sel1043 = and1045 ? sel1042 : 1'h0;
+  assign sel1056 = and1044 ? sel1055 : 1'h0;
   assign eq415 = io_lsu_rd_rsp_data[2:0] == 3'h4;
   assign sll930 = and927 << 20'h5;
   always @ (posedge clk) begin
-    reg352 <= reset ? lit332 : sel1050;
+    reg352 <= reset ? lit332 : sel1164;
   end
   assign sll920 = and917 << 20'h5;
-  assign sel1050 = and1049 ? bindout260 : reg352;
+  assign sel1164 = and1155 ? bindout260 : reg352;
   assign sll700 = and696 << 20'h5;
   assign proxy35 = io_lsu_rd_req_data34[2:0];
   assign proxy649 = proxy8[19:0];
@@ -632,11 +632,11 @@ module spmv_dcsc_walk(
   assign and835 = reg82 & 20'h1f;
   assign and788 = reg82 & 20'h1f;
   assign and399 = io_lsu_rd_rsp_valid & eq397;
-  assign and1063 = eq1062 & bindout281;
-  assign sel1176 = bindout185 ? 1'h1 : 1'h0;
-  assign sel1175 = and692 ? 1'h1 : 1'h0;
+  assign and1062 = eq1061 & bindout281;
+  assign sel1179 = bindout185 ? 1'h1 : 1'h0;
+  assign sel1178 = and692 ? 1'h1 : 1'h0;
   always @ (posedge clk) begin
-    reg365 <= reset ? lit363 : sel1168;
+    reg365 <= reset ? lit363 : sel1149;
   end
   assign bindin263 = reg617;
   assign bindin251 = io_lsu_rd_rsp_data[514:3];
@@ -646,62 +646,62 @@ module spmv_dcsc_walk(
   assign and411 = io_lsu_rd_rsp_valid & eq409;
   assign sll993 = and990 << 20'h5;
   always @ (posedge clk) begin
-    reg334 <= reset ? lit332 : sel1159;
+    reg334 <= reset ? lit332 : sel1167;
   end
   assign eq517 = proxy35 == 3'h4;
   always @ (posedge clk) begin
-    reg605 <= reset ? 1'h0 : sel1058;
+    reg605 <= reset ? 1'h0 : sel1042;
   end
   assign eq493 = proxy35 == 3'h3;
   always @ (posedge clk) begin
-    reg617 <= reset ? 1'h0 : sel1046;
+    reg617 <= reset ? 1'h0 : sel1153;
   end
   assign eq541 = proxy35 == 3'h5;
   assign eq565 = proxy35 == 3'h6;
   assign eq469 = proxy35 == 3'h2;
   always @ (posedge clk) begin
-    reg593 <= reset ? 1'h0 : sel1169;
+    reg593 <= reset ? 1'h0 : sel1159;
   end
   assign eq442 = proxy35 == 3'h1;
-  assign and444 = sel1108 & io_lsu_rd_req_ready;
+  assign and444 = sel1070 & io_lsu_rd_req_ready;
   assign sub652 = proxy649 - 20'h1;
-  assign eq1112 = reg437 == 23'h1;
-  assign sel1171 = io_pe_ready ? add962 : reg88;
-  assign sel1170 = and692 ? srl712[19:0] : reg88;
-  assign srl830 = sel1174 >> sll828;
+  assign eq1150 = reg437 == 23'h1;
+  assign sel1174 = io_pe_ready ? add962 : reg88;
+  assign sel1173 = and692 ? srl712[19:0] : reg88;
+  assign srl830 = sel1156 >> sll828;
   assign srl782 = reg346 >> sll780;
-  assign sel1061 = and1063 ? 1'h1 : 1'h0;
+  assign sel1060 = and1062 ? 1'h1 : 1'h0;
   assign eq427 = io_lsu_rd_rsp_data[2:0] == 3'h6;
   assign sub880 = reg125 - reg119;
   always @ (posedge clk) begin
-    reg611 <= reset ? 1'h0 : sel1043;
+    reg611 <= reset ? 1'h0 : sel1056;
   end
   assign and417 = io_lsu_rd_rsp_valid & eq415;
   always @(*) begin
     case (reg437)
-      23'h000010: sel1177 = sel1175;
-      23'h000040: sel1177 = sel1176;
-      default: sel1177 = 1'h0;
+      23'h000010: sel1180 = sel1178;
+      23'h000040: sel1180 = sel1179;
+      default: sel1180 = 1'h0;
     endcase
   end
   assign eq403 = io_lsu_rd_rsp_data[2:0] == 3'h2;
   assign srl932 = reg352 >> sll930;
-  assign srl922 = sel1050 >> sll920;
+  assign srl922 = sel1164 >> sll920;
   ch_queue __module6__(.clk(bindin246), .reset(bindin247), .io_enq_valid(bindin248), .io_enq_data(bindin251), .io_deq_ready(bindin263), .io_deq_valid(bindout257), .io_deq_data(bindout260));
   assign srl702 = bindout164 >> sll700;
-  assign and1113 = eq1112 & io_ctrl_start_valid;
-  assign sel1178 = (reg437 == 23'h100) ? sub763 : reg100;
+  assign and1151 = eq1150 & io_ctrl_start_valid;
+  assign sel1152 = (reg437 == 23'h100) ? sub763 : reg100;
   always @(*) begin
     case (reg437)
-      23'h000010: sel1172 = sel1170;
-      23'h040000: sel1172 = sel1171;
-      23'h200000: sel1172 = srl1005[19:0];
-      default: sel1172 = reg88;
+      23'h000010: sel1175 = sel1173;
+      23'h040000: sel1175 = sel1174;
+      23'h200000: sel1175 = srl1005[19:0];
+      default: sel1175 = reg88;
     endcase
   end
-  assign sel1051 = (reg437 == 23'h4000) ? sub885 : reg131;
+  assign sel1057 = (reg437 == 23'h4000) ? sub885 : reg131;
   assign sll838 = 32'h1 << and835;
-  assign sel1179 = eq807 ? reg113 : srl805;
+  assign sel1176 = eq807 ? reg113 : srl805;
   assign sll791 = 32'h1 << and788;
   assign sub1015 = io_ctrl_timer - reg365;
   assign srl995 = reg334 >> sll993;
@@ -725,9 +725,9 @@ module spmv_dcsc_walk(
   assign eq451 = and446 == 1'h0;
   assign eq456 = reg593 == 1'h0;
   assign and446 = and444 & eq442;
-  assign sel1111 = and1113 ? sub652 : reg76;
+  assign sel1163 = and1151 ? sub652 : reg76;
   assign and967 = reg88 & 20'hf;
-  assign sel1180 = (reg437 == 23'h200) ? sel1179 : reg113;
+  assign sel1177 = (reg437 == 23'h200) ? sel1176 : reg113;
   assign sll802 = reg82 << 20'h2;
   assign bindin167 = reg593;
   assign bindin155 = io_lsu_rd_rsp_data[514:3];
@@ -735,14 +735,14 @@ module spmv_dcsc_walk(
   assign bindin151 = reset;
   assign bindin150 = clk;
   always @ (posedge clk) begin
-    reg623 <= reset ? 1'h0 : sel1061;
+    reg623 <= reset ? 1'h0 : sel1060;
   end
   assign and429 = io_lsu_rd_rsp_valid & eq427;
   always @ (posedge clk) begin
-    reg599 <= reset ? 1'h0 : sel1177;
+    reg599 <= reset ? 1'h0 : sel1180;
   end
   assign and405 = io_lsu_rd_rsp_valid & eq403;
-  assign eq1048 = reg437 == 23'h20000;
+  assign eq1052 = reg437 == 23'h20000;
   assign and951 = reg88 & 20'hf;
   assign and941 = reg88 & 20'hf;
   assign bindin215 = reg605;
@@ -754,30 +754,30 @@ module spmv_dcsc_walk(
   assign proxy647 = proxy7[19:0];
   assign and982 = reg70 & 20'hf;
   always @ (posedge clk) begin
-    reg100 <= reset ? 20'h0 : sel1178;
+    reg100 <= reset ? 20'h0 : sel1152;
   end
   always @ (posedge clk) begin
-    reg88 <= reset ? 20'h0 : sel1172;
+    reg88 <= reset ? 20'h0 : sel1175;
   end
   always @ (posedge clk) begin
-    reg131 <= reset ? 20'h0 : sel1051;
+    reg131 <= reset ? 20'h0 : sel1057;
   end
   assign and840 = srl830[31:0] & sll838;
   assign and793 = srl782[31:0] & sll791;
   assign and717 = reg70 & 20'hf;
   ch_queue __module2__(.clk(bindin150), .reset(bindin151), .io_enq_valid(bindin152), .io_enq_data(bindin155), .io_deq_ready(bindin167), .io_deq_valid(bindout161), .io_deq_data(bindout164));
-  assign sel1055 = (reg437 == 23'h4000) ? sub880[5:0] : reg138;
+  assign sel1059 = (reg437 == 23'h4000) ? sub880[5:0] : reg138;
   assign bindin239 = reg611;
   assign bindin227 = io_lsu_rd_rsp_data[514:3];
   assign bindin224 = and417;
   assign bindin223 = reset;
   assign bindin222 = clk;
-  assign sel1052 = bindout257 ? srl922[31:0] : srl932[31:0];
-  assign and1054 = eq1048 & eq914;
+  assign sel1050 = bindout257 ? srl922[31:0] : srl932[31:0];
+  assign and1053 = eq1052 & eq914;
   ch_queue_0 __module4__(.clk(bindin198), .reset(bindin199), .io_enq_valid(bindin200), .io_enq_data(bindin203), .io_deq_ready(bindin215), .io_deq_data(bindout212));
-  assign sel1162 = and692 ? srl702[19:0] : reg82;
+  assign sel1168 = and692 ? srl702[19:0] : reg82;
   assign sll769 = srl766 << 20'h2;
-  assign sel1099 = io_ctrl_start_valid ? proxy647 : reg70;
+  assign sel1157 = io_ctrl_start_valid ? proxy647 : reg70;
   assign sub537 = reg315 - 8'h1;
   assign and526 = eq524 & reg611;
   assign add534 = reg315 + 8'h1;
@@ -804,32 +804,32 @@ module spmv_dcsc_walk(
   assign and458 = and446 & eq456;
   assign and1010 = reg70 & 20'hf;
   always @ (posedge clk) begin
-    reg76 <= reset ? 20'h0 : sel1111;
+    reg76 <= reset ? 20'h0 : sel1163;
   end
   assign eq970 = and967 == 20'hf;
   always @ (posedge clk) begin
-    reg113 <= reset ? 20'hfffff : sel1180;
+    reg113 <= reset ? 20'hfffff : sel1177;
   end
   assign srl805 = sll802 >> 20'h6;
   ch_queue_0 __module5__(.clk(bindin222), .reset(bindin223), .io_enq_valid(bindin224), .io_enq_data(bindin227), .io_deq_ready(bindin239), .io_deq_data(bindout236), .io_size(bindout242));
   assign lt1019 = reg394[63:32] < reg358;
-  assign sel1040 = (reg437 == 23'h400000) ? sub1015[31:0] : reg358;
-  assign sel1053 = and1054 ? sel1052 : reg145;
+  assign sel1162 = (reg437 == 23'h400000) ? sub1015[31:0] : reg358;
+  assign sel1051 = and1053 ? sel1050 : reg145;
   assign sll954 = and951 << 20'h5;
   assign sll944 = and941 << 20'h5;
   assign sll864 = reg88 << 20'h2;
   always @(*) begin
     case (reg437)
-      23'h000010: sel1163 = sel1162;
-      23'h200000: sel1163 = srl995[19:0];
-      default: sel1163 = reg82;
+      23'h000010: sel1169 = sel1168;
+      23'h200000: sel1169 = srl995[19:0];
+      default: sel1169 = reg82;
     endcase
   end
   always @(*) begin
     case (reg437)
-      23'h000001: sel1100 = sel1099;
-      23'h100000: sel1100 = add977;
-      default: sel1100 = reg70;
+      23'h000001: sel1158 = sel1157;
+      23'h100000: sel1158 = add977;
+      default: sel1158 = reg70;
     endcase
   end
   assign ne985 = and982 != 20'hf;
@@ -844,7 +844,7 @@ module spmv_dcsc_walk(
   assign bindin271 = reset;
   assign bindin270 = clk;
   always @ (posedge clk) begin
-    reg138 <= reset ? 6'h0 : sel1055;
+    reg138 <= reset ? 6'h0 : sel1059;
   end
   assign bindin191 = reg599;
   assign bindin179 = io_lsu_rd_rsp_data[514:3];
@@ -903,7 +903,7 @@ module spmv_dcsc_walk(
   end
   assign ne1013 = and1010 != 20'hf;
   assign ne979 = reg70 != reg76;
-  assign sel1091 = eq970 ? 23'h80000 : reg437;
+  assign sel1096 = eq970 ? 23'h80000 : reg437;
   assign eq807 = srl805 == reg113;
   assign eq774 = srl772 == reg107;
   assign and692 = bindout161 & bindout185;
@@ -919,35 +919,35 @@ module spmv_dcsc_walk(
   assign gt1028 = reg394[63:32] > reg358;
   assign sel1021 = lt1019 ? reg394[63:32] : reg358;
   always @ (posedge clk) begin
-    reg358 <= reset ? 32'h0 : sel1040;
+    reg358 <= reset ? 32'h0 : sel1162;
   end
   assign eq1024 = reg394[63:32] == 32'h0;
   always @ (posedge clk) begin
-    reg145 <= reset ? 32'h0 : sel1053;
+    reg145 <= reset ? 32'h0 : sel1051;
   end
   assign srl956 = bindout236 >> sll954;
   assign srl946 = bindout212 >> sll944;
   assign srl867 = sll864 >> 20'h6;
   always @ (posedge clk) begin
-    reg82 <= reset ? 20'h0 : sel1163;
+    reg82 <= reset ? 20'h0 : sel1169;
   end
   assign add739 = reg70 + 20'h1;
   always @ (posedge clk) begin
-    reg70 <= reset ? 20'h0 : sel1100;
+    reg70 <= reset ? 20'h0 : sel1158;
   end
-  assign sel1094 = ne985 ? 23'h200000 : 23'h2;
-  assign sel1092 = ne964 ? sel1091 : 23'h100000;
-  assign sel1088 = ne905 ? 23'h8000 : 23'h20000;
-  assign and1065 = ne900 & io_lsu_rd_req_ready;
-  assign and1087 = ne890 & io_lsu_rd_req_ready;
-  assign and1085 = ne855 & io_lsu_rd_req_ready;
-  assign sel1082 = ne843 ? 23'h200 : 23'h100000;
-  assign and1081 = ne812 & io_lsu_rd_req_ready;
-  assign sel1077 = ne796 ? 23'h200 : 23'h100000;
-  assign and1075 = ne748 & io_lsu_rd_req_ready;
-  assign sel1072 = ne720 ? 23'h80 : 23'h20;
-  assign and1071 = ne683 & io_lsu_rd_req_ready;
-  assign and1069 = ne665 & io_lsu_rd_req_ready;
+  assign sel1099 = ne985 ? 23'h200000 : 23'h2;
+  assign sel1097 = ne964 ? sel1096 : 23'h100000;
+  assign sel1092 = ne905 ? 23'h8000 : 23'h20000;
+  assign and1094 = ne900 & io_lsu_rd_req_ready;
+  assign and1091 = ne890 & io_lsu_rd_req_ready;
+  assign and1089 = ne855 & io_lsu_rd_req_ready;
+  assign sel1086 = ne843 ? 23'h200 : 23'h100000;
+  assign and1085 = ne812 & io_lsu_rd_req_ready;
+  assign sel1081 = ne796 ? 23'h200 : 23'h100000;
+  assign and1079 = ne748 & io_lsu_rd_req_ready;
+  assign sel1076 = ne720 ? 23'h80 : 23'h20;
+  assign and1075 = ne683 & io_lsu_rd_req_ready;
+  assign and1073 = ne665 & io_lsu_rd_req_ready;
   assign add1038 = reg394[351:320] + 32'h1;
   assign add974 = reg394[351:320] + 32'h1;
   assign add846 = reg394[319:288] + 32'h1;
@@ -961,7 +961,7 @@ module spmv_dcsc_walk(
   assign add755 = reg394[191:160] + 32'h1;
   assign add690 = reg394[191:160] + 32'h1;
   assign add674 = reg394[159:128] + 32'h1;
-  assign sel1064 = and1065 ? add903 : reg119;
+  assign sel1170 = and1094 ? add903 : reg119;
   assign sel1181 = eq774 ? reg107 : srl772;
   always @ (posedge clk) begin
     reg315 <= reset ? 8'h0 : sel539;
@@ -981,41 +981,41 @@ module spmv_dcsc_walk(
   always @ (posedge clk) begin
     reg297 <= reset ? 8'h0 : sel467;
   end
-  assign sel1097 = io_pe_ready ? 23'h1 : reg437;
-  assign sel1096 = ne1013 ? 23'h80 : 23'h20;
-  assign sel1095 = ne979 ? sel1094 : 23'h400000;
-  assign sel1093 = io_pe_ready ? sel1092 : reg437;
-  assign sel1090 = eq914 ? 23'h40000 : reg437;
-  assign sel1089 = and1065 ? sel1088 : reg437;
-  assign sel1086 = and1087 ? 23'h10000 : reg437;
-  assign sel1084 = and1085 ? 23'h2000 : reg437;
-  assign sel1083 = bindout281 ? sel1082 : reg437;
-  assign sel1080 = and1081 ? 23'h800 : reg437;
-  assign sel1079 = eq807 ? 23'h2000 : 23'h1000;
-  assign sel1078 = eq774 ? sel1077 : 23'h400;
-  assign sel1076 = bindout185 ? 23'h100 : reg437;
-  assign sel1074 = and1075 ? 23'h40 : reg437;
-  assign sel1073 = and692 ? sel1072 : reg437;
-  assign sel1070 = and1071 ? 23'h10 : reg437;
-  assign sel1068 = and1069 ? 23'h4 : reg437;
-  assign sel1067 = io_ctrl_start_valid ? 23'h2 : reg437;
-  assign sel1149 = io_lsu_rd_req_ready ? reg394[319:288] : add816;
-  assign sel1145 = io_lsu_rd_req_ready ? reg394[287:256] : add858;
-  assign sel1140 = io_lsu_rd_req_ready ? reg394[255:224] : add909;
-  assign sel1136 = io_lsu_rd_req_ready ? reg394[223:192] : add894;
-  assign sel1131 = io_lsu_rd_req_ready ? reg394[191:160] : add752;
-  assign sel1129 = io_lsu_rd_req_ready ? reg394[191:160] : add687;
-  assign sel1125 = io_lsu_rd_req_ready ? reg394[159:128] : add671;
+  assign sel1102 = io_pe_ready ? 23'h1 : reg437;
+  assign sel1101 = ne1013 ? 23'h80 : 23'h20;
+  assign sel1100 = ne979 ? sel1099 : 23'h400000;
+  assign sel1098 = io_pe_ready ? sel1097 : reg437;
+  assign sel1095 = eq914 ? 23'h40000 : reg437;
+  assign sel1093 = and1094 ? sel1092 : reg437;
+  assign sel1090 = and1091 ? 23'h10000 : reg437;
+  assign sel1088 = and1089 ? 23'h2000 : reg437;
+  assign sel1087 = bindout281 ? sel1086 : reg437;
+  assign sel1084 = and1085 ? 23'h800 : reg437;
+  assign sel1083 = eq807 ? 23'h2000 : 23'h1000;
+  assign sel1082 = eq774 ? sel1081 : 23'h400;
+  assign sel1080 = bindout185 ? 23'h100 : reg437;
+  assign sel1078 = and1079 ? 23'h40 : reg437;
+  assign sel1077 = and692 ? sel1076 : reg437;
+  assign sel1074 = and1075 ? 23'h10 : reg437;
+  assign sel1072 = and1073 ? 23'h4 : reg437;
+  assign sel1071 = io_ctrl_start_valid ? 23'h2 : reg437;
+  assign sel1141 = io_lsu_rd_req_ready ? reg394[319:288] : add816;
+  assign sel1137 = io_lsu_rd_req_ready ? reg394[287:256] : add858;
+  assign sel1132 = io_lsu_rd_req_ready ? reg394[255:224] : add909;
+  assign sel1128 = io_lsu_rd_req_ready ? reg394[223:192] : add894;
+  assign sel1123 = io_lsu_rd_req_ready ? reg394[191:160] : add752;
+  assign sel1121 = io_lsu_rd_req_ready ? reg394[191:160] : add687;
+  assign sel1117 = io_lsu_rd_req_ready ? reg394[159:128] : add671;
   assign add1032 = reg394[127:96] + reg358;
   assign sel1030 = gt1028 ? reg394[63:32] : reg358;
   assign sel1026 = eq1024 ? reg358 : sel1021;
   assign add1035 = reg394[31:0] + 32'h1;
-  assign eq1116 = reg437 == 23'h800000;
+  assign eq1108 = reg437 == 23'h800000;
   always @(*) begin
     case (reg437)
-      23'h002000: sel1066 = srl867;
-      23'h010000: sel1066 = sel1064;
-      default: sel1066 = reg119;
+      23'h002000: sel1171 = srl867;
+      23'h010000: sel1171 = sel1170;
+      default: sel1171 = reg119;
     endcase
   end
   assign sll849 = reg82 << 20'h2;
@@ -1025,54 +1025,54 @@ module spmv_dcsc_walk(
   assign sll657 = reg70 << 20'h2;
   always @(*) begin
     case (reg437)
-      23'h000001: sel1098 = sel1067;
-      23'h000002: sel1098 = sel1068;
-      23'h000004: sel1098 = sel1070;
-      23'h000010: sel1098 = sel1073;
-      23'h000080: sel1098 = 23'h100;
-      23'h000020: sel1098 = sel1074;
-      23'h000040: sel1098 = sel1076;
-      23'h000100: sel1098 = sel1078;
-      23'h000200: sel1098 = sel1079;
-      23'h000400: sel1098 = sel1080;
-      23'h000800: sel1098 = sel1083;
-      23'h001000: sel1098 = sel1084;
-      23'h002000: sel1098 = 23'h4000;
-      23'h004000: sel1098 = 23'h8000;
-      23'h008000: sel1098 = sel1086;
-      23'h010000: sel1098 = sel1089;
-      23'h020000: sel1098 = sel1090;
-      23'h040000: sel1098 = sel1093;
-      23'h080000: sel1098 = 23'h40000;
-      23'h100000: sel1098 = sel1095;
-      23'h200000: sel1098 = sel1096;
-      23'h400000: sel1098 = 23'h800000;
-      23'h800000: sel1098 = sel1097;
-      default: sel1098 = reg437;
+      23'h000001: sel1103 = sel1071;
+      23'h000002: sel1103 = sel1072;
+      23'h000004: sel1103 = sel1074;
+      23'h000010: sel1103 = sel1077;
+      23'h000080: sel1103 = 23'h100;
+      23'h000020: sel1103 = sel1078;
+      23'h000040: sel1103 = sel1080;
+      23'h000100: sel1103 = sel1082;
+      23'h000200: sel1103 = sel1083;
+      23'h000400: sel1103 = sel1084;
+      23'h000800: sel1103 = sel1087;
+      23'h001000: sel1103 = sel1088;
+      23'h002000: sel1103 = 23'h4000;
+      23'h004000: sel1103 = 23'h8000;
+      23'h008000: sel1103 = sel1090;
+      23'h010000: sel1103 = sel1093;
+      23'h020000: sel1103 = sel1095;
+      23'h040000: sel1103 = sel1098;
+      23'h080000: sel1103 = 23'h40000;
+      23'h100000: sel1103 = sel1100;
+      23'h200000: sel1103 = sel1101;
+      23'h400000: sel1103 = 23'h800000;
+      23'h800000: sel1103 = sel1102;
+      default: sel1103 = reg437;
     endcase
   end
-  assign sel1155 = io_pe_ready ? reg394[351:320] : add1038;
-  assign sel1154 = io_pe_ready ? reg394[351:320] : add974;
-  assign sel1151 = bindout281 ? reg394[319:288] : add846;
-  assign sel1150 = ne812 ? sel1149 : add819;
-  assign sel1146 = ne855 ? sel1145 : add861;
-  assign sel1142 = eq914 ? reg394[255:224] : add938;
-  assign sel1141 = ne900 ? sel1140 : add912;
-  assign sel1137 = ne890 ? sel1136 : add897;
-  assign sel1133 = bindout185 ? reg394[191:160] : add760;
-  assign sel1132 = ne748 ? sel1131 : add755;
-  assign sel1130 = ne683 ? sel1129 : add690;
-  assign sel1126 = ne665 ? sel1125 : add674;
-  assign and1117 = eq1116 & io_pe_ready;
-  assign sel1167 = (reg437 == 23'h800000) ? 1'h1 : 1'h0;
-  assign sel1166 = (reg437 == 23'h40000) ? reg145 : 32'h0;
-  assign sel1165 = (reg437 == 23'h40000) ? srl956[31:0] : 32'h0;
-  assign sel1164 = (reg437 == 23'h40000) ? srl946[19:0] : 20'h0;
+  assign sel1147 = io_pe_ready ? reg394[351:320] : add1038;
+  assign sel1146 = io_pe_ready ? reg394[351:320] : add974;
+  assign sel1143 = bindout281 ? reg394[319:288] : add846;
+  assign sel1142 = ne812 ? sel1141 : add819;
+  assign sel1138 = ne855 ? sel1137 : add861;
+  assign sel1134 = eq914 ? reg394[255:224] : add938;
+  assign sel1133 = ne900 ? sel1132 : add912;
+  assign sel1129 = ne890 ? sel1128 : add897;
+  assign sel1125 = bindout185 ? reg394[191:160] : add760;
+  assign sel1124 = ne748 ? sel1123 : add755;
+  assign sel1122 = ne683 ? sel1121 : add690;
+  assign sel1118 = ne665 ? sel1117 : add674;
+  assign and1109 = eq1108 & io_pe_ready;
+  assign sel1049 = (reg437 == 23'h800000) ? 1'h1 : 1'h0;
+  assign sel1048 = (reg437 == 23'h40000) ? reg145 : 32'h0;
+  assign sel1047 = (reg437 == 23'h40000) ? srl956[31:0] : 32'h0;
+  assign sel1046 = (reg437 == 23'h40000) ? srl946[19:0] : 20'h0;
   always @(*) begin
     case (reg437)
-      23'h040000: sel1059 = 1'h1;
-      23'h800000: sel1059 = 1'h1;
-      default: sel1059 = 1'h0;
+      23'h040000: sel1045 = 1'h1;
+      23'h800000: sel1045 = 1'h1;
+      default: sel1045 = 1'h0;
     endcase
   end
   assign ne900 = reg315 != 8'h20;
@@ -1084,43 +1084,43 @@ module spmv_dcsc_walk(
   assign ne665 = reg297 != 8'h2;
   always @(*) begin
     case (reg437)
-      23'h040000: sel1156 = sel1154;
-      23'h800000: sel1156 = sel1155;
-      default: sel1156 = reg394[351:320];
+      23'h040000: sel1148 = sel1146;
+      23'h800000: sel1148 = sel1147;
+      default: sel1148 = reg394[351:320];
     endcase
   end
   always @(*) begin
     case (reg437)
-      23'h000400: sel1152 = sel1150;
-      23'h000800: sel1152 = sel1151;
-      default: sel1152 = reg394[319:288];
+      23'h000400: sel1144 = sel1142;
+      23'h000800: sel1144 = sel1143;
+      default: sel1144 = reg394[319:288];
     endcase
   end
-  assign sel1147 = (reg437 == 23'h1000) ? sel1146 : reg394[287:256];
+  assign sel1139 = (reg437 == 23'h1000) ? sel1138 : reg394[287:256];
   always @(*) begin
     case (reg437)
-      23'h010000: sel1143 = sel1141;
-      23'h020000: sel1143 = sel1142;
-      default: sel1143 = reg394[255:224];
+      23'h010000: sel1135 = sel1133;
+      23'h020000: sel1135 = sel1134;
+      default: sel1135 = reg394[255:224];
     endcase
   end
-  assign sel1138 = (reg437 == 23'h8000) ? sel1137 : reg394[223:192];
+  assign sel1130 = (reg437 == 23'h8000) ? sel1129 : reg394[223:192];
   always @(*) begin
     case (reg437)
-      23'h000004: sel1134 = sel1130;
-      23'h000020: sel1134 = sel1132;
-      23'h000040: sel1134 = sel1133;
-      default: sel1134 = reg394[191:160];
+      23'h000004: sel1126 = sel1122;
+      23'h000020: sel1126 = sel1124;
+      23'h000040: sel1126 = sel1125;
+      default: sel1126 = reg394[191:160];
     endcase
   end
-  assign sel1127 = (reg437 == 23'h2) ? sel1126 : reg394[159:128];
-  assign sel1123 = and1117 ? add1032 : reg394[127:96];
-  assign sel1121 = and1117 ? sel1030 : reg394[95:64];
-  assign sel1119 = and1117 ? sel1026 : reg394[63:32];
-  assign sel1115 = and1117 ? add1035 : reg394[31:0];
-  assign ch_pe_req_t631 = {sel1167, sel1166, sel1165, sel1164};
+  assign sel1119 = (reg437 == 23'h2) ? sel1118 : reg394[159:128];
+  assign sel1115 = and1109 ? add1032 : reg394[127:96];
+  assign sel1113 = and1109 ? sel1030 : reg394[95:64];
+  assign sel1111 = and1109 ? sel1026 : reg394[63:32];
+  assign sel1107 = and1109 ? add1035 : reg394[31:0];
+  assign ch_pe_req_t631 = {sel1049, sel1048, sel1047, sel1046};
   always @ (posedge clk) begin
-    reg119 <= reset ? 20'h0 : sel1066;
+    reg119 <= reset ? 20'h0 : sel1171;
   end
   assign srl852 = sll849 >> 20'h6;
   always @ (posedge clk) begin
@@ -1130,67 +1130,67 @@ module spmv_dcsc_walk(
   assign srl680 = sll677 >> 20'h6;
   assign srl661 = sll657 >> 20'h6;
   always @ (posedge clk) begin
-    reg437 <= reset ? 23'h1 : sel1098;
+    reg437 <= reset ? 23'h1 : sel1103;
   end
-  assign ch_walker_stats_t380 = {sel1156, sel1152, sel1147, sel1143, sel1138, sel1134, sel1127, sel1123, sel1121, sel1119, sel1115};
+  assign ch_walker_stats_t380 = {sel1148, sel1144, sel1139, sel1135, sel1130, sel1126, sel1119, sel1115, sel1113, sel1111, sel1107};
   always @ (posedge clk) begin
     reg638 <= reset ? lit636 : ch_pe_req_t631;
   end
   always @ (posedge clk) begin
-    reg644 <= reset ? 1'h0 : sel1059;
+    reg644 <= reset ? 1'h0 : sel1045;
   end
-  assign sel1107 = ne900 ? 1'h1 : 1'h0;
-  assign sel1106 = ne890 ? 1'h1 : 1'h0;
-  assign sel1105 = ne855 ? 1'h1 : 1'h0;
-  assign sel1104 = ne812 ? 1'h1 : 1'h0;
-  assign sel1103 = ne748 ? 1'h1 : 1'h0;
-  assign sel1102 = ne683 ? 1'h1 : 1'h0;
-  assign sel1101 = ne665 ? 1'h1 : 1'h0;
+  assign sel1069 = ne900 ? 1'h1 : 1'h0;
+  assign sel1068 = ne890 ? 1'h1 : 1'h0;
+  assign sel1067 = ne855 ? 1'h1 : 1'h0;
+  assign sel1066 = ne812 ? 1'h1 : 1'h0;
+  assign sel1065 = ne748 ? 1'h1 : 1'h0;
+  assign sel1064 = ne683 ? 1'h1 : 1'h0;
+  assign sel1063 = ne665 ? 1'h1 : 1'h0;
   always @ (posedge clk) begin
     reg394 <= reset ? lit392 : ch_walker_stats_t380;
   end
   assign eq439 = reg437 == 23'h1;
   always @(*) begin
     case (reg437)
-      23'h000002: sel1158 = srl661;
-      23'h000004: sel1158 = srl680;
-      23'h000020: sel1158 = srl745;
-      23'h000400: sel1158 = reg107;
-      23'h001000: sel1158 = srl852;
-      23'h008000: sel1158 = reg119;
-      23'h010000: sel1158 = reg119;
-      default: sel1158 = 20'h0;
+      23'h000002: sel1166 = srl661;
+      23'h000004: sel1166 = srl680;
+      23'h000020: sel1166 = srl745;
+      23'h000400: sel1166 = reg107;
+      23'h001000: sel1166 = srl852;
+      23'h008000: sel1166 = reg119;
+      23'h010000: sel1166 = reg119;
+      default: sel1166 = 20'h0;
     endcase
   end
   always @(*) begin
     case (reg437)
-      23'h000002: sel1157 = 3'h1;
-      23'h000004: sel1157 = 3'h2;
-      23'h000020: sel1157 = 3'h2;
-      23'h000400: sel1157 = 3'h6;
-      23'h001000: sel1157 = 3'h5;
-      23'h008000: sel1157 = 3'h3;
-      23'h010000: sel1157 = 3'h4;
-      default: sel1157 = 3'h0;
+      23'h000002: sel1165 = 3'h1;
+      23'h000004: sel1165 = 3'h2;
+      23'h000020: sel1165 = 3'h2;
+      23'h000400: sel1165 = 3'h6;
+      23'h001000: sel1165 = 3'h5;
+      23'h008000: sel1165 = 3'h3;
+      23'h010000: sel1165 = 3'h4;
+      default: sel1165 = 3'h0;
     endcase
   end
   always @(*) begin
     case (reg437)
-      23'h000002: sel1108 = sel1101;
-      23'h000004: sel1108 = sel1102;
-      23'h000020: sel1108 = sel1103;
-      23'h000400: sel1108 = sel1104;
-      23'h001000: sel1108 = sel1105;
-      23'h008000: sel1108 = sel1106;
-      23'h010000: sel1108 = sel1107;
-      default: sel1108 = 1'h0;
+      23'h000002: sel1070 = sel1063;
+      23'h000004: sel1070 = sel1064;
+      23'h000020: sel1070 = sel1065;
+      23'h000400: sel1070 = sel1066;
+      23'h001000: sel1070 = sel1067;
+      23'h008000: sel1070 = sel1068;
+      23'h010000: sel1070 = sel1069;
+      default: sel1070 = 1'h0;
     endcase
   end
-  assign io_lsu_rd_req_data34 = {sel1158, sel1157};
+  assign io_lsu_rd_req_data34 = {sel1166, sel1165};
 
   assign io_ctrl_start_ready = eq439;
   assign io_ctrl_stats = reg394;
-  assign io_lsu_rd_req_valid = sel1108;
+  assign io_lsu_rd_req_valid = sel1070;
   assign io_lsu_rd_req_data = io_lsu_rd_req_data34;
   assign io_pe_valid = reg644;
   assign io_pe_data = reg638;
@@ -1290,11 +1290,11 @@ module spmv_pe(
   wire[31:0] sll148;
   reg[31:0] reg105; // v1768 - pe.cpp(14)
   wire eq209;
-  wire[31:0] sel508; // pe.cpp(120)
+  wire[31:0] sel516; // pe.cpp(120)
   wire ne187;
   wire proxy56; // v1682 - is_end(0)
   wire[19:0] proxy55; // v1681 - a_rowind(0)
-  wire[31:0] sel509; // pe.cpp(125)
+  wire[31:0] sel517; // pe.cpp(125)
   wire eq236;
   wire[20:0] proxy68; // v1753 - /home/blaise/dev/cash/src/module.h(33)
   wire[31:0] and165;
@@ -1303,7 +1303,7 @@ module spmv_pe(
   wire and211;
   wire eq214;
   wire eq219;
-  wire[31:0] sel510; // pe.cpp(112)
+  wire[31:0] sel518; // pe.cpp(112)
   wire eq265;
   wire[31:0] sel190;
   wire[31:0] fmult196;
@@ -1324,19 +1324,19 @@ module spmv_pe(
   wire[31:0] add224;
   wire and221;
   reg[31:0] reg93; // v1762 - pe.cpp(14)
-  wire eq515;
+  wire eq520;
   wire and267;
   wire[31:0] fadd205;
   wire bindout77;
   wire[19:0] srl483;
-  wire and516;
+  wire and521;
   wire[19:0] sel261; // pe.cpp(96)
   wire eq163;
   wire and170;
   reg[31:0] sel229; // pe.cpp(75)
-  wire[31:0] sel514; // pe.cpp(125)
+  wire[31:0] sel519; // pe.cpp(125)
   wire sel506; // pe.cpp(112)
-  wire[31:0] sel507; // pe.cpp(112)
+  wire[31:0] sel512; // pe.cpp(112)
   wire[4:0] sel505; // pe.cpp(112)
   wire and275;
   wire[31:0] add495;
@@ -1350,10 +1350,10 @@ module spmv_pe(
   wire and192;
   reg[31:0] reg111; // v1771 - pe.cpp(14)
   reg[31:0] reg99; // v1765 - pe.cpp(14)
-  wire[1:0] sel520; // pe.cpp(177)
-  wire[1:0] sel519; // pe.cpp(162)
-  wire[1:0] sel518; // pe.cpp(143)
-  wire[1:0] sel517; // pe.cpp(125)
+  wire[1:0] sel510; // pe.cpp(177)
+  wire[1:0] sel509; // pe.cpp(162)
+  wire[1:0] sel508; // pe.cpp(143)
+  wire[1:0] sel507; // pe.cpp(125)
   wire proxy9; // v1594 - is_end(0)
   wire[19:0] proxy6; // v1591 - a_rowind(0)
   wire[31:0] sel502; // pe.cpp(177)
@@ -1364,7 +1364,7 @@ module spmv_pe(
   wire[19:0] sll473;
   wire[19:0] srl458;
   wire[19:0] sll361;
-  reg[1:0] sel521; // pe.cpp(112)
+  reg[1:0] sel511; // pe.cpp(112)
   wire[20:0] proxy43; // v1675 - /home/blaise/dev/cash/src/module.h(33)
   wire eq175;
   wire eq178;
@@ -1387,9 +1387,9 @@ module spmv_pe(
   wire[511:0] proxy373; // v1920 - pe.cpp(153)
   wire[511:0] proxy279; // v1865 - pe.cpp(134)
   wire bindout49;
-  reg[511:0] sel513; // pe.cpp(112)
-  reg[19:0] sel512; // pe.cpp(112)
-  wire[1:0] sel511; // pe.cpp(112)
+  reg[511:0] sel515; // pe.cpp(112)
+  reg[19:0] sel514; // pe.cpp(112)
+  wire[1:0] sel513; // pe.cpp(112)
   reg sel504; // pe.cpp(112)
   wire[533:0] io_lsu_wr_req_data18; // v1597 - pe.cpp(14)
 
@@ -1423,11 +1423,11 @@ module spmv_pe(
     reg105 <= reset ? 32'h0 : sel256;
   end
   assign eq209 = 2'h0 == reg145;
-  assign sel508 = sel506 ? or273 : reg93;
+  assign sel516 = sel506 ? or273 : reg93;
   assign ne187 = 32'h0 != and184;
   assign proxy56 = bindout57[20];
   assign proxy55 = bindout57[19:0];
-  assign sel509 = and275 ? 32'h0 : sel508;
+  assign sel517 = and275 ? 32'h0 : sel516;
   assign eq236 = bindout82[20] == 1'h0;
   assign proxy68 = {proxy56, proxy55};
   assign and165 = reg105 & sll148;
@@ -1436,7 +1436,7 @@ module spmv_pe(
   assign and211 = eq209 & bindout77;
   assign eq214 = and192 == 1'h0;
   assign eq219 = and211 == 1'h0;
-  assign sel510 = (reg145 == 2'h0) ? sel509 : reg93;
+  assign sel518 = (reg145 == 2'h0) ? sel517 : reg93;
   assign eq265 = bindout82[20] == 1'h0;
   assign sel190 = ne187 ? mem86[proxy204] : 32'h0;
   fp_mult __fp_mult_196__(.clock(clk), .clk_en(or172), .dataa(io_req_data[51:20]), .datab(io_req_data[83:52]), .result(fmult196));
@@ -1456,13 +1456,13 @@ module spmv_pe(
   assign add224 = reg111 + 32'h1;
   assign and221 = and192 & eq219;
   always @ (posedge clk) begin
-    reg93 <= reset ? 32'h0 : sel510;
+    reg93 <= reset ? 32'h0 : sel518;
   end
-  assign eq515 = reg145 == 2'h0;
+  assign eq520 = reg145 == 2'h0;
   assign and267 = bindout77 & eq265;
   fp_add __fp_add_sub_205__(.clock(clk), .clk_en(or160), .dataa(fmult196), .datab(sel190), .result(fadd205));
   assign srl483 = reg126 >> 20'h5;
-  assign and516 = eq515 & and275;
+  assign and521 = eq520 & and275;
   assign sel261 = and238 ? and259 : reg126;
   assign eq163 = bindout52 == 1'h0;
   assign and170 = or160 & eq168;
@@ -1474,9 +1474,9 @@ module spmv_pe(
     else
       sel229 = reg111;
   end
-  assign sel514 = and516 ? reg93 : reg99;
+  assign sel519 = and521 ? reg93 : reg99;
   assign sel506 = (reg145 == 2'h0) ? and267 : 1'h0;
-  assign sel507 = (reg145 == 2'h0) ? fadd205 : 32'h0;
+  assign sel512 = (reg145 == 2'h0) ? fadd205 : 32'h0;
   assign sel505 = (reg145 == 2'h0) ? and270[4:0] : 5'h0;
   assign and275 = bindout77 & bindout82[20];
   assign add495 = reg137[63:32] + 32'h1;
@@ -1494,12 +1494,12 @@ module spmv_pe(
     reg111 <= reset ? 32'h0 : sel229;
   end
   always @ (posedge clk) begin
-    reg99 <= reset ? 32'h0 : sel514;
+    reg99 <= reset ? 32'h0 : sel519;
   end
-  assign sel520 = io_lsu_wr_req_ready ? 2'h0 : reg145;
-  assign sel519 = io_lsu_wr_req_ready ? 2'h3 : reg145;
-  assign sel518 = io_lsu_wr_req_ready ? 2'h2 : reg145;
-  assign sel517 = and275 ? 2'h1 : reg145;
+  assign sel510 = io_lsu_wr_req_ready ? 2'h0 : reg145;
+  assign sel509 = io_lsu_wr_req_ready ? 2'h3 : reg145;
+  assign sel508 = io_lsu_wr_req_ready ? 2'h2 : reg145;
+  assign sel507 = and275 ? 2'h1 : reg145;
   assign proxy9 = io_req_data[84];
   assign proxy6 = io_req_data[19:0];
   assign sel502 = io_lsu_wr_req_ready ? reg137[63:32] : add495;
@@ -1508,7 +1508,7 @@ module spmv_pe(
   assign sll490 = and487 << 20'h5;
   always @(posedge clk) begin
     if (sel506) begin
-      mem86[sel505] = sel507;
+      mem86[sel505] = sel512;
     end
   end
   assign sll473 = srl470 << 20'h2;
@@ -1516,11 +1516,11 @@ module spmv_pe(
   assign sll361 = reg126 << 20'h2;
   always @(*) begin
     case (reg145)
-      2'h0: sel521 = sel517;
-      2'h1: sel521 = sel518;
-      2'h2: sel521 = sel519;
-      2'h3: sel521 = sel520;
-      default: sel521 = reg145;
+      2'h0: sel511 = sel507;
+      2'h1: sel511 = sel508;
+      2'h2: sel511 = sel509;
+      2'h3: sel511 = sel510;
+      default: sel511 = reg145;
     endcase
   end
   assign proxy43 = {proxy9, proxy6};
@@ -1546,7 +1546,7 @@ module spmv_pe(
   assign add462 = srl458 + 20'h1;
   assign srl365 = sll361 >> 20'h6;
   always @ (posedge clk) begin
-    reg145 <= reset ? 2'h0 : sel521;
+    reg145 <= reset ? 2'h0 : sel511;
   end
   ch_pipe __module16__(.clk(bindin38), .reset(bindin40), .io_enq_valid(bindin41), .io_enq_data(bindin46), .io_deq_ready(bindin60), .io_enq_ready(bindout49), .io_deq_valid(bindout52), .io_deq_data(bindout57));
   assign and180 = eq178 & eq175;
@@ -1557,21 +1557,21 @@ module spmv_pe(
   assign proxy279 = {mem86[5'h71], mem86[5'h70], mem86[5'h61], mem86[5'h60], mem86[5'h51], mem86[5'h50], mem86[5'h41], mem86[5'h40], mem86[5'h31], mem86[5'h30], mem86[5'h21], mem86[5'h20], mem86[5'h11], mem86[5'h10], mem86[5'h1], mem86[5'h0]};
   always @(*) begin
     case (reg145)
-      2'h1: sel513 = proxy279;
-      2'h2: sel513 = proxy373;
-      2'h3: sel513 = sll492;
-      default: sel513 = lit262;
+      2'h1: sel515 = proxy279;
+      2'h2: sel515 = proxy373;
+      2'h3: sel515 = sll492;
+      default: sel515 = lit262;
     endcase
   end
   always @(*) begin
     case (reg145)
-      2'h1: sel512 = srl365;
-      2'h2: sel512 = add462;
-      2'h3: sel512 = srl476;
-      default: sel512 = 20'h0;
+      2'h1: sel514 = srl365;
+      2'h2: sel514 = add462;
+      2'h3: sel514 = srl476;
+      default: sel514 = 20'h0;
     endcase
   end
-  assign sel511 = (reg145 == 2'h3) ? 2'h1 : 2'h0;
+  assign sel513 = (reg145 == 2'h3) ? 2'h1 : 2'h0;
   always @(*) begin
     case (reg145)
       2'h1: sel504 = 1'h1;
@@ -1580,7 +1580,7 @@ module spmv_pe(
       default: sel504 = 1'h0;
     endcase
   end
-  assign io_lsu_wr_req_data18 = {sel513, sel512, sel511};
+  assign io_lsu_wr_req_data18 = {sel515, sel514, sel513};
 
   assign io_req_ready = bindout49;
   assign io_lsu_wr_req_valid = sel504;
@@ -1875,10 +1875,10 @@ module spmv_write_cache(
   wire eq112;
   wire[1:0] proxy137; // v3010 - owners(0)
   wire sel131;
-  wire sel350; // wrcache.h(143)
+  wire sel311; // wrcache.h(143)
   wire eq140;
   wire and114;
-  wire[19:0] sel316; // wrcache.h(143)
+  wire[19:0] sel321; // wrcache.h(143)
   wire[1:0] proxy173; // v3034 - owners(0)
   wire add290;
   wire sel143;
@@ -1894,12 +1894,12 @@ module spmv_write_cache(
   wire[1:0] proxy219; // v3066 - owners(0)
   wire[19:0] proxy204; // v3055 - tag(0)
   wire[1:0] proxy208; // v3058 - owners(0)
-  wire sel319; // wrcache.h(232)
-  wire sel317; // wrcache.h(135)
-  wire sel309; // wrcache.h(180)
-  wire sel308; // wrcache.h(160)
-  wire eq312;
-  wire sel314; // wrcache.h(146)
+  wire sel314; // wrcache.h(232)
+  wire sel312; // wrcache.h(135)
+  wire sel304; // wrcache.h(180)
+  wire sel303; // wrcache.h(160)
+  wire eq307;
+  wire sel309; // wrcache.h(146)
   wire[1:0] and266;
   wire[1:0] or221;
   wire[1:0] proxy188; // v3044 - owners(0)
@@ -1907,13 +1907,13 @@ module spmv_write_cache(
   wire ne211;
   wire ne178;
   wire eq180;
-  wire sel320; // wrcache.h(226)
-  wire sel318; // wrcache.h(121)
-  wire sel310; // wrcache.h(146)
-  wire and313;
+  wire sel315; // wrcache.h(226)
+  wire sel313; // wrcache.h(121)
+  wire sel305; // wrcache.h(146)
+  wire and308;
   reg reg155;
   reg reg147;
-  wire sel315; // wrcache.h(143)
+  wire sel310; // wrcache.h(143)
   wire[19:0] proxy270; // v3104 - tag(0)
   wire ne259;
   wire[19:0] proxy78; // v2967 - tag(0)
@@ -1923,8 +1923,8 @@ module spmv_write_cache(
   wire ne237;
   wire ne230;
   wire[511:0] or216;
-  reg sel321; // wrcache.h(119)
-  wire sel311; // wrcache.h(143)
+  reg sel316; // wrcache.h(119)
+  wire sel306; // wrcache.h(143)
   wire[21:0] tag_t272; // v3105 - wrcache.h(204)
   wire[19:0] proxy246; // v3086 - tag(0)
   wire[21:0] tag_t234; // v3076 - wrcache.h(173)
@@ -1937,27 +1937,27 @@ module spmv_write_cache(
   wire and182;
   wire[511:0] or185;
   reg reg11; // v2932 - wrcache.h(58)
-  wire sel343; // wrcache.h(201)
-  wire[21:0] sel357; // wrcache.h(201)
+  wire sel338; // wrcache.h(201)
+  wire[21:0] sel344; // wrcache.h(201)
   wire[21:0] tag_t248; // v3087 - wrcache.h(196)
-  wire[21:0] sel355; // wrcache.h(146)
+  wire[21:0] sel342; // wrcache.h(146)
   wire[21:0] tag_t196; // v3050 - wrcache.h(129)
   wire eq362;
   wire and332;
   wire eq242;
   wire[2:0] sel326; // wrcache.h(180)
   wire[2:0] sel325; // wrcache.h(160)
-  wire[511:0] sel347; // wrcache.h(146)
-  wire and341;
+  wire[511:0] sel357; // wrcache.h(146)
+  wire and318;
   reg reg38; // v2946 - wrcache.h(58)
   reg reg169; // v3030 - wrcache.h(102)
-  wire sel337; // wrcache.h(146)
-  wire sel344; // wrcache.h(193)
-  wire sel342; // wrcache.h(143)
-  wire sel340; // wrcache.h(124)
-  wire[21:0] sel358; // wrcache.h(193)
-  wire[21:0] sel356; // wrcache.h(143)
-  wire[21:0] sel354; // wrcache.h(124)
+  wire sel348; // wrcache.h(146)
+  wire sel339; // wrcache.h(193)
+  wire sel337; // wrcache.h(143)
+  wire sel336; // wrcache.h(124)
+  wire[21:0] sel345; // wrcache.h(193)
+  wire[21:0] sel343; // wrcache.h(143)
+  wire[21:0] sel341; // wrcache.h(124)
   wire[533:0] sel360; // wrcache.h(124)
   wire and363;
   wire[2:0] sel333; // wrcache.h(243)
@@ -1965,23 +1965,23 @@ module spmv_write_cache(
   wire[2:0] sel327; // wrcache.h(146)
   wire[2:0] sel323; // wrcache.h(135)
   wire[2:0] sel322; // wrcache.h(124)
-  wire sel352; // wrcache.h(143)
-  wire sel351; // wrcache.h(124)
-  wire[511:0] sel348; // wrcache.h(143)
-  wire[511:0] sel346; // wrcache.h(124)
-  wire sel338; // wrcache.h(143)
-  wire sel336; // wrcache.h(121)
-  reg sel345; // wrcache.h(119)
-  reg[21:0] sel359; // wrcache.h(119)
+  wire sel319; // wrcache.h(143)
+  wire sel317; // wrcache.h(124)
+  wire[511:0] sel358; // wrcache.h(143)
+  wire[511:0] sel356; // wrcache.h(124)
+  wire sel349; // wrcache.h(143)
+  wire sel347; // wrcache.h(121)
+  reg sel340; // wrcache.h(119)
+  reg[21:0] sel346; // wrcache.h(119)
   wire[533:0] sel361; // wrcache.h(121)
   wire[2:0] sel334; // wrcache.h(226)
   wire[2:0] sel330; // wrcache.h(218)
   wire[2:0] sel329; // wrcache.h(193)
   wire[2:0] sel328; // wrcache.h(143)
   wire[2:0] sel324; // wrcache.h(121)
-  reg sel353; // wrcache.h(119)
-  reg[511:0] sel349; // wrcache.h(119)
-  reg sel339; // wrcache.h(119)
+  reg sel320; // wrcache.h(119)
+  reg[511:0] sel359; // wrcache.h(119)
+  reg sel350; // wrcache.h(119)
   reg[21:0] mem1[0:1];
   wire[1:0] proxy280; // v3113 - owners(0)
   reg[2:0] sel335; // wrcache.h(119)
@@ -1990,16 +1990,16 @@ module spmv_write_cache(
   wire ne283;
   wire[19:0] proxy287; // v3119 - tag(0)
   reg[2:0] reg74; // v2962 - wrcache.h(68)
-  wire[511:0] sel304; // wrcache.h(226)
-  wire[19:0] sel302; // wrcache.h(226)
+  wire[511:0] sel354; // wrcache.h(226)
+  wire[19:0] sel352; // wrcache.h(226)
   wire[19:0] proxy277; // v3110 - tag(0)
   wire[1:0] proxy77; // v2966 - owner(0)
-  wire sel306; // wrcache.h(226)
+  wire sel301; // wrcache.h(226)
   wire eq162;
-  reg[511:0] sel305; // wrcache.h(119)
-  reg[19:0] sel303; // wrcache.h(119)
-  wire[1:0] sel301; // wrcache.h(119)
-  reg sel307; // wrcache.h(119)
+  reg[511:0] sel355; // wrcache.h(119)
+  reg[19:0] sel353; // wrcache.h(119)
+  wire[1:0] sel351; // wrcache.h(119)
+  reg sel302; // wrcache.h(119)
   wire[533:0] io_evict_data55; // v2956 - wrcache.h(58)
 
   assign proxy123 = mem1[1'h1][1:0];
@@ -2011,111 +2011,111 @@ module spmv_write_cache(
   assign eq112 = proxy111 == io_enq_data[21:2];
   assign proxy137 = mem1[1'h0][1:0];
   assign sel131 = ne128 ? 1'h1 : 1'h0;
-  assign sel350 = and313 ? reg147 : 1'h0;
+  assign sel311 = and308 ? reg147 : 1'h0;
   assign eq140 = proxy137 == 2'h0;
   assign and114 = eq112 & ne105;
-  assign sel316 = and313 ? proxy78 : reg18;
-  assign proxy173 = mem1[sel339][1:0];
+  assign sel321 = and308 ? proxy78 : reg18;
+  assign proxy173 = mem1[sel350][1:0];
   assign add290 = reg38 + 1'h1;
   assign sel143 = eq140 ? 1'h0 : 1'h1;
   assign sel117 = and114 ? 1'h1 : 1'h0;
   assign inv261 = ~proxy77;
-  assign proxy254 = mem1[sel339][1:0];
+  assign proxy254 = mem1[sel350][1:0];
   always @ (posedge clk) begin
     reg151 <= reset ? 1'h0 : sel131;
   end
   assign and175 = proxy173 & io_enq_data[1:0];
   always @ (posedge clk) begin
-    reg18 <= reset ? 20'h0 : sel316;
+    reg18 <= reset ? 20'h0 : sel321;
   end
   assign add296 = reg38 + 1'h1;
-  assign proxy264 = mem1[sel339][1:0];
+  assign proxy264 = mem1[sel350][1:0];
   assign and256 = proxy254 & proxy77;
-  assign proxy219 = mem1[sel339][1:0];
-  assign proxy204 = mem1[sel350][21:2];
-  assign proxy208 = mem1[sel350][1:0];
-  assign sel319 = io_evict_ready ? add290 : reg38;
-  assign sel317 = io_flush ? 1'h0 : reg38;
-  assign sel309 = ne237 ? reg151 : reg169;
-  assign sel308 = ne230 ? reg151 : reg169;
-  assign eq312 = reg74 == 3'h1;
-  assign sel314 = and213 ? reg147 : reg155;
+  assign proxy219 = mem1[sel350][1:0];
+  assign proxy204 = mem1[sel311][21:2];
+  assign proxy208 = mem1[sel311][1:0];
+  assign sel314 = io_evict_ready ? add290 : reg38;
+  assign sel312 = io_flush ? 1'h0 : reg38;
+  assign sel304 = ne237 ? reg151 : reg169;
+  assign sel303 = ne230 ? reg151 : reg169;
+  assign eq307 = reg74 == 3'h1;
+  assign sel309 = and213 ? reg147 : reg155;
   assign and266 = proxy264 & inv261;
   assign or221 = proxy219 | proxy77;
-  assign proxy188 = mem1[sel339][1:0];
+  assign proxy188 = mem1[sel350][1:0];
   assign eq205 = proxy204 == proxy78;
   assign ne211 = proxy208 != 2'h0;
   assign ne178 = and175 != 2'h0;
   assign eq180 = io_enq_data[21:2] == reg18;
-  assign sel320 = ne283 ? sel319 : add296;
-  assign sel318 = io_enq_valid ? reg38 : sel317;
-  assign sel310 = and213 ? sel308 : sel309;
-  assign and313 = eq312 & reg159;
+  assign sel315 = ne283 ? sel314 : add296;
+  assign sel313 = io_enq_valid ? reg38 : sel312;
+  assign sel305 = and213 ? sel303 : sel304;
+  assign and308 = eq307 & reg159;
   always @ (posedge clk) begin
     reg155 <= reset ? 1'h0 : sel143;
   end
   always @ (posedge clk) begin
     reg147 <= reset ? 1'h0 : sel117;
   end
-  assign sel315 = and313 ? sel314 : reg11;
-  assign proxy270 = mem1[sel339][21:2];
+  assign sel310 = and308 ? sel309 : reg11;
+  assign proxy270 = mem1[sel350][21:2];
   assign ne259 = and256 != 2'h0;
   assign proxy78 = reg87[21:2];
-  assign proxy225 = mem1[sel339][21:2];
+  assign proxy225 = mem1[sel350][21:2];
   assign or190 = proxy188 | io_enq_data[1:0];
   assign eq293 = reg38 == 1'h1;
   assign ne237 = reg155 != reg151;
   assign ne230 = reg147 != reg151;
-  assign or216 = mem3[sel339] | reg87[533:22];
+  assign or216 = mem3[sel350] | reg87[533:22];
   always @(*) begin
     case (reg74)
-      3'h0: sel321 = sel318;
-      3'h4: sel321 = sel320;
-      default: sel321 = reg38;
+      3'h0: sel316 = sel313;
+      3'h4: sel316 = sel315;
+      default: sel316 = reg38;
     endcase
   end
-  assign sel311 = and313 ? sel310 : reg169;
+  assign sel306 = and308 ? sel305 : reg169;
   assign tag_t272 = {proxy270, and266};
-  assign proxy246 = mem1[sel339][21:2];
+  assign proxy246 = mem1[sel350][21:2];
   assign tag_t234 = {proxy78, proxy77};
   assign tag_t227 = {proxy225, or221};
-  assign proxy194 = mem1[sel339][21:2];
+  assign proxy194 = mem1[sel350][21:2];
   assign eq299 = reg38 == 1'h1;
-  assign proxy240 = mem1[sel339][1:0];
+  assign proxy240 = mem1[sel350][1:0];
   assign and213 = ne211 & eq205;
   always @ (posedge clk) begin
     reg159 <= reset ? 1'h0 : io_enq_valid;
   end
   assign and182 = eq180 & ne178;
-  assign or185 = mem3[sel339] | io_enq_data[533:22];
+  assign or185 = mem3[sel350] | io_enq_data[533:22];
   always @ (posedge clk) begin
-    reg11 <= reset ? 1'h0 : sel315;
+    reg11 <= reset ? 1'h0 : sel310;
   end
-  assign sel343 = ne259 ? 1'h1 : 1'h0;
-  assign sel357 = ne259 ? tag_t272 : 22'h0;
+  assign sel338 = ne259 ? 1'h1 : 1'h0;
+  assign sel344 = ne259 ? tag_t272 : 22'h0;
   assign tag_t248 = {proxy246, 2'h0};
-  assign sel355 = and213 ? tag_t227 : tag_t234;
+  assign sel342 = and213 ? tag_t227 : tag_t234;
   assign tag_t196 = {proxy194, or190};
   assign eq362 = reg74 == 3'h0;
   assign and332 = io_evict_ready & eq293;
   assign eq242 = proxy240 == proxy77;
   assign sel326 = ne237 ? 3'h2 : 3'h0;
   assign sel325 = ne230 ? 3'h2 : 3'h0;
-  assign sel347 = and213 ? or216 : reg87[533:22];
-  assign and341 = io_enq_valid & and182;
+  assign sel357 = and213 ? or216 : reg87[533:22];
+  assign and318 = io_enq_valid & and182;
   always @ (posedge clk) begin
-    reg38 <= reset ? 1'h0 : sel321;
+    reg38 <= reset ? 1'h0 : sel316;
   end
   always @ (posedge clk) begin
-    reg169 <= reset ? 1'h0 : sel311;
+    reg169 <= reset ? 1'h0 : sel306;
   end
-  assign sel337 = and213 ? reg147 : reg155;
-  assign sel344 = eq242 ? 1'h1 : sel343;
-  assign sel342 = reg159 ? 1'h1 : 1'h0;
-  assign sel340 = and341 ? 1'h1 : 1'h0;
-  assign sel358 = eq242 ? tag_t248 : sel357;
-  assign sel356 = reg159 ? sel355 : 22'h0;
-  assign sel354 = and341 ? tag_t196 : 22'h0;
+  assign sel348 = and213 ? reg147 : reg155;
+  assign sel339 = eq242 ? 1'h1 : sel338;
+  assign sel337 = reg159 ? 1'h1 : 1'h0;
+  assign sel336 = and318 ? 1'h1 : 1'h0;
+  assign sel345 = eq242 ? tag_t248 : sel344;
+  assign sel343 = reg159 ? sel342 : 22'h0;
+  assign sel341 = and318 ? tag_t196 : 22'h0;
   assign sel360 = and182 ? reg87 : io_enq_data;
   assign and363 = eq362 & io_enq_valid;
   assign sel333 = eq299 ? 3'h0 : reg74;
@@ -2123,26 +2123,26 @@ module spmv_write_cache(
   assign sel327 = and213 ? sel325 : sel326;
   assign sel323 = io_flush ? 3'h4 : reg74;
   assign sel322 = and182 ? reg74 : 3'h1;
-  assign sel352 = reg159 ? 1'h1 : 1'h0;
-  assign sel351 = and341 ? 1'h1 : 1'h0;
-  assign sel348 = reg159 ? sel347 : lit170;
-  assign sel346 = and341 ? or185 : lit170;
-  assign sel338 = reg159 ? sel337 : 1'h0;
-  assign sel336 = io_enq_valid ? reg11 : 1'h0;
+  assign sel319 = reg159 ? 1'h1 : 1'h0;
+  assign sel317 = and318 ? 1'h1 : 1'h0;
+  assign sel358 = reg159 ? sel357 : lit170;
+  assign sel356 = and318 ? or185 : lit170;
+  assign sel349 = reg159 ? sel348 : 1'h0;
+  assign sel347 = io_enq_valid ? reg11 : 1'h0;
   always @(*) begin
     case (reg74)
-      3'h0: sel345 = sel340;
-      3'h1: sel345 = sel342;
-      3'h2: sel345 = sel344;
-      default: sel345 = 1'h0;
+      3'h0: sel340 = sel336;
+      3'h1: sel340 = sel337;
+      3'h2: sel340 = sel339;
+      default: sel340 = 1'h0;
     endcase
   end
   always @(*) begin
     case (reg74)
-      3'h0: sel359 = sel354;
-      3'h1: sel359 = sel356;
-      3'h2: sel359 = sel358;
-      default: sel359 = 22'h0;
+      3'h0: sel346 = sel341;
+      3'h1: sel346 = sel343;
+      3'h2: sel346 = sel345;
+      default: sel346 = 22'h0;
     endcase
   end
   assign sel361 = and363 ? sel360 : reg87;
@@ -2153,34 +2153,34 @@ module spmv_write_cache(
   assign sel324 = io_enq_valid ? sel322 : sel323;
   always @(*) begin
     case (reg74)
-      3'h0: sel353 = sel351;
-      3'h1: sel353 = sel352;
-      default: sel353 = 1'h0;
+      3'h0: sel320 = sel317;
+      3'h1: sel320 = sel319;
+      default: sel320 = 1'h0;
     endcase
   end
   always @(*) begin
     case (reg74)
-      3'h0: sel349 = sel346;
-      3'h1: sel349 = sel348;
-      default: sel349 = lit170;
+      3'h0: sel359 = sel356;
+      3'h1: sel359 = sel358;
+      default: sel359 = lit170;
     endcase
   end
   always @(*) begin
     case (reg74)
-      3'h0: sel339 = sel336;
-      3'h1: sel339 = sel338;
-      3'h2: sel339 = reg169;
-      3'h3: sel339 = reg169;
-      3'h4: sel339 = reg38;
-      default: sel339 = 1'h0;
+      3'h0: sel350 = sel347;
+      3'h1: sel350 = sel349;
+      3'h2: sel350 = reg169;
+      3'h3: sel350 = reg169;
+      3'h4: sel350 = reg38;
+      default: sel350 = 1'h0;
     endcase
   end
   always @(posedge clk) begin
-    if (sel345) begin
-      mem1[sel339] = sel359;
+    if (sel340) begin
+      mem1[sel350] = sel346;
     end
   end
-  assign proxy280 = mem1[sel339][1:0];
+  assign proxy280 = mem1[sel350][1:0];
   always @(*) begin
     case (reg74)
       3'h0: sel335 = sel324;
@@ -2192,50 +2192,50 @@ module spmv_write_cache(
     endcase
   end
   always @(posedge clk) begin
-    if (sel353) begin
-      mem3[sel339] = sel349;
+    if (sel320) begin
+      mem3[sel350] = sel359;
     end
   end
   always @ (posedge clk) begin
     reg87 <= reset ? lit85 : sel361;
   end
   assign ne283 = proxy280 != 2'h0;
-  assign proxy287 = mem1[sel339][21:2];
+  assign proxy287 = mem1[sel350][21:2];
   always @ (posedge clk) begin
     reg74 <= reset ? 3'h0 : sel335;
   end
-  assign sel304 = ne283 ? mem3[sel339] : lit170;
-  assign sel302 = ne283 ? proxy287 : 20'h0;
-  assign proxy277 = mem1[sel339][21:2];
+  assign sel354 = ne283 ? mem3[sel350] : lit170;
+  assign sel352 = ne283 ? proxy287 : 20'h0;
+  assign proxy277 = mem1[sel350][21:2];
   assign proxy77 = reg87[1:0];
-  assign sel306 = ne283 ? 1'h1 : 1'h0;
+  assign sel301 = ne283 ? 1'h1 : 1'h0;
   assign eq162 = reg74 == 3'h0;
   always @(*) begin
     case (reg74)
-      3'h3: sel305 = mem3[sel339];
-      3'h4: sel305 = sel304;
-      default: sel305 = lit170;
+      3'h3: sel355 = mem3[sel350];
+      3'h4: sel355 = sel354;
+      default: sel355 = lit170;
     endcase
   end
   always @(*) begin
     case (reg74)
-      3'h3: sel303 = proxy277;
-      3'h4: sel303 = sel302;
-      default: sel303 = 20'h0;
+      3'h3: sel353 = proxy277;
+      3'h4: sel353 = sel352;
+      default: sel353 = 20'h0;
     endcase
   end
-  assign sel301 = (reg74 == 3'h3) ? proxy77 : 2'h0;
+  assign sel351 = (reg74 == 3'h3) ? proxy77 : 2'h0;
   always @(*) begin
     case (reg74)
-      3'h3: sel307 = 1'h1;
-      3'h4: sel307 = sel306;
-      default: sel307 = 1'h0;
+      3'h3: sel302 = 1'h1;
+      3'h4: sel302 = sel301;
+      default: sel302 = 1'h0;
     endcase
   end
-  assign io_evict_data55 = {sel305, sel303, sel301};
+  assign io_evict_data55 = {sel355, sel353, sel351};
 
   assign io_enq_ready = eq162;
-  assign io_evict_valid = sel307;
+  assign io_evict_valid = sel302;
   assign io_evict_data = io_evict_data55;
 
 endmodule
@@ -2336,7 +2336,7 @@ module spmv_lsu(
   wire[533:0] ch_lsu_wr_req_t375; // v3180 - /home/blaise/dev/cash/src/seq.h(17)
   wire[2:0] proxy452; // v3219 - lsu.cpp(116)
   reg[2:0] reg387; // v3185 - lsu.cpp(82)
-  reg[19:0] sel481; // lsu.cpp(273)
+  reg[19:0] sel480; // lsu.cpp(273)
   reg[2:0] reg349; // v3162 - lsu.cpp(70)
   wire sel490; // lsu.cpp(127)
   wire sel489; // lsu.cpp(105)
@@ -2370,23 +2370,23 @@ module spmv_lsu(
   wire[31:0] sub432;
   wire[31:0] sub472;
   wire eq475;
-  wire[511:0] sel482; // lsu.cpp(114)
-  wire[13:0] sel485; // lsu.cpp(114)
+  wire[511:0] sel481; // lsu.cpp(114)
+  wire[13:0] sel484; // lsu.cpp(114)
   wire[13:0] proxy448; // v3217 - lsu.cpp(110)
-  wire[19:0] sel478; // lsu.cpp(114)
+  wire[19:0] sel477; // lsu.cpp(114)
   reg reg355; // v3165 - lsu.cpp(71)
   wire[2:0] proxy206; // v2709 - type(0)
   wire[2:0] proxy527; // v3241 - owner(0)
   wire and476;
-  wire[511:0] sel483; // lsu.cpp(105)
-  wire[13:0] sel486; // lsu.cpp(105)
-  wire[19:0] sel479; // lsu.cpp(105)
+  wire[511:0] sel482; // lsu.cpp(105)
+  wire[13:0] sel485; // lsu.cpp(105)
+  wire[19:0] sel478; // lsu.cpp(105)
   wire bindout203;
   wire[5:0] ch_rd_mdata_t336; // v3156 - lsu.cpp(55)
   wire[19:0] add333;
   wire eq539;
   wire eq534;
-  wire[31:0] sel474; // lsu.cpp(127)
+  wire[31:0] sel487; // lsu.cpp(127)
   wire eq529;
   wire bindin265;
   wire[533:0] bindin250;
@@ -2406,10 +2406,10 @@ module spmv_lsu(
   wire bindin170;
   wire bindin169;
   wire bindin167;
-  wire sel477; // lsu.cpp(127)
-  wire[511:0] sel484; // lsu.cpp(103)
-  wire[13:0] sel487; // lsu.cpp(103)
-  wire[19:0] sel480; // lsu.cpp(103)
+  wire sel474; // lsu.cpp(127)
+  wire[511:0] sel483; // lsu.cpp(103)
+  wire[13:0] sel486; // lsu.cpp(103)
+  wire[19:0] sel479; // lsu.cpp(103)
   wire[13:0] proxy343; // v3161 - lsu.cpp(55)
   wire bindout241;
   wire bindout229;
@@ -2497,9 +2497,9 @@ module spmv_lsu(
   spmv_write_cache __module28__(.clk(bindin272), .reset(bindin273), .io_enq_valid(bindin274), .io_enq_data(bindin280), .io_evict_ready(bindin295), .io_flush(bindin298), .io_enq_ready(bindout283), .io_evict_valid(bindout286), .io_evict_data(bindout292));
   always @(*) begin
     case (proxy371)
-      2'h0: sel481 = proxy62;
-      2'h1: sel481 = proxy63;
-      default: sel481 = io_ctx[231:212];
+      2'h0: sel480 = proxy62;
+      2'h1: sel480 = proxy63;
+      default: sel480 = io_ctx[231:212];
     endcase
   end
   always @ (posedge clk) begin
@@ -2536,7 +2536,7 @@ module spmv_lsu(
   assign eq467 = io_qpi_wr_req_almostfull == 1'h0;
   assign proxy465 = {9'h0, ch_wr_mdata_t454};
   assign ch_wr_mdata_t435 = {reg387, proxy371};
-  assign add443 = sel481 + reg381[21:2];
+  assign add443 = sel480 + reg381[21:2];
   assign sel506 = (reg349 == 3'h1) ? 1'h1 : 1'h0;
   always @(*) begin
     case (proxy206)
@@ -2552,24 +2552,24 @@ module spmv_lsu(
   assign sub432 = reg406 - sel399;
   assign sub472 = add470 - sel399;
   assign eq475 = reg355 == 1'h1;
-  assign sel482 = bindout286 ? bindout292[533:22] : reg425;
-  assign sel485 = bindout286 ? proxy465 : reg431;
+  assign sel481 = bindout286 ? bindout292[533:22] : reg425;
+  assign sel484 = bindout286 ? proxy465 : reg431;
   assign proxy448 = {9'h0, ch_wr_mdata_t435};
-  assign sel478 = bindout286 ? add461 : reg418;
+  assign sel477 = bindout286 ? add461 : reg418;
   always @ (posedge clk) begin
     reg355 <= reset ? 1'h0 : sel491;
   end
   assign proxy206 = bindout208[2:0];
   assign proxy527 = proxy525[5:3];
   assign and476 = eq475 & eq467;
-  assign sel483 = sel506 ? reg381[533:22] : sel482;
-  assign sel486 = sel506 ? proxy448 : sel485;
-  assign sel479 = sel506 ? add443 : sel478;
+  assign sel482 = sel506 ? reg381[533:22] : sel481;
+  assign sel485 = sel506 ? proxy448 : sel484;
+  assign sel478 = sel506 ? add443 : sel477;
   assign ch_rd_mdata_t336 = {bindout214, proxy206};
   assign add333 = sel332 + bindout208[22:3];
   assign eq539 = proxy527 == 3'h2;
   assign eq534 = proxy527 == 3'h1;
-  assign sel474 = and476 ? sub472 : sub432;
+  assign sel487 = and476 ? sub472 : sub432;
   assign eq529 = proxy527 == 3'h4;
   assign bindin265 = eq362;
   assign bindin250 = io_ctrl_wr_req_data;
@@ -2589,31 +2589,31 @@ module spmv_lsu(
   assign bindin170 = io_walkers_0_rd_req_valid;
   assign bindin169 = reset;
   assign bindin167 = clk;
-  assign sel477 = and476 ? 1'h1 : 1'h0;
-  assign sel484 = (reg355 == 1'h0) ? sel483 : reg425;
-  assign sel487 = (reg355 == 1'h0) ? sel486 : reg431;
-  assign sel480 = (reg355 == 1'h0) ? sel479 : reg418;
+  assign sel474 = and476 ? 1'h1 : 1'h0;
+  assign sel483 = (reg355 == 1'h0) ? sel482 : reg425;
+  assign sel486 = (reg355 == 1'h0) ? sel485 : reg431;
+  assign sel479 = (reg355 == 1'h0) ? sel478 : reg418;
   assign proxy343 = {8'h0, ch_rd_mdata_t336};
   ch_xbar_switch_0 __module25__(.clk(bindin218), .reset(bindin219), .io_in_0_valid(bindin220), .io_in_0_data(bindin226), .io_in_1_valid(bindin232), .io_in_1_data(bindin238), .io_in_2_valid(bindin244), .io_in_2_data(bindin250), .io_out_ready(bindin265), .io_in_0_ready(bindout229), .io_in_1_ready(bindout241), .io_in_2_ready(bindout253), .io_out_valid(bindout256), .io_out_data(bindout262), .io_out_grant(bindout268));
   ch_xbar_switch __module22__(.clk(bindin167), .reset(bindin169), .io_in_0_valid(bindin170), .io_in_0_data(bindin175), .io_in_1_valid(bindin181), .io_in_1_data(bindin186), .io_in_2_valid(bindin192), .io_in_2_data(bindin197), .io_out_ready(bindin211), .io_in_0_ready(bindout178), .io_in_1_ready(bindout189), .io_in_2_ready(bindout200), .io_out_valid(bindout203), .io_out_data(bindout208), .io_out_grant(bindout214));
   assign and541 = io_qpi_rd_rsp_valid & eq539;
   assign and536 = io_qpi_rd_rsp_valid & eq534;
   always @ (posedge clk) begin
-    reg406 <= reset ? 32'h0 : sel474;
+    reg406 <= reset ? 32'h0 : sel487;
   end
   assign proxy525 = io_qpi_rd_rsp_mdata[5:0];
   assign and531 = io_qpi_rd_rsp_valid & eq529;
   always @ (posedge clk) begin
-    reg412 <= reset ? 1'h0 : sel477;
+    reg412 <= reset ? 1'h0 : sel474;
   end
   always @ (posedge clk) begin
-    reg425 <= reset ? lit423 : sel484;
+    reg425 <= reset ? lit423 : sel483;
   end
   always @ (posedge clk) begin
-    reg431 <= reset ? 14'h0 : sel487;
+    reg431 <= reset ? 14'h0 : sel486;
   end
   always @ (posedge clk) begin
-    reg418 <= reset ? 20'h0 : sel480;
+    reg418 <= reset ? 20'h0 : sel479;
   end
   always @ (posedge clk) begin
     reg308 <= reset ? 1'h0 : bindout203;
@@ -2748,15 +2748,15 @@ module spmv_device(
   wire[4:0] sub776;
   wire eq564;
   wire bindout369;
-  wire[4:0] sel817; // spmv.cpp(197)
+  wire[4:0] sel843; // spmv.cpp(197)
   wire[31:0] sll599;
   wire[514:0] bindout374;
-  wire[4:0] sel820; // spmv.cpp(214)
-  wire[4:0] sel819; // spmv.cpp(214)
-  wire[4:0] sel818; // spmv.cpp(195)
+  wire[4:0] sel846; // spmv.cpp(214)
+  wire[4:0] sel845; // spmv.cpp(214)
+  wire[4:0] sel844; // spmv.cpp(195)
   reg[19:0] reg531; // v3399 - spmv.cpp(15)
   wire and566;
-  reg[4:0] sel821; // spmv.cpp(192)
+  reg[4:0] sel847; // spmv.cpp(192)
   wire[31:0] add603;
   wire ne803;
   wire ne780;
@@ -2781,40 +2781,40 @@ module spmv_device(
   wire[511:0] bindout457;
   wire eq750;
   wire bindout454;
-  wire[1:0] sel827; // spmv.cpp(233)
-  wire[1:0] sel825; // spmv.cpp(233)
+  wire[1:0] sel818; // spmv.cpp(233)
+  wire[1:0] sel816; // spmv.cpp(233)
   wire eq849;
   wire and577;
   wire and586;
-  wire[19:0] sel809; // spmv.cpp(214)
-  wire[19:0] sel808; // spmv.cpp(214)
+  wire[19:0] sel813; // spmv.cpp(214)
+  wire[19:0] sel812; // spmv.cpp(214)
   wire[19:0] sub612;
-  wire[31:0] sel843; // spmv.cpp(197)
-  wire[479:0] sel837; // spmv.cpp(197)
-  wire and832;
-  wire[1:0] sel828; // spmv.cpp(214)
-  wire[1:0] sel826; // spmv.cpp(214)
-  wire[1:0] sel824; // spmv.cpp(195)
+  wire[31:0] sel838; // spmv.cpp(197)
+  wire[479:0] sel832; // spmv.cpp(197)
+  wire and827;
+  wire[1:0] sel819; // spmv.cpp(214)
+  wire[1:0] sel817; // spmv.cpp(214)
+  wire[1:0] sel815; // spmv.cpp(195)
   wire and850;
-  reg[19:0] sel810; // spmv.cpp(192)
-  wire[31:0] sel846; // spmv.cpp(214)
-  wire[31:0] sel845; // spmv.cpp(214)
-  wire[31:0] sel844; // spmv.cpp(195)
-  wire[479:0] sel840; // spmv.cpp(214)
-  wire[479:0] sel839; // spmv.cpp(214)
-  wire[479:0] sel838; // spmv.cpp(195)
-  wire[31:0] sel834; // spmv.cpp(214)
-  wire[31:0] sel833; // spmv.cpp(214)
-  wire[31:0] sel831; // spmv.cpp(197)
-  reg[1:0] sel829; // spmv.cpp(192)
+  reg[19:0] sel814; // spmv.cpp(192)
+  wire[31:0] sel841; // spmv.cpp(214)
+  wire[31:0] sel840; // spmv.cpp(214)
+  wire[31:0] sel839; // spmv.cpp(195)
+  wire[479:0] sel835; // spmv.cpp(214)
+  wire[479:0] sel834; // spmv.cpp(214)
+  wire[479:0] sel833; // spmv.cpp(195)
+  wire[31:0] sel829; // spmv.cpp(214)
+  wire[31:0] sel828; // spmv.cpp(214)
+  wire[31:0] sel826; // spmv.cpp(197)
+  reg[1:0] sel820; // spmv.cpp(192)
   wire[31:0] add631;
   wire sel848; // spmv.cpp(195)
   wire[31:0] proxy581; // v3426 - spmv.cpp(68)
   wire bindout274;
   wire and589;
-  reg[31:0] sel847; // spmv.cpp(192)
-  reg[479:0] sel841; // spmv.cpp(192)
-  reg[31:0] sel835; // spmv.cpp(192)
+  reg[31:0] sel842; // spmv.cpp(192)
+  reg[479:0] sel836; // spmv.cpp(192)
+  reg[31:0] sel830; // spmv.cpp(192)
   wire[31:0] add634;
   wire[31:0] add582;
   wire[19:0] proxy533; // v3402 - spmv.cpp(32)
@@ -2823,23 +2823,23 @@ module spmv_device(
   wire[63:0] add547;
   wire[543:0] proxy467; // v3369 - /home/blaise/dev/cash/src/seq.h(17)
   reg[1:0] reg748; // v3507 - spmv.cpp(181)
-  wire[31:0] sel724; // spmv.cpp(114)
+  wire[31:0] sel733; // spmv.cpp(114)
   wire[31:0] proxy571; // v3420 - spmv.cpp(69)
   wire and591;
   wire bindout153;
   reg[543:0] reg470; // v3368 - spmv.cpp(15)
   wire bindout89;
-  wire[31:0] sel725; // spmv.cpp(111)
+  wire[31:0] sel734; // spmv.cpp(111)
   wire[31:0] sub584;
   wire eq636;
   wire eq627;
-  wire eq812;
-  wire eq815;
+  wire eq809;
+  wire eq822;
   wire[63:0] bindout271;
   wire[351:0] bindout170;
   wire[63:0] bindout235;
   wire[351:0] bindout106;
-  wire[31:0] sel726; // spmv.cpp(96)
+  wire[31:0] sel735; // spmv.cpp(96)
   wire[1:0] add701;
   wire eq711;
   wire bindout354;
@@ -2854,46 +2854,46 @@ module spmv_device(
   wire[514:0] bindout415;
   wire bindout410;
   wire bindout407;
-  wire and813;
+  wire and810;
   wire bindout218;
   wire[514:0] bindout396;
   wire bindout391;
   wire bindout388;
   reg[63:0] reg544; // v3405 - spmv.cpp(36)
-  wire and816;
+  wire and823;
   wire[95:0] ch_ctrl_stats_t511; // v3390 - /home/blaise/dev/cash/src/seq.h(17)
   wire and712;
   wire[19:0] add625;
   wire bindout366;
   wire and638;
-  wire and729;
+  wire and724;
   wire[63:0] sel811; // spmv.cpp(214)
-  wire sel822; // spmv.cpp(214)
-  wire[63:0] sel823; // spmv.cpp(214)
-  wire sel814; // spmv.cpp(214)
+  wire sel808; // spmv.cpp(214)
+  wire[63:0] sel824; // spmv.cpp(214)
+  wire sel821; // spmv.cpp(214)
   wire[415:0] ch_stats_t676; // v3482 - spmv.cpp(267)
   wire[415:0] ch_stats_t655; // v3463 - spmv.cpp(262)
   reg[95:0] reg517; // v3386 - spmv.cpp(15)
   wire[1:0] sel710; // spmv.cpp(153)
-  wire and721;
+  wire and720;
   reg[31:0] reg484; // v3374 - spmv.cpp(15)
   wire[131:0] proxy51; // v18 - a(0)
-  wire and734;
-  wire and730;
-  wire and719;
+  wire and729;
+  wire and725;
+  wire and718;
   wire[511:0] proxy694; // v3499 - spmv.cpp(270)
   wire[511:0] proxy673; // v3480 - spmv.cpp(265)
   wire eq695;
-  wire[19:0] sel720; // spmv.cpp(114)
-  wire[19:0] sel718; // spmv.cpp(99)
+  wire[19:0] sel719; // spmv.cpp(114)
+  wire[19:0] sel717; // spmv.cpp(99)
   wire[31:0] bindout377;
   wire[31:0] proxy52; // v19 - num_parts(0)
-  wire[2:0] sel735; // spmv.cpp(163)
-  wire[2:0] sel733; // spmv.cpp(155)
-  wire[2:0] sel732; // spmv.cpp(141)
-  wire[2:0] sel731; // spmv.cpp(131)
-  wire[2:0] sel728; // spmv.cpp(116)
-  wire[2:0] sel727; // spmv.cpp(99)
+  wire[2:0] sel730; // spmv.cpp(163)
+  wire[2:0] sel728; // spmv.cpp(155)
+  wire[2:0] sel727; // spmv.cpp(141)
+  wire[2:0] sel726; // spmv.cpp(131)
+  wire[2:0] sel723; // spmv.cpp(116)
+  wire[2:0] sel722; // spmv.cpp(99)
   wire bindin266;
   wire[84:0] bindin251;
   wire bindin244;
@@ -2926,10 +2926,10 @@ module spmv_device(
   wire[511:0] proxy652; // v3461 - spmv.cpp(260)
   wire eq697;
   reg[1:0] reg504; // v3383 - spmv.cpp(15)
-  reg[19:0] sel722; // spmv.cpp(96)
+  reg[19:0] sel721; // spmv.cpp(96)
   wire ne622;
   wire ne616;
-  reg[2:0] sel736; // spmv.cpp(96)
+  reg[2:0] sel731; // spmv.cpp(96)
   wire[511:0] sel698;
   wire eq738;
   wire eq708;
@@ -2944,18 +2944,18 @@ module spmv_device(
   wire[19:0] proxy647; // v3458 - spmv.cpp(149)
   reg[19:0] reg491; // v3377 - spmv.cpp(15)
   wire and739;
-  wire sel714; // spmv.cpp(99)
+  wire sel713; // spmv.cpp(99)
   reg[2:0] reg555; // v3410 - spmv.cpp(54)
   wire[511:0] sel742; // spmv.cpp(96)
   wire[19:0] sel741; // spmv.cpp(96)
   reg[1:0] sel740; // spmv.cpp(96)
-  reg sel713; // spmv.cpp(96)
+  reg sel736; // spmv.cpp(96)
   wire sel737; // spmv.cpp(111)
-  wire sel716; // spmv.cpp(163)
-  wire sel715; // spmv.cpp(98)
+  wire sel715; // spmv.cpp(163)
+  wire sel714; // spmv.cpp(98)
   wire[533:0] proxy359; // v3289 - /home/blaise/dev/cash/src/module.h(33)
   wire[22:0] proxy348; // v3284 - /home/blaise/dev/cash/src/module.h(33)
-  reg sel717; // spmv.cpp(96)
+  reg sel716; // spmv.cpp(96)
   wire[533:0] bindin436;
   wire bindin430;
   wire[533:0] bindin424;
@@ -2994,21 +2994,21 @@ module spmv_device(
   assign sub800 = reg477 - 5'h1;
   assign sub776 = reg477 - 5'h1;
   assign eq564 = bindout374[2:0] == 3'h0;
-  assign sel817 = eq750 ? 5'h80 : 5'h81;
+  assign sel843 = eq750 ? 5'h80 : 5'h81;
   assign sll599 = add595 << 32'h2;
-  assign sel820 = bindout153 ? sub800 : reg477;
-  assign sel819 = bindout89 ? sub776 : reg477;
-  assign sel818 = bindout454 ? sel817 : reg477;
+  assign sel846 = bindout153 ? sub800 : reg477;
+  assign sel845 = bindout89 ? sub776 : reg477;
+  assign sel844 = bindout454 ? sel843 : reg477;
   always @ (posedge clk) begin
     reg531 <= reset ? 20'h0 : sub536;
   end
   assign and566 = bindout369 & eq564;
   always @(*) begin
     case (reg748)
-      2'h0: sel821 = sel818;
-      2'h1: sel821 = sel819;
-      2'h2: sel821 = sel820;
-      default: sel821 = reg477;
+      2'h0: sel847 = sel844;
+      2'h1: sel847 = sel845;
+      2'h2: sel847 = sel846;
+      default: sel847 = reg477;
     endcase
   end
   assign add603 = sll599 + 32'h3f;
@@ -3016,7 +3016,7 @@ module spmv_device(
   assign ne780 = reg477 != 5'h10;
   assign ne782 = reg525 != reg531;
   always @ (posedge clk) begin
-    reg477 <= reset ? 5'h0 : sel821;
+    reg477 <= reset ? 5'h0 : sel847;
   end
   assign proxy349 = proxy348[2:0];
   assign srl607 = add603 >> 32'h6;
@@ -3035,43 +3035,43 @@ module spmv_device(
   assign srl791 = reg470 >> lit764;
   assign srl766 = reg470 >> lit764;
   assign eq750 = 5'h0 == reg477;
-  assign sel827 = and806 ? 2'h1 : 2'h0;
-  assign sel825 = and784 ? 2'h2 : 2'h0;
+  assign sel818 = and806 ? 2'h1 : 2'h0;
+  assign sel816 = and784 ? 2'h2 : 2'h0;
   assign eq849 = reg748 == 2'h0;
   assign and577 = and575 & eq573;
   assign and586 = bindout89 & bindout238;
-  assign sel809 = bindout153 ? add797 : reg525;
-  assign sel808 = bindout89 ? add772 : reg525;
+  assign sel813 = bindout153 ? add797 : reg525;
+  assign sel812 = bindout89 ? add772 : reg525;
   assign sub612 = srl607[19:0] - 20'h1;
-  assign sel843 = eq750 ? reg470[543:512] : bindout457[511:480];
-  assign sel837 = eq750 ? bindout457[511:32] : bindout457[479:0];
-  assign and832 = bindout454 & eq750;
-  assign sel828 = bindout153 ? sel827 : 2'h1;
-  assign sel826 = bindout89 ? sel825 : 2'h2;
-  assign sel824 = bindout454 ? 2'h1 : reg748;
+  assign sel838 = eq750 ? reg470[543:512] : bindout457[511:480];
+  assign sel832 = eq750 ? bindout457[511:32] : bindout457[479:0];
+  assign and827 = bindout454 & eq750;
+  assign sel819 = bindout153 ? sel818 : 2'h1;
+  assign sel817 = bindout89 ? sel816 : 2'h2;
+  assign sel815 = bindout454 ? 2'h1 : reg748;
   assign and850 = eq849 & bindout454;
   always @(*) begin
     case (reg748)
-      2'h1: sel810 = sel808;
-      2'h2: sel810 = sel809;
-      default: sel810 = reg525;
+      2'h1: sel814 = sel812;
+      2'h2: sel814 = sel813;
+      default: sel814 = reg525;
     endcase
   end
-  assign sel846 = bindout153 ? srl791[543:512] : reg470[543:512];
-  assign sel845 = bindout89 ? srl766[543:512] : reg470[543:512];
-  assign sel844 = bindout454 ? sel843 : reg470[543:512];
-  assign sel840 = bindout153 ? srl791[511:32] : reg470[511:32];
-  assign sel839 = bindout89 ? srl766[511:32] : reg470[511:32];
-  assign sel838 = bindout454 ? sel837 : reg470[511:32];
-  assign sel834 = bindout153 ? srl791[31:0] : reg470[31:0];
-  assign sel833 = bindout89 ? srl766[31:0] : reg470[31:0];
-  assign sel831 = and832 ? bindout457[31:0] : reg470[31:0];
+  assign sel841 = bindout153 ? srl791[543:512] : reg470[543:512];
+  assign sel840 = bindout89 ? srl766[543:512] : reg470[543:512];
+  assign sel839 = bindout454 ? sel838 : reg470[543:512];
+  assign sel835 = bindout153 ? srl791[511:32] : reg470[511:32];
+  assign sel834 = bindout89 ? srl766[511:32] : reg470[511:32];
+  assign sel833 = bindout454 ? sel832 : reg470[511:32];
+  assign sel829 = bindout153 ? srl791[31:0] : reg470[31:0];
+  assign sel828 = bindout89 ? srl766[31:0] : reg470[31:0];
+  assign sel826 = and827 ? bindout457[31:0] : reg470[31:0];
   always @(*) begin
     case (reg748)
-      2'h0: sel829 = sel824;
-      2'h1: sel829 = sel826;
-      2'h2: sel829 = sel828;
-      default: sel829 = reg748;
+      2'h0: sel820 = sel815;
+      2'h1: sel820 = sel817;
+      2'h2: sel820 = sel819;
+      default: sel820 = reg748;
     endcase
   end
   assign add631 = reg517[31:0] + 32'h1;
@@ -3080,98 +3080,98 @@ module spmv_device(
   assign and589 = and586 & bindout153;
   always @(*) begin
     case (reg748)
-      2'h0: sel847 = sel844;
-      2'h1: sel847 = sel845;
-      2'h2: sel847 = sel846;
-      default: sel847 = reg470[543:512];
+      2'h0: sel842 = sel839;
+      2'h1: sel842 = sel840;
+      2'h2: sel842 = sel841;
+      default: sel842 = reg470[543:512];
     endcase
   end
   always @(*) begin
     case (reg748)
-      2'h0: sel841 = sel838;
-      2'h1: sel841 = sel839;
-      2'h2: sel841 = sel840;
-      default: sel841 = reg470[511:32];
+      2'h0: sel836 = sel833;
+      2'h1: sel836 = sel834;
+      2'h2: sel836 = sel835;
+      default: sel836 = reg470[511:32];
     endcase
   end
   always @(*) begin
     case (reg748)
-      2'h0: sel835 = sel831;
-      2'h1: sel835 = sel833;
-      2'h2: sel835 = sel834;
-      default: sel835 = reg470[31:0];
+      2'h0: sel830 = sel826;
+      2'h1: sel830 = sel828;
+      2'h2: sel830 = sel829;
+      default: sel830 = reg470[31:0];
     endcase
   end
   assign add634 = reg517[31:0] + 32'h1;
   assign add582 = reg484 + proxy581;
   assign proxy533 = proxy52[19:0];
   always @ (posedge clk) begin
-    reg525 <= reset ? 20'h0 : sel810;
+    reg525 <= reset ? 20'h0 : sel814;
   end
   always @ (posedge clk) begin
     reg497 <= reset ? 20'h0 : sub612;
   end
   assign add547 = reg544 + lit545;
-  assign proxy467 = {sel847, sel841, sel835};
+  assign proxy467 = {sel842, sel836, sel830};
   always @ (posedge clk) begin
-    reg748 <= reset ? 2'h0 : sel829;
+    reg748 <= reset ? 2'h0 : sel820;
   end
-  assign sel724 = bindout354 ? reg517[31:0] : add631;
+  assign sel733 = bindout354 ? reg517[31:0] : add631;
   assign proxy571 = {31'h0, sel848};
   assign and591 = and589 & bindout274;
   always @ (posedge clk) begin
     reg470 <= reset ? lit468 : proxy467;
   end
-  assign sel725 = ne622 ? sel724 : add634;
+  assign sel734 = ne622 ? sel733 : add634;
   assign sub584 = add582 - proxy571;
   assign eq636 = reg525 == proxy533;
   assign eq627 = reg491 == reg497;
-  assign eq812 = reg748 == 2'h2;
-  assign eq815 = reg748 == 2'h1;
-  assign sel726 = (reg555 == 3'h1) ? sel725 : reg517[31:0];
+  assign eq809 = reg748 == 2'h2;
+  assign eq822 = reg748 == 2'h1;
+  assign sel735 = (reg555 == 3'h1) ? sel734 : reg517[31:0];
   assign add701 = reg504 + 2'h1;
   assign eq711 = reg555 == 3'h4;
   assign eq704 = reg504 == 2'h2;
-  assign and813 = eq812 & bindout153;
+  assign and810 = eq809 & bindout153;
   always @ (posedge clk) begin
     reg544 <= reset ? lit542 : add547;
   end
-  assign and816 = eq815 & bindout89;
-  assign ch_ctrl_stats_t511 = {reg517[95:32], sel726};
+  assign and823 = eq822 & bindout89;
+  assign ch_ctrl_stats_t511 = {reg517[95:32], sel735};
   assign and712 = eq711 & bindout366;
   assign add625 = reg491 + 20'h1;
   assign and638 = eq636 & and591;
-  assign and729 = bindout354 & eq627;
-  assign sel811 = and813 ? reg470[63:0] : lit542;
-  assign sel822 = and813 ? 1'h1 : 1'h0;
-  assign sel823 = and816 ? reg470[63:0] : lit542;
-  assign sel814 = and816 ? 1'h1 : 1'h0;
+  assign and724 = bindout354 & eq627;
+  assign sel811 = and810 ? reg470[63:0] : lit542;
+  assign sel808 = and810 ? 1'h1 : 1'h0;
+  assign sel824 = and823 ? reg470[63:0] : lit542;
+  assign sel821 = and823 ? 1'h1 : 1'h0;
   assign ch_stats_t676 = {bindout271, bindout170};
   assign ch_stats_t655 = {bindout235, bindout106};
   always @ (posedge clk) begin
     reg517 <= reset ? lit515 : ch_ctrl_stats_t511;
   end
   assign sel710 = and712 ? add701 : reg504;
-  assign and721 = ne622 & bindout354;
+  assign and720 = ne622 & bindout354;
   always @ (posedge clk) begin
     reg484 <= reset ? 32'h0 : sub584;
   end
   assign proxy51 = io_ctx[131:0];
-  assign and734 = bindout366 & eq704;
-  assign and730 = ne622 & and729;
-  assign and719 = io_start & ne616;
+  assign and729 = bindout366 & eq704;
+  assign and725 = ne622 & and724;
+  assign and718 = io_start & ne616;
   assign proxy694 = {lit515, ch_stats_t676};
   assign proxy673 = {lit515, ch_stats_t655};
   assign eq695 = reg504 == 2'h1;
-  assign sel720 = and721 ? add625 : reg491;
-  assign sel718 = and719 ? 20'h0 : reg491;
+  assign sel719 = and720 ? add625 : reg491;
+  assign sel717 = and718 ? 20'h0 : reg491;
   assign proxy52 = proxy51[31:0];
-  assign sel735 = eq708 ? 3'h0 : reg555;
-  assign sel733 = and734 ? 3'h5 : reg555;
-  assign sel732 = bindout366 ? 3'h4 : reg555;
-  assign sel731 = and638 ? 3'h3 : reg555;
-  assign sel728 = and730 ? 3'h2 : reg555;
-  assign sel727 = and719 ? 3'h1 : reg555;
+  assign sel730 = eq708 ? 3'h0 : reg555;
+  assign sel728 = and729 ? 3'h5 : reg555;
+  assign sel727 = bindout366 ? 3'h4 : reg555;
+  assign sel726 = and638 ? 3'h3 : reg555;
+  assign sel723 = and725 ? 3'h2 : reg555;
+  assign sel722 = and718 ? 3'h1 : reg555;
   assign bindin266 = bindout439;
   assign bindin251 = bindout199;
   assign bindin244 = bindout192;
@@ -3188,7 +3188,7 @@ module spmv_device(
   assign bindin181 = bindout407;
   assign bindin156 = reg544;
   assign bindin150 = sel811;
-  assign bindin144 = sel822;
+  assign bindin144 = sel808;
   assign bindin143 = reset;
   assign bindin142 = clk;
   assign bindin138 = bindout218;
@@ -3196,8 +3196,8 @@ module spmv_device(
   assign bindin120 = bindout391;
   assign bindin117 = bindout388;
   assign bindin92 = reg544;
-  assign bindin86 = sel823;
-  assign bindin80 = sel814;
+  assign bindin86 = sel824;
+  assign bindin80 = sel821;
   assign bindin79 = reset;
   assign bindin77 = clk;
   assign sel696 = eq695 ? proxy673 : proxy694;
@@ -3208,22 +3208,22 @@ module spmv_device(
   end
   always @(*) begin
     case (reg555)
-      3'h0: sel722 = sel718;
-      3'h1: sel722 = sel720;
-      default: sel722 = reg491;
+      3'h0: sel721 = sel717;
+      3'h1: sel721 = sel719;
+      default: sel721 = reg491;
     endcase
   end
   assign ne622 = reg484 != 32'h4;
   assign ne616 = proxy52 != 32'h0;
   always @(*) begin
     case (reg555)
-      3'h0: sel736 = sel727;
-      3'h1: sel736 = sel728;
-      3'h2: sel736 = sel731;
-      3'h3: sel736 = sel732;
-      3'h4: sel736 = sel733;
-      3'h5: sel736 = sel735;
-      default: sel736 = reg555;
+      3'h0: sel731 = sel722;
+      3'h1: sel731 = sel723;
+      3'h2: sel731 = sel726;
+      3'h3: sel731 = sel727;
+      3'h4: sel731 = sel728;
+      3'h5: sel731 = sel730;
+      default: sel731 = reg555;
     endcase
   end
   spmv_pe __module18__(.clk(bindin242), .reset(bindin243), .io_req_valid(bindin244), .io_req_data(bindin251), .io_lsu_wr_req_ready(bindin266), .io_req_ready(bindout254), .io_lsu_wr_req_valid(bindout257), .io_lsu_wr_req_data(bindout263), .io_stats(bindout271), .io_is_idle(bindout274));
@@ -3235,12 +3235,12 @@ module spmv_device(
   assign eq708 = bindout377 == 32'h0;
   assign proxy647 = {18'h0, reg504};
   always @ (posedge clk) begin
-    reg491 <= reset ? 20'h0 : sel722;
+    reg491 <= reset ? 20'h0 : sel721;
   end
   assign and739 = eq738 & ne622;
-  assign sel714 = ne616 ? 1'h0 : 1'h1;
+  assign sel713 = ne616 ? 1'h0 : 1'h1;
   always @ (posedge clk) begin
-    reg555 <= reset ? 3'h0 : sel736;
+    reg555 <= reset ? 3'h0 : sel731;
   end
   assign sel742 = (reg555 == 3'h4) ? sel698 : lit614;
   assign sel741 = (reg555 == 3'h4) ? proxy647 : 20'h0;
@@ -3253,21 +3253,21 @@ module spmv_device(
   end
   always @(*) begin
     case (reg555)
-      3'h3: sel713 = 1'h1;
-      3'h4: sel713 = 1'h1;
-      default: sel713 = 1'h0;
+      3'h3: sel736 = 1'h1;
+      3'h4: sel736 = 1'h1;
+      default: sel736 = 1'h0;
     endcase
   end
   assign sel737 = and739 ? 1'h1 : 1'h0;
-  assign sel716 = eq708 ? 1'h1 : reg562;
-  assign sel715 = io_start ? sel714 : reg562;
+  assign sel715 = eq708 ? 1'h1 : reg562;
+  assign sel714 = io_start ? sel713 : reg562;
   assign proxy359 = {sel742, sel741, sel740};
   assign proxy348 = {reg491, 3'h0};
   always @(*) begin
     case (reg555)
-      3'h0: sel717 = sel715;
-      3'h5: sel717 = sel716;
-      default: sel717 = reg562;
+      3'h0: sel716 = sel714;
+      3'h5: sel716 = sel715;
+      default: sel716 = reg562;
     endcase
   end
   assign bindin436 = bindout263;
@@ -3279,7 +3279,7 @@ module spmv_device(
   assign bindin385 = bindout114;
   assign bindin380 = bindout109;
   assign bindin363 = proxy359;
-  assign bindin357 = sel713;
+  assign bindin357 = sel736;
   assign bindin351 = proxy348;
   assign bindin346 = sel737;
   assign bindin343 = io_ctx;
@@ -3296,7 +3296,7 @@ module spmv_device(
   assign bindin278 = clk;
   spmv_lsu __module21__(.clk(bindin278), .reset(bindin279), .io_qpi_rd_req_almostfull(bindin280), .io_qpi_rd_rsp_mdata(bindin292), .io_qpi_rd_rsp_data(bindin295), .io_qpi_rd_rsp_valid(bindin298), .io_qpi_wr_req_almostfull(bindin301), .io_qpi_wr_rsp0_mdata(bindin316), .io_qpi_wr_rsp0_valid(bindin319), .io_qpi_wr_rsp1_mdata(bindin322), .io_qpi_wr_rsp1_valid(bindin325), .io_ctx(bindin343), .io_ctrl_rd_req_valid(bindin346), .io_ctrl_rd_req_data(bindin351), .io_ctrl_wr_req_valid(bindin357), .io_ctrl_wr_req_data(bindin363), .io_walkers_0_rd_req_valid(bindin380), .io_walkers_0_rd_req_data(bindin385), .io_walkers_1_rd_req_valid(bindin399), .io_walkers_1_rd_req_data(bindin404), .io_PEs_0_wr_req_valid(bindin418), .io_PEs_0_wr_req_data(bindin424), .io_PEs_1_wr_req_valid(bindin430), .io_PEs_1_wr_req_data(bindin436), .io_qpi_rd_req_addr(bindout283), .io_qpi_rd_req_mdata(bindout286), .io_qpi_rd_req_valid(bindout289), .io_qpi_wr_req_addr(bindout304), .io_qpi_wr_req_mdata(bindout307), .io_qpi_wr_req_data(bindout310), .io_qpi_wr_req_valid(bindout313), .io_ctrl_rd_req_ready(bindout354), .io_ctrl_wr_req_ready(bindout366), .io_ctrl_rd_rsp_valid(bindout369), .io_ctrl_rd_rsp_data(bindout374), .io_ctrl_outstanding_writes(bindout377), .io_walkers_0_rd_req_ready(bindout388), .io_walkers_0_rd_rsp_valid(bindout391), .io_walkers_0_rd_rsp_data(bindout396), .io_walkers_1_rd_req_ready(bindout407), .io_walkers_1_rd_rsp_valid(bindout410), .io_walkers_1_rd_rsp_data(bindout415), .io_PEs_0_wr_req_ready(bindout427), .io_PEs_1_wr_req_ready(bindout439));
   always @ (posedge clk) begin
-    reg562 <= reset ? 1'h0 : sel717;
+    reg562 <= reset ? 1'h0 : sel716;
   end
 
   assign io_qpi_rd_req_addr = bindout283;
