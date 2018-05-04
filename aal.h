@@ -20,29 +20,29 @@ struct aal_qpi {
   static constexpr unsigned cdata_width = CDATA;
 
   __inout (rd_req_io, (
-    (ch_in<ch_bit1>)        almostfull,
-    (ch_out<ch_bit<ADDR>>)  addr,
+    (ch_in<ch_bool>)        almostfull,
+    (ch_out<ch_uint<ADDR>>) addr,
     (ch_out<ch_bit<MDATA>>) mdata,
-    (ch_out<ch_bit1>)       valid
+    (ch_out<ch_bool>)       valid
   ));
 
   __inout (rd_rsp_io, (
     (ch_in<ch_bit<MDATA>>) mdata,
     (ch_in<ch_bit<CDATA>>) data,
-    (ch_in<ch_bit1>)       valid
+    (ch_in<ch_bool>)       valid
   ));
 
   __inout (wr_req_io, (
-    (ch_in<ch_bit1>)        almostfull,
-    (ch_out<ch_bit<ADDR>>)  addr,
+    (ch_in<ch_bool>)        almostfull,
+    (ch_out<ch_uint<ADDR>>)  addr,
     (ch_out<ch_bit<MDATA>>) mdata,
     (ch_out<ch_bit<CDATA>>) data,
-    (ch_out<ch_bit1>)       valid
+    (ch_out<ch_bool>)       valid
   ));
 
   __inout (wr_rsp_io, (
     (ch_in<ch_bit<MDATA>>) mdata,
-    (ch_in<ch_bit1>)       valid
+    (ch_in<ch_bool>)       valid
   ));
 
   __inout (io, (
@@ -67,8 +67,8 @@ public:
   __io (
     (qpi_io)          qpi,
     __in(Context)     ctx,
-    (ch_in<ch_bit1>)  start,
-    (ch_out<ch_bit1>) done
+    (ch_in<ch_bool>)  start,
+    (ch_out<ch_bool>) done
   );
 
   aal_device() {}

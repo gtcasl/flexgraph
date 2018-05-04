@@ -36,9 +36,9 @@ using qpi = aal::aal_qpi0;
 
 using ch_block = ch_bit<qpi::cdata_width>;
 
-using ch_blk_addr = ch_bit<qpi::addr_wdith>;
+using ch_blk_addr = ch_uint<qpi::addr_wdith>;
 
-using ch_ptr = ch_bit<qpi::addr_wdith>;
+using ch_ptr = ch_uint<qpi::addr_wdith>;
 
 enum {
   FP_MULT_LATENCY = 3, // Aria 10
@@ -93,50 +93,50 @@ inline bool test_bitvector(const uint32_t* bitvec, uint32_t idx) {
 }
 
 __struct (ch_walker_stats_t, (
-  (ch_bit32) num_parts,
-  (ch_bit32) min_latency,
-  (ch_bit32) max_latency,
-  (ch_bit32) total_latency,
-  (ch_bit32) a_colind_stalls,
-  (ch_bit32) a_rowptr_stalls,
-  (ch_bit32) a_rowind_stalls,
-  (ch_bit32) a_values_stalls,
-  (ch_bit32) x_values_stalls,
-  (ch_bit32) x_masks_stalls,
-  (ch_bit32) execute_stalls
+  (ch_uint32) num_parts,
+  (ch_uint32) min_latency,
+  (ch_uint32) max_latency,
+  (ch_uint32) total_latency,
+  (ch_uint32) a_colind_stalls,
+  (ch_uint32) a_rowptr_stalls,
+  (ch_uint32) a_rowind_stalls,
+  (ch_uint32) a_values_stalls,
+  (ch_uint32) x_values_stalls,
+  (ch_uint32) x_masks_stalls,
+  (ch_uint32) execute_stalls
 ));
 
 __struct (ch_pe_stats_t, (
-  (ch_bit32) write_value_stalls,
-  (ch_bit32) write_mask_stalls
+  (ch_uint32) write_value_stalls,
+  (ch_uint32) write_mask_stalls
 ));
 
-__struct (ch_stats_t, (
+__struct (ch_cu_stats_t, (
   (ch_walker_stats_t) walker,
   (ch_pe_stats_t) pe
 ));
 
 __struct (ch_ctrl_stats_t, (
-  (ch_bit32) a_colptr_stalls,
-  (ch_bit32) vcache_hits,
-  (ch_bit32) vcache_stalls
+  (ch_uint32) a_colptr_stalls,
+  (ch_uint32) vcache_hits,
+  (ch_uint32) vcache_stalls
 ));
 
 __struct (ch_matrix_dcsc_t, (
-  (ch_bit32) num_parts,
-  (ch_bit<qpi::addr_wdith>) col_ptr,
-  (ch_bit<qpi::addr_wdith>) col_ind,
-  (ch_bit<qpi::addr_wdith>) row_ptr,
-  (ch_bit<qpi::addr_wdith>) row_ind,
-  (ch_bit<qpi::addr_wdith>) values
+  (ch_uint32) num_parts,
+  (ch_uint<qpi::addr_wdith>) col_ptr,
+  (ch_uint<qpi::addr_wdith>) col_ind,
+  (ch_uint<qpi::addr_wdith>) row_ptr,
+  (ch_uint<qpi::addr_wdith>) row_ind,
+  (ch_uint<qpi::addr_wdith>) values
 ));
 
 __struct (ch_vertex_t, (
-  (ch_bit<qpi::addr_wdith>) values,
-  (ch_bit<qpi::addr_wdith>) masks
+  (ch_uint<qpi::addr_wdith>) values,
+  (ch_uint<qpi::addr_wdith>) masks
 ));
 
-using stats_addr_t = ch_bit<qpi::addr_wdith>;
+using stats_addr_t = ch_uint<qpi::addr_wdith>;
 
 __struct (spmv_ctx_t, (
   (ch_matrix_dcsc_t) a,
@@ -149,8 +149,8 @@ __struct (spmv_ctx_t, (
 using spmv_aal_device = aal::aal_device<spmv_ctx_t, qpi>;
 
 __struct (ch_dcsc_part_t, (
-  (ch_bit32) start,
-  (ch_bit32) end
+  (ch_uint32) start,
+  (ch_uint32) end
 ));
 
 }

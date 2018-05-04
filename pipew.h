@@ -12,13 +12,13 @@ public:
     //--
     value_[0] = value;
     for (unsigned i = 1; i < Delay; ++i) {
-      value_[i] = ch_reg(value_[i-1]);
+      value_[i] = ch_delay(value_[i-1]);
     }
 
     //--
     valid_[0] = valid;
     for (unsigned i = 1; i < Delay; ++i) {
-      valid_[i] = ch_reg(valid_[i-1]);
+      valid_[i] = ch_delay(valid_[i-1]);
     }
   }
 

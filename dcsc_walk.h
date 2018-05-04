@@ -30,7 +30,7 @@ __struct (ch_pe_start_req_t, (
 
 __inout (ch_ctrl_pe_io, (
   (ch_deq_io<ch_pe_start_req_t>) start,
-  __in(ch_bit64) timer,
+  __in(ch_uint64) timer,
   __out(ch_walker_stats_t) stats
 ));
 
@@ -52,24 +52,24 @@ private:
 
   uint32_t id_;
 
-  ch_seq<ch_ptr> col_curr_;
-  ch_seq<ch_ptr> col_end_;
+  ch_reg<ch_ptr> col_curr_;
+  ch_reg<ch_ptr> col_end_;
 
-  ch_seq<ch_ptr> a_colidx_;
+  ch_reg<ch_ptr> a_colidx_;
 
-  ch_seq<ch_ptr> row_curr_;
-  ch_seq<ch_ptr> row_endp_;
-  ch_seq<ch_ptr> row_end_;
+  ch_reg<ch_ptr> row_curr_;
+  ch_reg<ch_ptr> row_endp_;
+  ch_reg<ch_ptr> row_end_;
 
-  ch_seq<ch_ptr> xmblock_addr_;
-  ch_seq<ch_ptr> xvblock_addr_;
+  ch_reg<ch_ptr> xmblock_addr_;
+  ch_reg<ch_ptr> xvblock_addr_;
 
-  ch_seq<ch_ptr>  row_blk_curr_;
-  ch_seq<ch_ptr>  row_blk_endp_;
-  ch_seq<ch_ptr>  row_blk_end_;
-  ch_seq<ch_bit<6>> row_blk_cnt_;
+  ch_reg<ch_ptr>  row_blk_curr_;
+  ch_reg<ch_ptr>  row_blk_endp_;
+  ch_reg<ch_ptr>  row_blk_end_;
+  ch_reg<ch_uint<6>> row_blk_cnt_;
 
-  ch_seq<ch_float32> x_value_;
+  ch_reg<ch_float32> x_value_;
 
   ch_module<ch_acbuf_t> acbuf_;
   ch_module<ch_asbuf_t> asbuf_;
@@ -78,21 +78,21 @@ private:
   ch_module<ch_xvbuf_t> xvbuf_;
   ch_module<ch_xmbuf_t> xmbuf_;
 
-  ch_seq<ch_bit8> acbuf_pending_size_;
-  ch_seq<ch_bit8> asbuf_pending_size_;
-  ch_seq<ch_bit8> arbuf_pending_size_;
-  ch_seq<ch_bit8> avbuf_pending_size_;
-  ch_seq<ch_bit8> xvbuf_pending_size_;
-  ch_seq<ch_bit8> xmbuf_pending_size_;
+  ch_reg<ch_uint8> acbuf_pending_size_;
+  ch_reg<ch_uint8> asbuf_pending_size_;
+  ch_reg<ch_uint8> arbuf_pending_size_;
+  ch_reg<ch_uint8> avbuf_pending_size_;
+  ch_reg<ch_uint8> xvbuf_pending_size_;
+  ch_reg<ch_uint8> xmbuf_pending_size_;
 
-  ch_seq<ch_block> acblock_;
-  ch_seq<ch_block> asblock_;
-  ch_seq<ch_block> xmblock_;
-  ch_seq<ch_block> xvblock_;
+  ch_reg<ch_block> acblock_;
+  ch_reg<ch_block> asblock_;
+  ch_reg<ch_block> xmblock_;
+  ch_reg<ch_block> xvblock_;
 
-  ch_seq<ch_bit32> runtime_;
-  ch_seq<ch_bit64> prof_start_;
-  ch_seq<ch_walker_stats_t> stats_;
+  ch_reg<ch_uint32> runtime_;
+  ch_reg<ch_uint64> prof_start_;
+  ch_reg<ch_walker_stats_t> stats_;
 };
 
 }

@@ -38,12 +38,12 @@ __enum (ch_wr_request, (
 
 __struct(ch_rd_mdata_t, (
   (ch_rd_request) type,
-  (ch_bit<RD_REQ_INPUTS>) owner
+  (ch_uint<RD_REQ_INPUTS>) owner
 ));
 
 __struct(ch_wr_mdata_t, (
   (ch_wr_request) type,
-  (ch_bit<WR_REQ_INPUTS>) owner
+  (ch_uint<WR_REQ_INPUTS>) owner
 ));
 
 __struct (ch_lsu_rd_req_t, (
@@ -70,7 +70,7 @@ __inout (ch_ctrl_lsu_io, (
   (ch_deq_io<ch_lsu_rd_req_t>)   rd_req,
   (ch_deq_io<ch_lsu_wr_req_t>)   wr_req,
   (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp,
-  __out(ch_bit32)                outstanding_writes
+  __out(ch_uint32)                outstanding_writes
 ));
 
 __inout (ch_walker_lsu_io, (

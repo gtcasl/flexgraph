@@ -35,30 +35,30 @@ public:
 
 private:
 
-  using ch_pvBits = ch_bit<PARTITION_SIZE>;
-  using ch_paBits = ch_bit<LOG2_PARTITION_SIZE>;
+  using ch_pvBits = ch_uint<PARTITION_SIZE>;
+  using ch_paBits = ch_uint<LOG2_PARTITION_SIZE>;
   
   uint32_t  id_;
 
   ch_module<ch_pipe<ch_pipe_data_t, FP_MULT_LATENCY>> mult_pipe_;
   ch_module<ch_pipe<ch_pipe_data_t, FP_ADD_LATENCY>> add_pipe_;
 
-  ch_ram<ch_float32, PARTITION_SIZE> y_values_;
-  ch_seq<ch_pvBits> y_mask_;
-  ch_seq<ch_pvBits> y_mask_cpy_;
+  ch_mem<ch_float32, PARTITION_SIZE> y_values_;
+  ch_reg<ch_pvBits> y_mask_;
+  ch_reg<ch_pvBits> y_mask_cpy_;
 
-  ch_seq<ch_pvBits> inflight_mask_;
+  ch_reg<ch_pvBits> inflight_mask_;
 
-  ch_seq<ch_bit32> pending_reqs_;
+  ch_reg<ch_uint32> pending_reqs_;
 
   ch_float32  y_value_;
   ch_paBits   y_raddr_;
   ch_paBits   y_waddr_;
-  ch_bit1     y_wenable_;
+  ch_bool     y_wenable_;
 
-  ch_seq<ch_ptr>   y0_;  
+  ch_reg<ch_ptr>   y0_;
 
-  ch_seq<ch_pe_stats_t> stats_;
+  ch_reg<ch_pe_stats_t> stats_;
 };
 
 }

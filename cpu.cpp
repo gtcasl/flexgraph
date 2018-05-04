@@ -36,7 +36,7 @@ cpu_device::cpu_device(const char* mtx_file)
 
   // dump verilog
   ch_toVerilog("flexgraph.v", accelerator_);
-  ch_toFIRRTL("flexgraph.fir", accelerator_);
+  //ch_toFIRRTL("flexgraph.fir", accelerator_);
 }
 
 cpu_device::~cpu_device() {
@@ -373,17 +373,17 @@ void cpu_device::dump_stats(ch_tick t) {
     ch_scalar_t<ch_ctrl_stats_t> stats;
 
     //--
-    stats.asScalar().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
+    stats.as_scalar().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
 
     //--
     DbgPrint(0, "total colptr stalls = %d\n", (uint32_t)stats.a_colptr_stalls);
   }
 
   for (int i = 0; i < PE_COUNT; ++i) {
-    ch_scalar_t<ch_stats_t> stats;
+    ch_scalar_t<ch_cu_stats_t> stats;
 
     //--
-    stats.asScalar().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
+    stats.as_scalar().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
 
     //--
     auto avg_stats = [&](const ch_scalar<32>& stat) {

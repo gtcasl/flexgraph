@@ -44,20 +44,20 @@ void spmv_lsu::read_req_thread() {
   rd_req_arb_.io.out.ready = !io.qpi.rd_req.almostfull;
 
   //--
-  auto qpi_rd_req_valid = io.qpi.rd_req.valid.asSeq();
-  auto qpi_rd_req_addr  = io.qpi.rd_req.addr.asSeq();
-  auto qpi_rd_req_mdata = io.qpi.rd_req.mdata.asSeq();
+  auto qpi_rd_req_valid = io.qpi.rd_req.valid.as_reg();
+  auto qpi_rd_req_addr  = io.qpi.rd_req.addr.as_reg();
+  auto qpi_rd_req_mdata = io.qpi.rd_req.mdata.as_reg();
 
   //--
-  qpi_rd_req_valid.next = rd_req_arb_.io.out.valid;
-  qpi_rd_req_addr.next  = get_baseaddr(rd_req_arb_.io.out.data.type) + rd_req_arb_.io.out.data.addr;
-  qpi_rd_req_mdata.next = ch_zext<qpi::mdata_width>(
-        ch_rd_mdata_t(rd_req_arb_.io.out.grant, rd_req_arb_.io.out.data.type).asBits());
+  qpi_rd_req_valid <<= rd_req_arb_.io.out.valid;
+  qpi_rd_req_addr <<= get_baseaddr(rd_req_arb_.io.out.data.type) + rd_req_arb_.io.out.data.addr;
+  qpi_rd_req_mdata <<= ch_pad<qpi::mdata_width>(
+        ch_rd_mdata_t(rd_req_arb_.io.out.grant, rd_req_arb_.io.out.data.type).as_bit());
     
   //--
   if (verbose) {
     ch_print("{0}: lsu_rd_req: valid={1}, grant={2}, type={3}, addr={4}",
-           ch_getTick(),
+           ch_time(),
            rd_req_arb_.io.out.valid,
            rd_req_arb_.io.out.grant,
            rd_req_arb_.io.out.data.type,
@@ -67,8 +67,8 @@ void spmv_lsu::read_req_thread() {
 
 void spmv_lsu::write_req_thread() {
   //--
-  ch_seq<ch_wr_req_state> state(ch_wr_req_state::ready);
-  ch_seq<ch_qpi_write_state> qw_state(ch_qpi_write_state::ready);
+  ch_reg<ch_wr_req_state> state(ch_wr_req_state::ready);
+  ch_reg<ch_qpi_write_state> qw_state(ch_qpi_write_state::ready);
 
   //--
   ch_bool lsu_write_valid;
@@ -78,8 +78,8 @@ void spmv_lsu::write_req_thread() {
   wr_req_arb_.io.out.ready = (state == ch_wr_req_state::ready);
   wr_cache_.io.evict.ready = (qpi_write_ready & !lsu_write_valid);
 
-  ch_seq<ch_lsu_wr_req_t> req_data;
-  ch_seq<ch_bit<PE_COUNT+1>> req_owner;
+  ch_reg<ch_lsu_wr_req_t> req_data;
+  ch_reg<ch_bit<PE_COUNT+1>> req_owner;
 
   // QPI write thread
   {
@@ -88,53 +88,53 @@ void spmv_lsu::write_req_thread() {
                                 (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
 
     //--
-    auto outstanding_writes = io.ctrl.outstanding_writes.asSeq();
+    auto outstanding_writes = io.ctrl.outstanding_writes.as_reg();
 
     //--
-    auto qpi_wr_req_valid = io.qpi.wr_req.valid.asSeq();
-    auto qpi_wr_req_addr  = io.qpi.wr_req.addr.asSeq();
-    auto qpi_wr_req_data  = io.qpi.wr_req.data.asSeq();
-    auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.asSeq();
+    auto qpi_wr_req_valid = io.qpi.wr_req.valid.as_reg();
+    auto qpi_wr_req_addr  = io.qpi.wr_req.addr.as_reg();
+    auto qpi_wr_req_data  = io.qpi.wr_req.data.as_reg();
+    auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.as_reg();
 
     //--
-    qpi_wr_req_valid.next = false; // valid signal is a pulse (goes off the following cycle)
-    outstanding_writes.next = outstanding_writes - wr_rsp_cnt;
+    qpi_wr_req_valid <<= false; // valid signal is a pulse (goes off the following cycle)
+    outstanding_writes <<= (outstanding_writes - wr_rsp_cnt);
 
     __switch (qw_state)
     __case (ch_qpi_write_state::ready) {
       __if (lsu_write_valid) {
         // get the data
         ch_wr_mdata_t mdata(req_owner, req_data.type);
-        qpi_wr_req_addr.next  = get_baseaddr(req_data.type) + req_data.addr;
-        qpi_wr_req_data.next  = req_data.data;
-        qpi_wr_req_mdata.next = ch_zext<qpi::mdata_width>(mdata.asBits());
+        qpi_wr_req_addr <<= get_baseaddr(req_data.type) + req_data.addr;
+        qpi_wr_req_data <<= req_data.data;
+        qpi_wr_req_mdata <<= ch_pad<qpi::mdata_width>(mdata.as_bit());
         // go to write
-        qw_state.next = ch_qpi_write_state::write;
+        qw_state <<= ch_qpi_write_state::write;
       } __else {
         __if (wr_cache_.io.evict.valid) {
           // get the data
-          auto owner = ch_zext<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
+          auto owner = ch_pad<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
           ch_wr_mdata_t mdata(owner, ch_wr_request::y_masks);
-          qpi_wr_req_addr.next  = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
-          qpi_wr_req_data.next  = wr_cache_.io.evict.data.data;
-          qpi_wr_req_mdata.next = ch_zext<qpi::mdata_width>(mdata.asBits());
+          qpi_wr_req_addr <<= get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
+          qpi_wr_req_data <<= wr_cache_.io.evict.data.data;
+          qpi_wr_req_mdata <<= ch_pad<qpi::mdata_width>(mdata.as_bit());
           // go to write
-          qw_state.next = ch_qpi_write_state::write;
+          qw_state <<= ch_qpi_write_state::write;
         };
       };
     }
     __case (ch_qpi_write_state::write) {
       __if (!io.qpi.wr_req.almostfull) {
-        qpi_wr_req_valid.next = true; // QPI write enable
-        outstanding_writes.next = outstanding_writes + 1 - wr_rsp_cnt;
-        qw_state.next = ch_qpi_write_state::ready;
+        qpi_wr_req_valid <<= true; // QPI write enable
+        outstanding_writes <<= outstanding_writes + 1 - wr_rsp_cnt;
+        qw_state <<= ch_qpi_write_state::ready;
       };
     };
 
     //--
     if (verbose) {
       ch_print("{0}: qpi_wr: state={1:s}, valid={2}, addr={3}, data={4}, mdata={5}",
-             ch_getTick(),
+             ch_time(),
              qw_state,
              io.qpi.wr_req.valid,
              io.qpi.wr_req.addr,
@@ -158,18 +158,16 @@ void spmv_lsu::write_req_thread() {
     __switch (state)
     __case (ch_wr_req_state::ready) {
       __if (wr_req_arb_.io.out.valid) {
-        req_data.next.addr = wr_req_arb_.io.out.data.addr;
-        req_data.next.type = wr_req_arb_.io.out.data.type;
-        req_data.next.data = wr_req_arb_.io.out.data.data;
-        req_owner.next     = wr_req_arb_.io.out.grant;
+        req_data <<= wr_req_arb_.io.out.data;
+        req_owner <<= wr_req_arb_.io.out.grant;
         __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) {
           __if (wr_req_arb_.io.out.grant == CTRL_ID) {
-            state.next = ch_wr_req_state::flush;
+            state <<= ch_wr_req_state::flush;
           } __else {
-            state.next = ch_wr_req_state::write_mask;
+            state <<= ch_wr_req_state::write_mask;
           };
         } __else {
-          state.next = ch_wr_req_state::write_value;
+          state <<= ch_wr_req_state::write_value;
         };
       };
     }
@@ -178,7 +176,7 @@ void spmv_lsu::write_req_thread() {
       // wait for QPI write ack
       __if (qpi_write_ready) {
         // return
-        state.next = ch_wr_req_state::ready;
+        state <<= ch_wr_req_state::ready;
       };
     }
     __case (ch_wr_req_state::write_mask) {
@@ -190,7 +188,7 @@ void spmv_lsu::write_req_thread() {
       // wait for the cache ack
       __if (wr_cache_.io.enq.ready) {
         // return
-        state.next = ch_wr_req_state::ready;
+        state <<= ch_wr_req_state::ready;
       };
     }
     __case (ch_wr_req_state::flush) {
@@ -199,14 +197,14 @@ void spmv_lsu::write_req_thread() {
       // wait for the cache ack
       __if (wr_cache_.io.enq.ready) {
         // go wait for data
-        state.next = ch_wr_req_state::wait_for_flush;
+        state <<= ch_wr_req_state::wait_for_flush;
       };
     }
     __case (ch_wr_req_state::wait_for_flush) {
       // waitr for write flushes to complete
       __if (wr_cache_.io.enq.ready) {
         // return
-        state.next = ch_wr_req_state::ready;
+        state <<= ch_wr_req_state::ready;
       };
     };
   }
@@ -214,7 +212,7 @@ void spmv_lsu::write_req_thread() {
   //--
   if (verbose) {
     ch_print("{0}: lsu_wr_req: state={1:s}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
-           ch_getTick(),
+           ch_time(),
            state,
            wr_req_arb_.io.out.valid,
            wr_req_arb_.io.out.grant,
@@ -243,7 +241,7 @@ void spmv_lsu::read_rsp_thread() {
   //--
   if (verbose) {
     ch_print("{0}: lsu_rd_rsp: valid={1}, grant={2}, type={3}, data={4}",
-           ch_getTick(), io.qpi.rd_rsp.valid, mdata.owner, mdata.type, io.qpi.rd_rsp.data);
+           ch_time(), io.qpi.rd_rsp.valid, mdata.owner, mdata.type, io.qpi.rd_rsp.data);
   }
 }
 
