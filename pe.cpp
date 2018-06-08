@@ -61,7 +61,7 @@ void spmv_pe::describe() {
   mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
   mult_pipe_.io.enq.valid = io.req.valid && io.req.ready;
   mult_pipe_.io.deq.ready = mult_enable;
-  ch_float32 mult_value = ch_fmult<FP_MULT_LATENCY>(
+  ch_float32 mult_value = ch_udf<fMult<FP_MULT_LATENCY>>(
         io.req.data.a_value, io.req.data.x_value, mult_enable);
 
   // Adder pipeline
@@ -70,7 +70,7 @@ void spmv_pe::describe() {
   add_pipe_.io.enq.valid = mult_pipe_.io.deq.valid && mult_enable;
   add_pipe_.io.deq.ready = add_enable;
   y_raddr_ = (mult_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();  
-  ch_float32 add_value = ch_fadd<FP_ADD_LATENCY>(
+  ch_float32 add_value = ch_udf<fAdd<FP_ADD_LATENCY>>(
         mult_value, prev_y_value, add_enable);
 
   // track outstanding requests

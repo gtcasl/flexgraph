@@ -7,6 +7,7 @@
 #include <htl/arbiter.h>
 #include <htl/counter.h>
 #include <htl/pipe.h>
+#include <htl/float32.h>
 #include "aal.h"
 
 using namespace ch::core;
