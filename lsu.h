@@ -38,12 +38,12 @@ __enum (ch_wr_request, (
 
 __struct(ch_rd_mdata_t, (
   (ch_rd_request) type,
-  (ch_uint<RD_REQ_INPUTS>) owner
+  (ch_bit<RD_REQ_INPUTS>) owner
 ));
 
 __struct(ch_wr_mdata_t, (
   (ch_wr_request) type,
-  (ch_uint<WR_REQ_INPUTS>) owner
+  (ch_bit<WR_REQ_INPUTS>) owner
 ));
 
 __struct (ch_lsu_rd_req_t, (

@@ -32,11 +32,11 @@ cpu_device::cpu_device(const char* mtx_file)
   this->init(mtx_file);
 
   // dump stats
-  ch_dumpStats(std::cout, accelerator_);
+  ch_stats(std::cout, accelerator_);
 
   // dump verilog
-  ch_toVerilog("flexgraph.v", accelerator_);
-  //ch_toFIRRTL("flexgraph.fir", accelerator_);
+  ch_verilog("flexgraph.v", accelerator_);
+  //ch_firrtl("flexgraph.fir", accelerator_);
 }
 
 cpu_device::~cpu_device() {
@@ -373,20 +373,20 @@ void cpu_device::dump_stats(ch_tick t) {
     ch_scalar_t<ch_ctrl_stats_t> stats;
 
     //--
-    stats.as_scalar().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
+    stats.as_scbit().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
 
     //--
     DbgPrint(0, "total colptr stalls = %d\n", (uint32_t)stats.a_colptr_stalls);
   }
 
-  for (int i = 0; i < PE_COUNT; ++i) {
+  for (unsigned i = 0; i < PE_COUNT; ++i) {
     ch_scalar_t<ch_cu_stats_t> stats;
 
     //--
-    stats.as_scalar().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
+    stats.as_scbit().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);
 
     //--
-    auto avg_stats = [&](const ch_scalar<32>& stat) {
+    auto avg_stats = [&](const ch_scbit<32>& stat) {
       int n = (int)stats.walker.num_parts;
       if (0 == n)
         return 0;

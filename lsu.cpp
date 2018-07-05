@@ -20,7 +20,7 @@ spmv_lsu::spmv_lsu() {
   //
   // bind modules
   //
-  for (int i = 0; i < PE_COUNT; ++i) {
+  for (unsigned i = 0; i < PE_COUNT; ++i) {
     rd_req_arb_.io.in[i](io.walkers[i].rd_req);
     wr_req_arb_.io.in[i](io.PEs[i].wr_req);
   }
@@ -84,8 +84,8 @@ void spmv_lsu::write_req_thread() {
   // QPI write thread
   {
     //--
-    auto wr_rsp_cnt = ch_select(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
-                                (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
+    auto wr_rsp_cnt = ch_sel(io.qpi.wr_rsp0.valid & io.qpi.wr_rsp1.valid, 0x2_h32)
+                             (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
 
     //--
     auto outstanding_writes = io.ctrl.outstanding_writes.as_reg();
@@ -232,7 +232,7 @@ void spmv_lsu::read_rsp_thread() {
   io.ctrl.rd_rsp.data.type = mdata.type;
 
   //--
-  for (int i = 0; i < PE_COUNT; ++i) {
+  for (unsigned i = 0; i < PE_COUNT; ++i) {
     io.walkers[i].rd_rsp.valid     = io.qpi.rd_rsp.valid & (mdata.owner == PE_ID(i));
     io.walkers[i].rd_rsp.data.data = io.qpi.rd_rsp.data;
     io.walkers[i].rd_rsp.data.type = mdata.type;

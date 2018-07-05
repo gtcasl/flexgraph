@@ -7,14 +7,12 @@
 namespace spmv {
 namespace accelerator {
 
-enum {
-  ACBUF_SIZE = 2,
-  ASBUF_SIZE = 2,
-  ARBUF_SIZE = 32,
-  AVBUF_SIZE = 32,
-  XVBUF_SIZE = 2,
-  XMBUF_SIZE = 2,
-};
+inline constexpr unsigned ACBUF_SIZE = 2;
+inline constexpr unsigned ASBUF_SIZE = 2;
+inline constexpr unsigned ARBUF_SIZE = 32;
+inline constexpr unsigned AVBUF_SIZE = 32;
+inline constexpr unsigned XVBUF_SIZE = 2;
+inline constexpr unsigned XMBUF_SIZE = 2;
 
 using ch_acbuf_t = ch_queue<ch_block, ACBUF_SIZE>;
 using ch_asbuf_t = ch_queue<ch_block, ASBUF_SIZE>;

@@ -14,9 +14,14 @@ __enum (ch_ctrl_state, (
   wait_for_writes
 ));
 
-spmv_device::spmv_device() {
+spmv_device::spmv_device()
+  : part_buf_size_(0)
+  , pbuf_pending_size_(0)
+  , part_blk_curr_(0)
+  , stats_addr_(0)
+  , part_curr_(0) {
   // bind modules
-  for (int i = 0; i < PE_COUNT; ++i) {
+  for (unsigned i = 0; i < PE_COUNT; ++i) {
     PEs_[i].io.req(walkers_[i].io.pe);
     lsu_.io.walkers[i](walkers_[i].io.lsu);
     lsu_.io.PEs[i](PEs_[i].io.lsu);
@@ -72,7 +77,7 @@ void spmv_device::main_thread() {
 
   //--
   ch_bool all_PEs_ready = walkers_[0].io.ctrl.start.ready && PEs_[0].io.is_idle;
-  for (int i = 1; i < PE_COUNT; ++i) {
+  for (unsigned i = 1; i < PE_COUNT; ++i) {
     all_PEs_ready = ch_clone(all_PEs_ready)
                  && walkers_[i].io.ctrl.start.ready
                  && PEs_[i].io.is_idle;
@@ -187,7 +192,7 @@ void spmv_device::dispatch_thread() {
   ch_reg<ch_uint<log2ceil(1+PE_COUNT)>> state;
 
   //--
-  for (int i = 0; i < PE_COUNT; ++i) {
+  for (unsigned i = 0; i < PE_COUNT; ++i) {
     walkers_[i].io.ctrl.start.data.part.as_bit() = 0;
     walkers_[i].io.ctrl.start.valid = false;
   }
@@ -218,7 +223,7 @@ void spmv_device::dispatch_thread() {
       };
     };
 
-    for (int i = 0; i < PE_COUNT; ++i) {
+    for (unsigned i = 0; i < PE_COUNT; ++i) {
       sw __case (1+i) {
         // check if PE is ready
         __if (walkers_[i].io.ctrl.start.ready) {
@@ -234,7 +239,7 @@ void spmv_device::dispatch_thread() {
 
           //--
           if (verbose) {
-            ch_print(fstring("{0}: *** assigned partition {1} to PE%d, p_start={2}, p_end={3}", i),
+            ch_print(stringf("{0}: *** assigned partition {1} to PE%d, p_start={2}, p_end={3}", i),
                      ch_time(), part_curr_, part.start, part.end);
           }
 
@@ -267,7 +272,7 @@ void spmv_device::dispatch_thread() {
 
 ch_block spmv_device::get_stats(const ch_stats_addr& addr) {
   auto cs = ch_case(addr, 0, ch_pad<ch_block>(stats_.as_bit()));
-  for (int i = 1; i < PE_COUNT; ++i) {
+  for (unsigned i = 1; i < PE_COUNT; ++i) {
     ch_cu_stats_t stats{PEs_[i-1].io.stats, walkers_[i-1].io.ctrl.stats};
     cs(i, ch_pad<ch_block>(stats.as_bit()));
   }

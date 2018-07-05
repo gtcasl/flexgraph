@@ -11,7 +11,9 @@ __enum (ch_pe_state, (
   write_mask
 ));
 
-spmv_pe::spmv_pe() : stats_(0) {
+spmv_pe::spmv_pe()
+  : pending_reqs_(0)
+  , stats_(0) {
   //--
   static uint32_t s_ids = 0;
   id_ = s_ids++;
@@ -54,14 +56,14 @@ void spmv_pe::describe() {
 
   // select previous y_value if dirty
   ch_float32 prev_y_value =
-      ch_select(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
+      ch_sel(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
 
   // Multiply pipeline
   mult_pipe_.io.enq.data.a_rowind = io.req.data.a_rowind;
   mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
   mult_pipe_.io.enq.valid = io.req.valid && io.req.ready;
   mult_pipe_.io.deq.ready = mult_enable;
-  ch_float32 mult_value = ch_udf<fMult<FP_MULT_LATENCY>>(
+  ch_float32 mul_value = ch_fmul<FP_MULT_LATENCY>(
         io.req.data.a_value, io.req.data.x_value, mult_enable);
 
   // Adder pipeline
@@ -69,9 +71,9 @@ void spmv_pe::describe() {
   add_pipe_.io.enq.data.is_end = mult_pipe_.io.deq.data.is_end;
   add_pipe_.io.enq.valid = mult_pipe_.io.deq.valid && mult_enable;
   add_pipe_.io.deq.ready = add_enable;
-  y_raddr_ = (mult_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();  
-  ch_float32 add_value = ch_udf<fAdd<FP_ADD_LATENCY>>(
-        mult_value, prev_y_value, add_enable);
+  y_raddr_ = (mult_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>().as_uint();
+  ch_float32 add_value = ch_fadd<FP_ADD_LATENCY>(
+        mul_value, prev_y_value, add_enable);
 
   // track outstanding requests
   auto pe_issue = mult_pipe_.io.enq.valid;
@@ -117,7 +119,7 @@ void spmv_pe::describe() {
   __case (ch_pe_state::ready) {
     //--
     y_wenable_ = add_pipe_.io.deq.valid && !add_pipe_.io.deq.data.is_end;
-    y_waddr_   = (add_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>();
+    y_waddr_   = (add_pipe_.io.deq.data.a_rowind & 0x1f).slice<5>().as_uint();
     y_value_   = add_value;
 
     //--
@@ -189,14 +191,14 @@ void spmv_pe::describe() {
 
   //--
   if (verbose) {
-    ch_print(fstring("{0}: PE%d: state={1:s}, rq_val={2}, rq_ar={3}, rq_av={4}, rq_xv={5}, "
+    ch_print(stringf("{0}: PE%d: state={1:s}, rq_val={2}, rq_ar={3}, rq_av={4}, rq_xv={5}, "
                      "mp_val={6}, mp_ar={7}, mp_dat={8}, "
                      "ap_val={9}, ap_ar={10}, ap_dat={11}, ap_old={12}, "
                      "rq_rdy={13}, idle={14}, "
                      "wq_val={15}, wq_typ={16}, wq_adr={17}, wq_dat={18}, "
                      "flight={19}, pending={20}, wen={21}, m_en={22}, a_en={23}", id_),
       ch_time(), state, io.req.valid, io.req.data.a_rowind, io.req.data.a_value, io.req.data.x_value,
-      mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_rowind, mult_value,
+      mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_rowind, mul_value,
       add_pipe_.io.deq.valid, add_pipe_.io.deq.data.a_rowind, add_value, prev_y_value,
       io.req.ready, io.is_idle,
       io.lsu.wr_req.valid, io.lsu.wr_req.data.type, io.lsu.wr_req.data.addr, io.lsu.wr_req.data.data,

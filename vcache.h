@@ -79,8 +79,8 @@ public:
       int step = CH_CEILDIV(N, LookupCycles);
       T lookup_data = io.enq.data; // use io.enq.data in first cycle
       for (unsigned i = 1; i < N; ++i) {
-        match_block_idx = ch_select((tags_[i].tag == lookup_data.tag) && tags_[i].valid, i, ch_clone(match_block_idx));
-        free_block_idx  = ch_select(tags_[N-1-i].owners == 0, N-1-i, ch_clone(free_block_idx));
+        match_block_idx = ch_sel((tags_[i].tag == lookup_data.tag) && tags_[i].valid, i, ch_clone(match_block_idx));
+        free_block_idx  = ch_sel(tags_[N-1-i].owners == 0, N-1-i, ch_clone(free_block_idx));
         if (0 == (i % step)) {
           lookup_data = enq_data; // io.enq.data is not avaiable beyond first cycle, use backup value
           match_block_idx = ch_delay(ch_clone(match_block_idx));

@@ -8,12 +8,9 @@
 namespace spmv {
 namespace accelerator {
 
-enum {
-  LOG2_PBUF_SIZE = 2,
-  PBUF_SIZE = (1 << LOG2_PBUF_SIZE),
-
-  LOG2_HWCNTR_ADDR_SIZE = log2ceil(PE_COUNT+1),
-};
+inline constexpr unsigned LOG2_PBUF_SIZE = 2;
+inline constexpr unsigned PBUF_SIZE = (1 << LOG2_PBUF_SIZE);
+inline constexpr unsigned LOG2_HWCNTR_ADDR_SIZE = log2ceil(PE_COUNT+1);
 
 using ch_part_buf = ch_bit<ch_width_v<ch_block> + PARTITION_VALUE_BITS>;
 

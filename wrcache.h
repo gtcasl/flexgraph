@@ -21,9 +21,9 @@ private:
   ));
 
   __struct (entry_t, (
-    (ch_uint<N>) owner,  // one-hot representation
-    (ch_tag)     tag,
-    (T)          data
+    (ch_bit<N>) owner,  // one-hot representation
+    (ch_tag)    tag,
+    (T)         data
   ));
 
   __struct (tag_t, (
@@ -55,7 +55,7 @@ public:
     __in(ch_bool)        flush
   );
 
-  spmv_write_cache() {
+  spmv_write_cache() : counter_(0) {
     //--
     data_.write(port0_, data_value_, data_wenable_);
 
@@ -79,9 +79,9 @@ public:
       int step = CH_CEILDIV(N, LookupCycles);
       entry_t lookup_data = io.enq.data; // use io.enq.data in first cycle
       for (unsigned i = 1; i < N; ++i) {
-        match_block_idx = ch_select((tags_.read(i).tag == lookup_data.tag) && (tags_.read(i).owners != 0), i, ch_clone(match_block_idx));
-        owned_block_idx = ch_select((tags_.read(i).owners & lookup_data.owner) != 0, i, ch_clone(owned_block_idx));
-        free_block_idx  = ch_select(tags_.read(N-1-i).owners == 0, N-1-i, ch_clone(free_block_idx));
+        match_block_idx = ch_sel((tags_.read(i).tag == lookup_data.tag) && (tags_.read(i).owners != 0), i, ch_clone(match_block_idx));
+        owned_block_idx = ch_sel((tags_.read(i).owners & lookup_data.owner) != 0, i, ch_clone(owned_block_idx));
+        free_block_idx  = ch_sel(tags_.read(N-1-i).owners == 0, N-1-i, ch_clone(free_block_idx));
         if (0 == (i % step)) {
           lookup_data = enq_data; // io.enq.data is not avaiable beyond first cycle, use backup value
           match_block_idx = ch_delay(ch_clone(match_block_idx));

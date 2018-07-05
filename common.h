@@ -41,24 +41,23 @@ using ch_blk_addr = ch_uint<qpi::addr_wdith>;
 
 using ch_ptr = ch_uint<qpi::addr_wdith>;
 
-enum {
-  FP_MULT_LATENCY = 3, // Aria 10
-  FP_ADD_LATENCY  = 3,
+inline constexpr unsigned FP_MULT_LATENCY = 3; // Aria 10
+inline constexpr unsigned FP_ADD_LATENCY  = 3;
 
-  PE_COUNT       = 2,
-  LOG2_PE_COUNT  = log2ceil(PE_COUNT),
+inline constexpr unsigned PE_COUNT       = 2;
+inline constexpr unsigned LOG2_PE_COUNT  = log2ceil(PE_COUNT);
 
-  PTR_MAX_VALUE  = (1 << qpi::addr_wdith)-1,
+inline constexpr unsigned PTR_MAX_VALUE  = (1 << qpi::addr_wdith)-1;
 
-  PARTITION_SIZE = 32,
-  LOG2_PARTITION_SIZE = log2ceil(PARTITION_SIZE),
+inline constexpr unsigned PARTITION_SIZE = 32;
+inline constexpr unsigned LOG2_PARTITION_SIZE = log2ceil(PARTITION_SIZE);
 
-  PARTITION_VALUE_BITS = 32,
-  PARTITIONS_PER_BLOCK = ch_width_v<ch_block> / PARTITION_VALUE_BITS,
-  LOG2_PARTITIONS_PER_BLOCK = log2ceil(PARTITIONS_PER_BLOCK+1),
+inline constexpr unsigned PARTITION_VALUE_BITS = 32;
+inline constexpr unsigned PARTITIONS_PER_BLOCK = ch_width_v<ch_block> / PARTITION_VALUE_BITS;
+inline constexpr unsigned LOG2_PARTITIONS_PER_BLOCK = log2ceil(PARTITIONS_PER_BLOCK+1);
 
-  CTRL_ID = (1 << PE_COUNT),
-};
+inline constexpr unsigned CTRL_ID = (1 << PE_COUNT);
+
 
 #define PE_ID(x) (1 << x)
 

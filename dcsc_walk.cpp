@@ -32,6 +32,12 @@ __enum (ch_walk_state, (
 spmv_dcsc_walk::spmv_dcsc_walk()
   : xmblock_addr_(PTR_MAX_VALUE) // default initialize to max
   , xvblock_addr_(PTR_MAX_VALUE) // default initialize to max
+  , acbuf_pending_size_(0)
+  , asbuf_pending_size_(0)
+  , arbuf_pending_size_(0)
+  , avbuf_pending_size_(0)
+  , xvbuf_pending_size_(0)
+  , xmbuf_pending_size_(0)
   , stats_(0)
 {
   //--
@@ -70,11 +76,10 @@ void spmv_dcsc_walk::describe() {
   //--
   auto emit_pending_size = [&](auto& p, const auto& q, auto type) {
     auto req = io.lsu.rd_req.valid && io.lsu.rd_req.ready && (io.lsu.rd_req.data.type == type);
-    auto deq = q.io.deq.ready;
-    __if (req && !deq) {
+    __if (req && !q.io.deq.ready) {
       p <<= p + 1;
     }
-    __elif (!req && deq) {
+    __elif (!req && q.io.deq.ready) {
       p <<= p - 1;
     };
   };
@@ -87,7 +92,7 @@ void spmv_dcsc_walk::describe() {
 
   //--
   if (verbose) {
-    ch_print(fstring("{0}: *** Walker%d: state={1:s}, "
+    ch_print(stringf("{0}: *** Walker%d: state={1:s}, "
                      "acbuf.enq.val={2}, acbuf.deq.val={3}, acbuf_psz={4}, "
                      "asbuf.enq.val={5}, asbuf.deq.val={6}, asbuf_psz={7}, "
                      "arbuf.enq.val={8}, arbuf.deq.val={9}, arbuf_psz={10}, "
@@ -258,7 +263,7 @@ void spmv_dcsc_walk::describe() {
     __if (x_mask_addr == xmblock_addr_) {
       // check if the index is valid
       ch_uint32 mask(ch_slice<32>(xmblock_ >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)));
-      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
+      __if ((mask & (ch_uint32(1) << (a_colidx_ & 0x1f))) != 0) {
         // go to check_xmask2
         state <<= ch_walk_state::check_xmask2;
       } __else {
@@ -313,7 +318,7 @@ void spmv_dcsc_walk::describe() {
       // check if the index is valid
       ch_ptr x_mask_index = a_colidx_ >> 5; // divide by 32 bitmask
       ch_uint32 mask(ch_slice<32>(xmbuf_.io.deq.data >> INT32_TO_BLOCK_BITSHIFT(x_mask_index)));
-      __if ((mask & (1_b32 << (a_colidx_ & 0x1f))) != 0) {
+      __if ((mask & (ch_uint32(1) << (a_colidx_ & 0x1f))) != 0) {
         // go to check_xmask2
         state <<= ch_walk_state::check_xmask2;
       } __else {
@@ -507,7 +512,7 @@ void spmv_dcsc_walk::describe() {
     // wait for PE ack
     __if (io.pe.ready) {
       // profiling
-      stats_next.min_latency   = ch_select(stats_.min_latency == 0, runtime_, ch_min(stats_.min_latency, runtime_));
+      stats_next.min_latency   = ch_sel(stats_.min_latency == 0, runtime_, ch_min(stats_.min_latency, runtime_));
       stats_next.max_latency   = ch_max(stats_.min_latency, runtime_);
       stats_next.total_latency = stats_.total_latency + runtime_;
       stats_next.num_parts     = stats_.num_parts + 1;
@@ -521,7 +526,7 @@ void spmv_dcsc_walk::describe() {
 
   //--
   if (verbose) {
-    ch_print(fstring("{0}: Walker%d: state={1:s}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
+    ch_print(stringf("{0}: Walker%d: state={1:s}, rq_val={2}, rq_typ={3}, rq_adr={4}, "
                      "rr_val={5}, rr_typ={6}, "
                      "col_cur={7}, col_end={8}, row_cur={9}, row_end={10}, ax={11}, xv={12}, "
                      "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}", id_),
