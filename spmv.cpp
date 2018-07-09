@@ -19,7 +19,8 @@ spmv_device::spmv_device()
   , pbuf_pending_size_(0)
   , part_blk_curr_(0)
   , stats_addr_(0)
-  , part_curr_(0) {
+  , part_curr_(0)
+  , stats_(0) {
   // bind modules
   for (unsigned i = 0; i < PE_COUNT; ++i) {
     PEs_[i].io.req(walkers_[i].io.pe);
@@ -37,11 +38,11 @@ spmv_device::~spmv_device() {
 void spmv_device::describe() {  
   //--
   num_parts_ = ch_slice<ch_ptr>(io.ctx.a.num_parts);
-  part_end_ <<= num_parts_ - 1;
+  part_end_->next = (num_parts_ - 1);
 
   // timer
-  ch_reg<ch_uint64> timer;
-  timer <<= timer + 1;
+  ch_reg<ch_uint64> timer(0);
+  timer->next = timer + 1;
   for (auto& w : walkers_) {
     w.io.ctrl.timer = timer;
   }
@@ -61,7 +62,7 @@ void spmv_device::main_thread() {
   ch_reg<ch_ctrl_state> state(ch_ctrl_state::ready);
 
   //--
-  auto done = io.done.as_reg();
+  auto done = io.done.as_reg(false);
 
   //--
   pbuf_.io.enq.data  = lsu_.io.ctrl.rd_rsp.data.data;
@@ -69,7 +70,7 @@ void spmv_device::main_thread() {
                    && (lsu_.io.ctrl.rd_rsp.data.type == ch_rd_request::a_colptr);
 
   //--
-  pbuf_pending_size_ <<= pbuf_pending_size_ +
+  pbuf_pending_size_->next = pbuf_pending_size_ +
       ch_pad<ch_uint32>((lsu_.io.ctrl.rd_req.valid
                && lsu_.io.ctrl.rd_req.ready
                && (lsu_.io.ctrl.rd_req.data.type == ch_rd_request::a_colptr))) -
@@ -88,7 +89,7 @@ void spmv_device::main_thread() {
   lsu_.io.ctrl.rd_req.data.addr = part_blk_curr_;
 
   //--
-  part_blk_end_ <<= ch_slice<ch_ptr>(CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1)) - 1;
+  part_blk_end_->next = ch_slice<ch_ptr>(CEIL_INT32_TO_BLOCK_ADDR(io.ctx.a.num_parts+1)) - 1;
 
   //--
   lsu_.io.ctrl.rd_req.valid = false;
@@ -98,23 +99,19 @@ void spmv_device::main_thread() {
   lsu_.io.ctrl.wr_req.data.type = ch_wr_request::y_values;
   lsu_.io.ctrl.wr_req.data.data = 0;
   lsu_.io.ctrl.wr_req.valid     = false;
-
-  //--
-  ch_ctrl_stats_t stats_next(stats_);
-  stats_ <<= stats_next;
       
   //--
   __switch (state)
   __case (ch_ctrl_state::ready) {
     __if (io.start) {
       __if (io.ctx.a.num_parts != 0) {
-        part_blk_curr_ <<= 0;        
-        done <<= false; // clear done signal
+        part_blk_curr_->next = 0;        
+        done->next = false; // clear done signal
         // request partition block
-        state <<= ch_ctrl_state::get_partition;
+        state->next = ch_ctrl_state::get_partition;
       } __else {
         // no work to do!
-        done <<= true; // set done signal
+        done->next = true; // set done signal
       };
     };
   }
@@ -123,25 +120,25 @@ void spmv_device::main_thread() {
       lsu_.io.ctrl.rd_req.valid = true;
       // wait for LSU ack
       __if (lsu_.io.ctrl.rd_req.ready) {
-        part_blk_curr_ <<= part_blk_curr_ + 1;
+        part_blk_curr_->next = part_blk_curr_ + 1;
         __if (part_blk_curr_ == part_blk_end_) {
           // go wait for execution to complete
-          state <<= ch_ctrl_state::wait_for_execute;
+          state->next = ch_ctrl_state::wait_for_execute;
         };
       } __else {
         // profiling
-        stats_next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
+        stats_->next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
       };
     } __else {
       // profiling
-      stats_next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
+      stats_->next.a_colptr_stalls = stats_.a_colptr_stalls + 1;
     };
   }
   __case (ch_ctrl_state::wait_for_execute) {
     // wait for the execution to complete
     __if (part_curr_ == num_parts_ && all_PEs_ready) {
       // flush LSU write buffers      
-      state <<= ch_ctrl_state::flush_buffers;  
+      state->next = ch_ctrl_state::flush_buffers;  
     };
   }
   __case (ch_ctrl_state::flush_buffers) {
@@ -151,7 +148,7 @@ void spmv_device::main_thread() {
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) {
       // write hardware counters      
-      state <<= ch_ctrl_state::write_stats;
+      state->next = ch_ctrl_state::write_stats;
     };
   }
   __case (ch_ctrl_state::write_stats) {
@@ -162,18 +159,18 @@ void spmv_device::main_thread() {
     lsu_.io.ctrl.wr_req.valid     = true;
     // wait for LSU ack
     __if (lsu_.io.ctrl.wr_req.ready) {
-      stats_addr_ <<= stats_addr_ + 1;
+      stats_addr_->next = stats_addr_ + 1;
       __if (stats_addr_ == PE_COUNT) {
         // got wait for writes to complete
-        state <<= ch_ctrl_state::wait_for_writes;
+        state->next = ch_ctrl_state::wait_for_writes;
       };
     };
   }
   __case (ch_ctrl_state::wait_for_writes) {
     // wait for pending LSU writes to complete
     __if (lsu_.io.ctrl.outstanding_writes == 0) {
-      state <<= ch_ctrl_state::ready;
-      done <<= true; // set done signal
+      state->next = ch_ctrl_state::ready;
+      done->next = true; // set done signal
     };
   };
     
@@ -189,7 +186,7 @@ void spmv_device::main_thread() {
 }
 
 void spmv_device::dispatch_thread() {
-  ch_reg<ch_uint<log2ceil(1+PE_COUNT)>> state;
+  ch_reg<ch_uint<log2ceil(1+PE_COUNT)>> state(0);
 
   //--
   for (unsigned i = 0; i < PE_COUNT; ++i) {
@@ -197,10 +194,6 @@ void spmv_device::dispatch_thread() {
     walkers_[i].io.ctrl.start.valid = false;
   }
   pbuf_.io.deq.ready = false; // off by default
-
-  //--
-  ch_part_buf part_buf_next(part_buf_);
-  part_buf_ <<= part_buf_next;
   
   // extract partition data from pbuf and assign it to each PE
   {
@@ -211,15 +204,15 @@ void spmv_device::dispatch_thread() {
         pbuf_.io.deq.ready = true;
         __if (0 == part_buf_size_) {
           // get whole partition block
-          part_buf_next.slice<ch_block>(0) = pbuf_.io.deq.data;
-          part_buf_size_ <<= PARTITIONS_PER_BLOCK;
+          part_buf_->next.slice<ch_block>(0) = pbuf_.io.deq.data;
+          part_buf_size_->next = PARTITIONS_PER_BLOCK;
         } __else {
           // append partition block
-          part_buf_next.slice<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
-          part_buf_size_ <<= 1 + PARTITIONS_PER_BLOCK;
+          part_buf_->next.slice<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
+          part_buf_size_->next = 1 + PARTITIONS_PER_BLOCK;
         };
         // submit partition to next ready PE starting with PE0
-        state <<= 1;
+        state->next = 1;
       };
     };
 
@@ -233,9 +226,9 @@ void spmv_device::dispatch_thread() {
           walkers_[i].io.ctrl.start.valid = true;
 
           // advance counters
-          part_buf_next = (part_buf_ >> PARTITION_VALUE_BITS); // pop one entry
-          part_curr_ <<= part_curr_ + 1; // advance partition
-          part_buf_size_ <<= part_buf_size_ - 1;
+          part_buf_->next = (part_buf_ >> PARTITION_VALUE_BITS); // pop one entry
+          part_curr_->next = part_curr_ + 1; // advance partition
+          part_buf_size_->next = part_buf_size_ - 1;
 
           //--
           if (verbose) {
@@ -248,13 +241,13 @@ void spmv_device::dispatch_thread() {
           __if (part_curr_ != part_end_
              && part_buf_size_ != 2) {
             // goto next PE
-            state <<= 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
+            state->next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
           } __else {
-            state <<= 0;
+            state->next = 0;
           };
         } __else {
           // goto next PE
-          state <<= 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
+          state->next = 1 + ((i+1 != PE_COUNT) ? (i+1) : 0);
         };
       };
     }

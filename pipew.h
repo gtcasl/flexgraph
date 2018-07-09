@@ -18,7 +18,7 @@ public:
     //--
     valid_[0] = valid;
     for (unsigned i = 1; i < Delay; ++i) {
-      valid_[i] = ch_delay(valid_[i-1]);
+      valid_[i] = ch_delay(valid_[i-1], 1, false);
     }
   }
 

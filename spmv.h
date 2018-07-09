@@ -47,11 +47,11 @@ protected:
 
   ch_reg<ch_stats_addr> stats_addr_;
 
-  ch_reg<ch_ctrl_stats_t> stats_;
-
   ch_ptr num_parts_;
   ch_reg<ch_ptr> part_curr_;
   ch_reg<ch_ptr> part_end_;
+
+  ch_reg<ch_ctrl_stats_t> stats_;
 };
 
 }

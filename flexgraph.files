@@ -33,4 +33,3 @@ test_lsu.cpp
 test_pe.cpp
 test_spmv.cpp
 test_vcache.cpp
-vcache.h

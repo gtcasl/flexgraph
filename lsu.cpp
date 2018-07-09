@@ -44,14 +44,14 @@ void spmv_lsu::read_req_thread() {
   rd_req_arb_.io.out.ready = !io.qpi.rd_req.almostfull;
 
   //--
-  auto qpi_rd_req_valid = io.qpi.rd_req.valid.as_reg();
+  auto qpi_rd_req_valid = io.qpi.rd_req.valid.as_reg(false);
   auto qpi_rd_req_addr  = io.qpi.rd_req.addr.as_reg();
   auto qpi_rd_req_mdata = io.qpi.rd_req.mdata.as_reg();
 
   //--
-  qpi_rd_req_valid <<= rd_req_arb_.io.out.valid;
-  qpi_rd_req_addr <<= get_baseaddr(rd_req_arb_.io.out.data.type) + rd_req_arb_.io.out.data.addr;
-  qpi_rd_req_mdata <<= ch_pad<qpi::mdata_width>(
+  qpi_rd_req_valid->next = rd_req_arb_.io.out.valid;
+  qpi_rd_req_addr->next = get_baseaddr(rd_req_arb_.io.out.data.type) + rd_req_arb_.io.out.data.addr;
+  qpi_rd_req_mdata->next = ch_pad<qpi::mdata_width>(
         ch_rd_mdata_t(rd_req_arb_.io.out.grant, rd_req_arb_.io.out.data.type).as_bit());
     
   //--
@@ -88,7 +88,7 @@ void spmv_lsu::write_req_thread() {
                              (io.qpi.wr_rsp0.valid | io.qpi.wr_rsp1.valid, 0x1_h32)(0);
 
     //--
-    auto outstanding_writes = io.ctrl.outstanding_writes.as_reg();
+    auto outstanding_writes = io.ctrl.outstanding_writes.as_reg(0);
 
     //--
     auto qpi_wr_req_valid = io.qpi.wr_req.valid.as_reg();
@@ -97,37 +97,37 @@ void spmv_lsu::write_req_thread() {
     auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.as_reg();
 
     //--
-    qpi_wr_req_valid <<= false; // valid signal is a pulse (goes off the following cycle)
-    outstanding_writes <<= (outstanding_writes - wr_rsp_cnt);
+    qpi_wr_req_valid->next = false; // valid signal is a pulse (goes off the following cycle)
+    outstanding_writes->next = (outstanding_writes - wr_rsp_cnt);
 
     __switch (qw_state)
     __case (ch_qpi_write_state::ready) {
       __if (lsu_write_valid) {
         // get the data
         ch_wr_mdata_t mdata(req_owner, req_data.type);
-        qpi_wr_req_addr <<= get_baseaddr(req_data.type) + req_data.addr;
-        qpi_wr_req_data <<= req_data.data;
-        qpi_wr_req_mdata <<= ch_pad<qpi::mdata_width>(mdata.as_bit());
+        qpi_wr_req_addr->next = get_baseaddr(req_data.type) + req_data.addr;
+        qpi_wr_req_data->next = req_data.data;
+        qpi_wr_req_mdata->next = ch_pad<qpi::mdata_width>(mdata.as_bit());
         // go to write
-        qw_state <<= ch_qpi_write_state::write;
+        qw_state->next = ch_qpi_write_state::write;
       } __else {
         __if (wr_cache_.io.evict.valid) {
           // get the data
           auto owner = ch_pad<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
           ch_wr_mdata_t mdata(owner, ch_wr_request::y_masks);
-          qpi_wr_req_addr <<= get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
-          qpi_wr_req_data <<= wr_cache_.io.evict.data.data;
-          qpi_wr_req_mdata <<= ch_pad<qpi::mdata_width>(mdata.as_bit());
+          qpi_wr_req_addr->next = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
+          qpi_wr_req_data->next = wr_cache_.io.evict.data.data;
+          qpi_wr_req_mdata->next = ch_pad<qpi::mdata_width>(mdata.as_bit());
           // go to write
-          qw_state <<= ch_qpi_write_state::write;
+          qw_state->next = ch_qpi_write_state::write;
         };
       };
     }
     __case (ch_qpi_write_state::write) {
       __if (!io.qpi.wr_req.almostfull) {
-        qpi_wr_req_valid <<= true; // QPI write enable
-        outstanding_writes <<= outstanding_writes + 1 - wr_rsp_cnt;
-        qw_state <<= ch_qpi_write_state::ready;
+        qpi_wr_req_valid->next = true; // QPI write enable
+        outstanding_writes->next = outstanding_writes + 1 - wr_rsp_cnt;
+        qw_state->next = ch_qpi_write_state::ready;
       };
     };
 
@@ -158,16 +158,16 @@ void spmv_lsu::write_req_thread() {
     __switch (state)
     __case (ch_wr_req_state::ready) {
       __if (wr_req_arb_.io.out.valid) {
-        req_data <<= wr_req_arb_.io.out.data;
-        req_owner <<= wr_req_arb_.io.out.grant;
+        req_data->next = wr_req_arb_.io.out.data;
+        req_owner->next = wr_req_arb_.io.out.grant;
         __if (wr_req_arb_.io.out.data.type == ch_wr_request::y_masks) {
           __if (wr_req_arb_.io.out.grant == CTRL_ID) {
-            state <<= ch_wr_req_state::flush;
+            state->next = ch_wr_req_state::flush;
           } __else {
-            state <<= ch_wr_req_state::write_mask;
+            state->next = ch_wr_req_state::write_mask;
           };
         } __else {
-          state <<= ch_wr_req_state::write_value;
+          state->next = ch_wr_req_state::write_value;
         };
       };
     }
@@ -176,7 +176,7 @@ void spmv_lsu::write_req_thread() {
       // wait for QPI write ack
       __if (qpi_write_ready) {
         // return
-        state <<= ch_wr_req_state::ready;
+        state->next = ch_wr_req_state::ready;
       };
     }
     __case (ch_wr_req_state::write_mask) {
@@ -188,7 +188,7 @@ void spmv_lsu::write_req_thread() {
       // wait for the cache ack
       __if (wr_cache_.io.enq.ready) {
         // return
-        state <<= ch_wr_req_state::ready;
+        state->next = ch_wr_req_state::ready;
       };
     }
     __case (ch_wr_req_state::flush) {
@@ -197,14 +197,14 @@ void spmv_lsu::write_req_thread() {
       // wait for the cache ack
       __if (wr_cache_.io.enq.ready) {
         // go wait for data
-        state <<= ch_wr_req_state::wait_for_flush;
+        state->next = ch_wr_req_state::wait_for_flush;
       };
     }
     __case (ch_wr_req_state::wait_for_flush) {
       // waitr for write flushes to complete
       __if (wr_cache_.io.enq.ready) {
         // return
-        state <<= ch_wr_req_state::ready;
+        state->next = ch_wr_req_state::ready;
       };
     };
   }

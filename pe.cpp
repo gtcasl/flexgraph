@@ -12,7 +12,10 @@ __enum (ch_pe_state, (
 ));
 
 spmv_pe::spmv_pe()
-  : pending_reqs_(0)
+  : y_mask_(0)
+  , inflight_mask_(0)
+  , pending_reqs_(0)
+  , y0_(0)
   , stats_(0) {
   //--
   static uint32_t s_ids = 0;
@@ -30,10 +33,6 @@ spmv_pe::~spmv_pe() {}
 void spmv_pe::describe() {
   //--
   ch_reg<ch_pe_state> state(ch_pe_state::ready);
-
-  //--
-  ch_pe_stats_t stats_next(stats_);
-  stats_ <<= stats_next;
 
   //--
   auto y_raddr_mask = ch_pvBits(1) << y_raddr_;
@@ -55,8 +54,7 @@ void spmv_pe::describe() {
             && (0 == pending_reqs_);
 
   // select previous y_value if dirty
-  ch_float32 prev_y_value =
-      ch_sel(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
+  auto prev_y_value = ch_sel(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
 
   // Multiply pipeline
   mult_pipe_.io.enq.data.a_rowind = io.req.data.a_rowind;
@@ -79,9 +77,9 @@ void spmv_pe::describe() {
   auto pe_issue = mult_pipe_.io.enq.valid;
   auto pe_commit = (ch_pe_state::ready == state) && add_pipe_.io.deq.valid;
   __if (pe_issue && !pe_commit) {
-    pending_reqs_ <<= pending_reqs_ + 1;
+    pending_reqs_->next = pending_reqs_ + 1;
   } __elif (!pe_issue && pe_commit) {
-    pending_reqs_ <<= pending_reqs_ - 1;
+    pending_reqs_->next = pending_reqs_ - 1;
   };
 
   // in-flight controller:
@@ -90,17 +88,17 @@ void spmv_pe::describe() {
   auto adder_commit = pe_commit && !add_pipe_.io.deq.data.is_end;
   __if (adder_commit) {
     __if (adder_issue && (y_raddr_mask != y_waddr_mask)) {
-      inflight_mask_ <<= (inflight_mask_ & ~y_waddr_mask) | y_raddr_mask;
+      inflight_mask_->next = (inflight_mask_ & ~y_waddr_mask) | y_raddr_mask;
     } __else {
-      inflight_mask_ <<= inflight_mask_ & ~y_waddr_mask;
+      inflight_mask_->next = inflight_mask_ & ~y_waddr_mask;
     };
   } __elif (adder_issue) {
-    inflight_mask_ <<= inflight_mask_ | y_raddr_mask;
+    inflight_mask_->next = inflight_mask_ | y_raddr_mask;
   };
 
   //--
   __if (adder_commit) {
-    y0_ <<= add_pipe_.io.deq.data.a_rowind & ~0x1f_h20;
+    y0_->next = add_pipe_.io.deq.data.a_rowind & ~0x1f_h20;
   };
 
   //--
@@ -124,15 +122,15 @@ void spmv_pe::describe() {
 
     //--
     __if (y_wenable_) {
-      y_mask_ <<= y_mask_ | y_waddr_mask;
+      y_mask_->next = y_mask_ | y_waddr_mask;
     };
 
     //--
     __if (add_pipe_.io.deq.valid
        && add_pipe_.io.deq.data.is_end) {
-      y_mask_cpy_ <<= y_mask_;
-      y_mask_ <<= 0;
-      state <<= ch_pe_state::write_value0;
+      y_mask_cpy_->next = y_mask_;
+      y_mask_->next = 0;
+      state->next = ch_pe_state::write_value0;
     };
   }
   __case (ch_pe_state::write_value0) {
@@ -148,10 +146,10 @@ void spmv_pe::describe() {
     // wait for LSU ack
     __if (io.lsu.wr_req.ready) {
       // go write second y_value block
-      state <<= ch_pe_state::write_value1;
+      state->next = ch_pe_state::write_value1;
     } __else {
       // profiling
-      stats_next.write_value_stalls = stats_.write_value_stalls + 1;
+      stats_->next.write_value_stalls = stats_.write_value_stalls + 1;
     };
   }
   __case (ch_pe_state::write_value1) {
@@ -167,10 +165,10 @@ void spmv_pe::describe() {
     // wait for LSU ack
     __if (io.lsu.wr_req.ready) {
       // go write mask value
-      state <<= ch_pe_state::write_mask;
+      state->next = ch_pe_state::write_mask;
     } __else {
       // profiling
-      stats_next.write_value_stalls = stats_.write_value_stalls + 1;
+      stats_->next.write_value_stalls = stats_.write_value_stalls + 1;
     };
   }
   __case (ch_pe_state::write_mask) {
@@ -182,10 +180,10 @@ void spmv_pe::describe() {
    // wait for LSU ack
     __if (io.lsu.wr_req.ready) {
       // return
-      state <<= ch_pe_state::ready;
+      state->next = ch_pe_state::ready;
     } __else {
       // profiling
-      stats_next.write_mask_stalls = stats_.write_mask_stalls + 1;
+      stats_->next.write_mask_stalls = stats_.write_mask_stalls + 1;
     };
   };
 
