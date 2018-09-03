@@ -10,10 +10,10 @@
 #include <htl/float32.h>
 #include "aal.h"
 
-using namespace ch::core;
+using namespace ch::logic;
+using namespace ch::system;
 using namespace ch::literals;
 using namespace ch::htl;
-using namespace ch::sim;
 
 #define LOG2_BLOCK_SIZE   6
 #define BLOCK_SIZE        (1 << LOG2_BLOCK_SIZE)

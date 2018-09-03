@@ -462,7 +462,7 @@ void mdcsc_t::init(
 size_t mdcsc_t::copy(byte_t* dest,
                      size_t offset,
                      size_t size,
-                     ch_scalar_t<ch_matrix_dcsc_t>& desc) {
+                     ch_system_t<ch_matrix_dcsc_t>& desc) {
   desc.num_parts = num_parts;
 
   offset = copy_data(dest, desc.col_ptr, col_ptr, sizeof(uint32_t) * (num_parts + 1), offset, size);
@@ -498,7 +498,7 @@ vertex_t::~vertex_t() {
 size_t vertex_t::copy(byte_t* dest,
                       size_t offset,
                       size_t size,
-                      ch_scalar_t<ch_vertex_t>& desc) {
+                      ch_system_t<ch_vertex_t>& desc) {
   offset = copy_data(dest, desc.values, values, this->size * data_size, offset, size);
   offset = copy_data(dest, desc.masks, masks, sizeof(uint32_t) * __div_ceil(this->size, 32), offset, size);
   return offset;

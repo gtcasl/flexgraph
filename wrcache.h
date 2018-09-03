@@ -51,8 +51,8 @@ private:
 public:
 
   __io (
-    (ch_deq_io<entry_t>) enq,
-    (ch_enq_io<entry_t>) evict,
+    (ch_enq_io<entry_t>) enq,
+    (ch_deq_io<entry_t>) evict,
     __in(ch_bool)        flush
   );
 

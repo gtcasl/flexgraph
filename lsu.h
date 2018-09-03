@@ -67,19 +67,19 @@ __struct (ch_lsu_wr_rsp_t, (
 ));
 
 __inout (ch_ctrl_lsu_io, (
-  (ch_deq_io<ch_lsu_rd_req_t>)   rd_req,
-  (ch_deq_io<ch_lsu_wr_req_t>)   wr_req,
-  (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp,
+  (ch_enq_io<ch_lsu_rd_req_t>)    rd_req,
+  (ch_enq_io<ch_lsu_wr_req_t>)    wr_req,
+  (ch_valid_out<ch_lsu_rd_rsp_t>) rd_rsp,
   __out(ch_uint32)                outstanding_writes
 ));
 
 __inout (ch_walker_lsu_io, (
-  (ch_deq_io<ch_lsu_rd_req_t>)   rd_req,
-  (ch_valid_io<ch_lsu_rd_rsp_t>) rd_rsp
+  (ch_enq_io<ch_lsu_rd_req_t>)    rd_req,
+  (ch_valid_out<ch_lsu_rd_rsp_t>) rd_rsp
 ));
 
 __inout (ch_pe_lsu_io, (
-  (ch_deq_io<ch_lsu_wr_req_t>) wr_req
+  (ch_enq_io<ch_lsu_wr_req_t>) wr_req
 ));
 
 using ch_rd_req_arb_t = ch_xbar_switch<ch_lsu_rd_req_t, RD_REQ_INPUTS>;

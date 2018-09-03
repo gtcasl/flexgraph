@@ -35,8 +35,8 @@ cpu_device::cpu_device(const char* mtx_file)
   ch_stats(std::cout, accelerator_);
 
   // dump verilog
-  ch_verilog("flexgraph.v", accelerator_);
-  //ch_firrtl("flexgraph.fir", accelerator_);
+  ch_toVerilog("flexgraph.v", accelerator_);
+  //ch_toFIRRTL("flexgraph.fir", accelerator_);
 }
 
 cpu_device::~cpu_device() {
@@ -370,7 +370,7 @@ void cpu_device::dump_stats(ch_tick t) {
   auto stats_base = (uint32_t)accelerator_.io.ctx.stats;
 
   {
-    ch_scalar_t<ch_ctrl_stats_t> stats;
+    ch_system_t<ch_ctrl_stats_t> stats;
 
     //--
     stats.as_scbit().write(0, shared_mem_ + stats_base * BLOCK_SIZE, BLOCK_SIZE);
@@ -380,7 +380,7 @@ void cpu_device::dump_stats(ch_tick t) {
   }
 
   for (unsigned i = 0; i < PE_COUNT; ++i) {
-    ch_scalar_t<ch_cu_stats_t> stats;
+    ch_system_t<ch_cu_stats_t> stats;
 
     //--
     stats.as_scbit().write(0, shared_mem_ + (stats_base + 1 + i) * BLOCK_SIZE, BLOCK_SIZE);

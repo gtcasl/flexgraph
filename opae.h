@@ -11,7 +11,7 @@ namespace opae {
 // - memory responses are returned in order
 //
 
-using namespace ch::core;
+using namespace ch::logic;
 
 template <unsigned ADDR, unsigned MDATA, unsigned CDATA>
 struct opae_qpi {

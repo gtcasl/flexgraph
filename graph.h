@@ -46,7 +46,7 @@ public:
   size_t copy(byte_t* dest,
               size_t offset,
               size_t size,
-              ch_scalar_t<ch_matrix_dcsc_t>& desc);
+              ch_system_t<ch_matrix_dcsc_t>& desc);
 };
 
 struct vertex_t {
@@ -62,7 +62,7 @@ struct vertex_t {
   size_t copy(byte_t* dest,
               size_t offset,
               size_t size,
-              ch_scalar_t<ch_vertex_t>& desc);
+              ch_system_t<ch_vertex_t>& desc);
   
   void dump();
 };

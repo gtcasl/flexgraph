@@ -22,8 +22,8 @@ class spmv_pe {
 public:
 
   __io(
-    (ch_deq_io<ch_pe_req_t>) req,
-    (ch_flip_t<ch_pe_lsu_io>) lsu,
+    (ch_enq_io<ch_pe_req_t>) req,
+    (ch_flip_io<ch_pe_lsu_io>) lsu,
     __out(ch_pe_stats_t) stats,
     __out(ch_bool) is_idle
   );

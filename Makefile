@@ -1,7 +1,7 @@
 #CXX = clang-5.0
 #CXXFLAGS += -std=c++17 -O3 -DNDEBUG -pedantic -Wall -Wextra
-CXXFLAGS += -std=c++17 -O0 -g -pedantic -Wall -Wextra -fmax-errors=1
-LDFLAGS += -lcash -lstdc++
+CXXFLAGS += -std=c++17 -O0 -g -pedantic -Wall -Wextra -fmax-errors=1 -I$(CASH_HOME)/include
+LDFLAGS += -lcash -lstdc++ -L$(CASH_HOME)/build/lib
 
 PROJECT_SRCS = lsu.cpp dcsc_walk.cpp pe.cpp spmv.cpp mtx.cpp graph.cpp cpu.cpp simulator.cpp main.cpp
 

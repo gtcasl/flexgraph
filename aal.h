@@ -11,7 +11,7 @@ namespace aal {
 // - memory responses are returned in order
 //
 
-using namespace ch::core;
+using namespace ch::logic;
 
 template <unsigned ADDR, unsigned MDATA, unsigned CDATA>
 struct aal_qpi {
@@ -55,7 +55,6 @@ struct aal_qpi {
 };
 
 using aal_qpi0 = aal_qpi<20, 14, 512>;
-
 using aal_qpi1 = aal_qpi<42, 16, 512>;
 
 template <typename Context, typename Qpi = aal_qpi0>

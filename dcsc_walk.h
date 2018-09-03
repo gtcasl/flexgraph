@@ -27,7 +27,7 @@ __struct (ch_pe_start_req_t, (
 ));
 
 __inout (ch_ctrl_pe_io, (
-  (ch_deq_io<ch_pe_start_req_t>) start,
+  (ch_enq_io<ch_pe_start_req_t>) start,
   __in(ch_uint64) timer,
   __out(ch_walker_stats_t) stats
 ));
@@ -37,8 +37,8 @@ public:
 
   __io(
     (ch_ctrl_pe_io) ctrl,
-    (ch_flip_t<ch_walker_lsu_io>) lsu,
-    (ch_enq_io<ch_pe_req_t>) pe
+    (ch_flip_io<ch_walker_lsu_io>) lsu,
+    (ch_deq_io<ch_pe_req_t>) pe
   );
 
   spmv_dcsc_walk();

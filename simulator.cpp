@@ -3,14 +3,13 @@
 
 using namespace spmv;
 
-simulator::simulator(const char* mtx_file)
-  : vcd_file_("spmv.vcd") {
+simulator::simulator(const char* mtx_file) {
   // initialize random seed
   srand(0);
     
   //--
   cpu_ = new host::cpu_device(mtx_file);
-  tracer_ = new ch_vcdtracer(vcd_file_, cpu_->get_accelerator());
+  tracer_ = new ch_tracer(cpu_->get_accelerator());
 }
 
 simulator::~simulator() {   
@@ -35,6 +34,8 @@ void simulator::run(ch_tick run_ticks) {
     // advance native simulation
     t = tracer_->step(t);
   }
+
+  tracer_->toVCD("spmv.vcd");
 
   auto end_time = std::chrono::system_clock::now();
   auto latency = end_time - start_time;
