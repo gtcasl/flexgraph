@@ -179,7 +179,7 @@ void spmv_device::main_thread() {
     ch_print("{0}: ctrl_main: state={1:s}, start={2}, done={3}, Bc={4}, Be={5}, "
            "rq_val={6}, rq_typ={7}, rq_adr={8}, "
            "wr_val={9}, wr_typ={10}, wr_adr={11}",
-           ch_time(), state, io.start, done, part_blk_curr_, part_blk_end_,
+           ch_now(), state, io.start, done, part_blk_curr_, part_blk_end_,
            lsu_.io.ctrl.rd_req.valid, lsu_.io.ctrl.rd_req.data.type, lsu_.io.ctrl.rd_req.data.addr,
            lsu_.io.ctrl.wr_req.valid, lsu_.io.ctrl.wr_req.data.type, lsu_.io.ctrl.wr_req.data.addr);
   }
@@ -233,7 +233,7 @@ void spmv_device::dispatch_thread() {
           //--
           if (verbose) {
             ch_print(stringf("{0}: *** assigned partition {1} to PE%d, p_start={2}, p_end={3}", i),
-                     ch_time(), part_curr_, part.start, part.end);
+                     ch_now(), part_curr_, part.start, part.end);
           }
 
           // check if we can pop another partition from current block
@@ -256,7 +256,7 @@ void spmv_device::dispatch_thread() {
   //--
   if (verbose) {
     ch_print("{0}: ctrl_disp: state={1}, pe0_rdy={2}, p={3}, pbuf_sz={4}, pbuf={5}, part0={6}",
-           ch_time(), state, 
+           ch_now(), state, 
            (walkers_[0].io.ctrl.start.valid == walkers_[0].io.ctrl.start.ready),
            part_curr_, part_buf_size_, part_buf_,
            walkers_[0].io.ctrl.start.data.part.as_bit());

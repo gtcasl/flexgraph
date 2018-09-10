@@ -57,7 +57,7 @@ void spmv_lsu::read_req_thread() {
   //--
   if (verbose) {
     ch_print("{0}: lsu_rd_req: valid={1}, grant={2}, type={3}, addr={4}",
-           ch_time(),
+           ch_now(),
            rd_req_arb_.io.out.valid,
            rd_req_arb_.io.out.grant,
            rd_req_arb_.io.out.data.type,
@@ -134,7 +134,7 @@ void spmv_lsu::write_req_thread() {
     //--
     if (verbose) {
       ch_print("{0}: qpi_wr: state={1:s}, valid={2}, addr={3}, data={4}, mdata={5}",
-             ch_time(),
+             ch_now(),
              qw_state,
              io.qpi.wr_req.valid,
              io.qpi.wr_req.addr,
@@ -212,7 +212,7 @@ void spmv_lsu::write_req_thread() {
   //--
   if (verbose) {
     ch_print("{0}: lsu_wr_req: state={1:s}, valid={2}, grant={3}, type={4}, addr={5}, data={6}",
-           ch_time(),
+           ch_now(),
            state,
            wr_req_arb_.io.out.valid,
            wr_req_arb_.io.out.grant,
@@ -241,7 +241,7 @@ void spmv_lsu::read_rsp_thread() {
   //--
   if (verbose) {
     ch_print("{0}: lsu_rd_rsp: valid={1}, grant={2}, type={3}, data={4}",
-           ch_time(), io.qpi.rd_rsp.valid, mdata.owner, mdata.type, io.qpi.rd_rsp.data);
+           ch_now(), io.qpi.rd_rsp.valid, mdata.owner, mdata.type, io.qpi.rd_rsp.data);
   }
 }
 

@@ -2278,7 +2278,7 @@ namespace Catch {
 
 } // end namespace Catch
 
-// #included from: catch_timer.h
+// #included from: catch_nowr.h
 #define TWOBLUECUBES_CATCH_TIMER_H_INCLUDED
 
 #ifdef CATCH_PLATFORM_WINDOWS
@@ -7741,7 +7741,7 @@ namespace Catch
     }
 }
 
-// #included from: catch_timer.hpp
+// #included from: catch_nowr.hpp
 
 #ifdef __clang__
 #pragma clang diagnostic push

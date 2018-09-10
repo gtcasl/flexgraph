@@ -98,7 +98,7 @@ void spmv_dcsc_walk::describe() {
                      "arbuf.enq.val={8}, arbuf.deq.val={9}, arbuf_psz={10}, "
                      "avbuf.enq.val={11}, avbuf.deq.val={12}, avbuf_psz={13}, "
                      "rbk_cur={14}, rbk_end={15}, rbk_cnt={16}, nparts={17}", id_),
-             ch_time(), state,
+             ch_now(), state,
              acbuf_.io.enq.valid, acbuf_.io.deq.valid, acbuf_pending_size_,
              asbuf_.io.enq.valid, asbuf_.io.deq.valid, asbuf_pending_size_,
              arbuf_.io.enq.valid, arbuf_.io.deq.valid, arbuf_pending_size_,
@@ -524,7 +524,7 @@ void spmv_dcsc_walk::describe() {
                      "rr_val={5}, rr_typ={6}, "
                      "col_cur={7}, col_end={8}, row_cur={9}, row_end={10}, ax={11}, xv={12}, "
                      "pe_ay={13}, pe_av={14}, pe_xv={15}, pe_end={16}, pe_val={17}", id_),
-    ch_time(), state, io.lsu.rd_req.valid, io.lsu.rd_req.data.type, io.lsu.rd_req.data.addr,
+    ch_now(), state, io.lsu.rd_req.valid, io.lsu.rd_req.data.type, io.lsu.rd_req.data.addr,
     io.lsu.rd_rsp.valid, io.lsu.rd_rsp.data.type,
     col_curr_, col_end_, row_curr_, row_end_, a_colidx_, x_value_,
     io.pe.data.a_rowind, io.pe.data.a_value, io.pe.data.x_value, io.pe.data.is_end, io.pe.valid);

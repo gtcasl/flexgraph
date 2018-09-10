@@ -195,7 +195,7 @@ void spmv_pe::describe() {
                      "rq_rdy={13}, idle={14}, "
                      "wq_val={15}, wq_typ={16}, wq_adr={17}, wq_dat={18}, "
                      "flight={19}, pending={20}, wen={21}, m_en={22}, a_en={23}", id_),
-      ch_time(), state, io.req.valid, io.req.data.a_rowind, io.req.data.a_value, io.req.data.x_value,
+      ch_now(), state, io.req.valid, io.req.data.a_rowind, io.req.data.a_value, io.req.data.x_value,
       mult_pipe_.io.deq.valid, mult_pipe_.io.deq.data.a_rowind, mul_value,
       add_pipe_.io.deq.valid, add_pipe_.io.deq.data.a_rowind, add_value, prev_y_value,
       io.req.ready, io.is_idle,
