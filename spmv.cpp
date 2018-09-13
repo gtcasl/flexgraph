@@ -71,15 +71,15 @@ void spmv_device::main_thread() {
 
   //--
   pbuf_pending_size_->next = pbuf_pending_size_ +
-      ch_pad<ch_uint32>((lsu_.io.ctrl.rd_req.valid
+      ch_resize<ch_uint32>((lsu_.io.ctrl.rd_req.valid
                && lsu_.io.ctrl.rd_req.ready
                && (lsu_.io.ctrl.rd_req.data.type == ch_rd_request::a_colptr))) -
-      ch_pad<ch_uint32>(pbuf_.io.deq.ready);
+      ch_resize<ch_uint32>(pbuf_.io.deq.ready);
 
   //--
   ch_bool all_PEs_ready = walkers_[0].io.ctrl.start.ready && PEs_[0].io.is_idle;
   for (unsigned i = 1; i < PE_COUNT; ++i) {
-    all_PEs_ready = ch_clone(all_PEs_ready)
+    all_PEs_ready = all_PEs_ready.clone()
                  && walkers_[i].io.ctrl.start.ready
                  && PEs_[i].io.is_idle;
   }
@@ -154,7 +154,7 @@ void spmv_device::main_thread() {
   __case (ch_ctrl_state::write_stats) {
     // write ctrl counters
     lsu_.io.ctrl.wr_req.data.type = ch_wr_request::stats;
-    lsu_.io.ctrl.wr_req.data.addr = ch_pad<ch_blk_addr>(stats_addr_);
+    lsu_.io.ctrl.wr_req.data.addr = ch_resize<ch_blk_addr>(stats_addr_);
     lsu_.io.ctrl.wr_req.data.data = this->get_stats(stats_addr_);
     lsu_.io.ctrl.wr_req.valid     = true;
     // wait for LSU ack
@@ -204,11 +204,11 @@ void spmv_device::dispatch_thread() {
         pbuf_.io.deq.ready = true;
         __if (0 == part_buf_size_) {
           // get whole partition block
-          part_buf_->next.slice<ch_block>(0) = pbuf_.io.deq.data;
+          part_buf_->next.sliceref<ch_block>(0) = pbuf_.io.deq.data;
           part_buf_size_->next = PARTITIONS_PER_BLOCK;
         } __else {
           // append partition block
-          part_buf_->next.slice<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
+          part_buf_->next.sliceref<ch_block>(PARTITION_VALUE_BITS) = pbuf_.io.deq.data;
           part_buf_size_->next = 1 + PARTITIONS_PER_BLOCK;
         };
         // submit partition to next ready PE starting with PE0
@@ -264,11 +264,11 @@ void spmv_device::dispatch_thread() {
 }
 
 ch_block spmv_device::get_stats(const ch_stats_addr& addr) {
-  auto cs = ch_case(addr, 0, ch_pad<ch_block>(stats_.as_bit()));
+  auto cs = ch_case(addr, 0, ch_resize<ch_block>(stats_.as_bit()));
   for (unsigned i = 1; i < PE_COUNT; ++i) {
     ch_cu_stats_t stats{PEs_[i-1].io.stats, walkers_[i-1].io.ctrl.stats};
-    cs(i, ch_pad<ch_block>(stats.as_bit()));
+    cs(i, ch_resize<ch_block>(stats.as_bit()));
   }
   ch_cu_stats_t stats{PEs_[PE_COUNT-1].io.stats, walkers_[PE_COUNT-1].io.ctrl.stats};
-  return cs(ch_pad<ch_block>(stats.as_bit()));
+  return cs(ch_resize<ch_block>(stats.as_bit()));
 }

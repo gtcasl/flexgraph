@@ -137,7 +137,7 @@ void spmv_pe::describe() {
     // submit first y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.slice<32>(i*32) = y_values_.read(i);
+      value.sliceref<32>(i*32) = y_values_.read(i);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_);
@@ -156,7 +156,7 @@ void spmv_pe::describe() {
     // submit second y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.slice<32>(i*32) = y_values_.read(i+16);
+      value.sliceref<32>(i*32) = y_values_.read(i+16);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_) + 1;
@@ -175,7 +175,7 @@ void spmv_pe::describe() {
     // submit write mask
     io.lsu.wr_req.data.type = ch_wr_request::y_masks;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_ >> 5); // divide by 32
-    io.lsu.wr_req.data.data = ch_pad<512>(y_mask_cpy_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
+    io.lsu.wr_req.data.data = ch_resize<512>(y_mask_cpy_) << INT32_TO_BLOCK_BITSHIFT(y0_ >> 5); // apply mask
     io.lsu.wr_req.valid     = true;
    // wait for LSU ack
     __if (io.lsu.wr_req.ready) {

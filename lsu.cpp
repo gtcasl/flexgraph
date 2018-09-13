@@ -51,7 +51,7 @@ void spmv_lsu::read_req_thread() {
   //--
   qpi_rd_req_valid->next = rd_req_arb_.io.out.valid;
   qpi_rd_req_addr->next = get_baseaddr(rd_req_arb_.io.out.data.type) + rd_req_arb_.io.out.data.addr;
-  qpi_rd_req_mdata->next = ch_pad<qpi::mdata_width>(
+  qpi_rd_req_mdata->next = ch_resize<qpi::mdata_width>(
         ch_rd_mdata_t(rd_req_arb_.io.out.grant, rd_req_arb_.io.out.data.type).as_bit());
     
   //--
@@ -107,17 +107,17 @@ void spmv_lsu::write_req_thread() {
         ch_wr_mdata_t mdata(req_owner, req_data.type);
         qpi_wr_req_addr->next = get_baseaddr(req_data.type) + req_data.addr;
         qpi_wr_req_data->next = req_data.data;
-        qpi_wr_req_mdata->next = ch_pad<qpi::mdata_width>(mdata.as_bit());
+        qpi_wr_req_mdata->next = ch_resize<qpi::mdata_width>(mdata.as_bit());
         // go to write
         qw_state->next = ch_qpi_write_state::write;
       } __else {
         __if (wr_cache_.io.evict.valid) {
           // get the data
-          auto owner = ch_pad<PE_COUNT+1>(wr_cache_.io.evict.data.owner); // add ctrl bit
+          auto owner = ch_pad<1>(wr_cache_.io.evict.data.owner); // add ctrl bit
           ch_wr_mdata_t mdata(owner, ch_wr_request::y_masks);
           qpi_wr_req_addr->next = get_baseaddr(ch_wr_request::y_masks) + wr_cache_.io.evict.data.tag;
           qpi_wr_req_data->next = wr_cache_.io.evict.data.data;
-          qpi_wr_req_mdata->next = ch_pad<qpi::mdata_width>(mdata.as_bit());
+          qpi_wr_req_mdata->next = ch_resize<qpi::mdata_width>(mdata.as_bit());
           // go to write
           qw_state->next = ch_qpi_write_state::write;
         };

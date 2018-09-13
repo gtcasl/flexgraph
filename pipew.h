@@ -25,7 +25,7 @@ public:
   ch_bool in_flight(const T& value) const {
     ch_bool ret = (value_[0] == value) && valid_[0];
     for (unsigned i = 1; i < Delay; ++i) {
-      ret = (value_[i] == value && valid_[i]) || ch_clone(ret);
+      ret = (value_[i] == value && valid_[i]) || ret.clone();
     }
     return ret;
   }

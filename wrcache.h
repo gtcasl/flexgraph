@@ -79,20 +79,20 @@ public:
       auto lookup_data = ch_sel(state == ch_state::ready, io.enq.data, saved_enq_data);
       for (unsigned i = 1; i < N; ++i) {
         auto tag_valid  = (0 != (tags_valid_ & (ch_bit<N>(1) << i)));
-        match_block_idx = ch_sel(tag_valid && (tags_.read(i).tag == lookup_data.tag), i, ch_clone(match_block_idx));
-        owned_block_idx = ch_sel(tag_valid && (tags_.read(i).owners & lookup_data.owner) != 0, i, ch_clone(owned_block_idx));
-        free_block_idx  = ch_sel(!tag_valid, N-1-i, ch_clone(free_block_idx));
+        match_block_idx = ch_sel(tag_valid && (tags_.read(i).tag == lookup_data.tag), i, match_block_idx.clone());
+        owned_block_idx = ch_sel(tag_valid && (tags_.read(i).owners & lookup_data.owner) != 0, i, owned_block_idx.clone());
+        free_block_idx  = ch_sel(!tag_valid, N-1-i, free_block_idx.clone());
         if (0 == (i % step)) {
-          match_block_idx = ch_delay(ch_clone(match_block_idx));
-          owned_block_idx = ch_delay(ch_clone(owned_block_idx));
-          free_block_idx  = ch_delay(ch_clone(free_block_idx));
-          lookup_valid    = ch_delay(ch_clone(lookup_valid), 1, false);
+          match_block_idx = ch_delay(match_block_idx.clone());
+          owned_block_idx = ch_delay(owned_block_idx.clone());
+          free_block_idx  = ch_delay(free_block_idx.clone());
+          lookup_valid    = ch_delay(lookup_valid.clone(), 1, false);
         }
       }
-      match_block_idx = ch_delay(ch_clone(match_block_idx));
-      owned_block_idx = ch_delay(ch_clone(owned_block_idx));
-      free_block_idx  = ch_delay(ch_clone(free_block_idx));
-      lookup_valid    = ch_delay(ch_clone(lookup_valid), 1, false);
+      match_block_idx = ch_delay(match_block_idx.clone());
+      owned_block_idx = ch_delay(owned_block_idx.clone());
+      free_block_idx  = ch_delay(free_block_idx.clone());
+      lookup_valid    = ch_delay(lookup_valid.clone(), 1, false);
     }
 
     // advance counter

@@ -495,7 +495,7 @@ void spmv_dcsc_walk::describe() {
   }
   __case (ch_walk_state::calc_runtime) {
     // compute the runtime
-    runtime_->next = (io.ctrl.timer - prof_start_).slice<ch_uint32>();
+    runtime_->next = (io.ctrl.timer - prof_start_).slice<32>().as_uint();
     // end the partition
     state->next = ch_walk_state::end_partition;
   }
