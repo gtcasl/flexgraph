@@ -56,20 +56,20 @@ private:
 
 struct rq_data_t {
   rq_data_t() {
-    for (unsigned i = 0; i < sizeof(__m); ++i) {
-      __m[i] = 0;
+    for (unsigned i = 0; i < sizeof(m); ++i) {
+      m[i] = 0;
     }
   }
-  byte_t __m[__div_ceil(qpi::cdata_width, 8)];
+  byte_t m[__div_ceil(qpi::cdata_width, 8)];
 };
 
 struct rq_mdata_t {
   rq_mdata_t() {
-    for (unsigned i = 0; i < sizeof(__m); ++i) {
-      __m[i] = 0;
+    for (unsigned i = 0; i < sizeof(m); ++i) {
+      m[i] = 0;
     }
   }
-  byte_t __m[__div_ceil(qpi::mdata_width, 8)];
+  byte_t m[__div_ceil(qpi::mdata_width, 8)];
 };
 
 struct request_t {

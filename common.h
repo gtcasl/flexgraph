@@ -27,6 +27,7 @@ using namespace ch::htl;
   (((x) + ((alignment)-1)) & ~((alignment)-1))
 
 #define __div_ceil(x, y) (((x) + (y) - 1) / (y))
+
 #define __div_rnd(x, y)  (((x) + ((y)/2)) / (y))
 
 #define CHECK(x) if (!(x)) { assert(false); exit(1); }

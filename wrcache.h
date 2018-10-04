@@ -5,7 +5,7 @@
 namespace spmv {
 namespace accelerator {
 
-template <typename T, unsigned N, unsigned TagBits, unsigned LookupCycles = CH_CEILDIV(N, 4)>
+template <typename T, unsigned N, unsigned TagBits, unsigned LookupCycles = ceildiv<unsigned>(N, 4)>
 class spmv_write_cache {
 private:
 
@@ -75,7 +75,7 @@ public:
 
     // lookup unit
     {
-      int step = CH_CEILDIV(N, LookupCycles);
+      int step = ceildiv(N, LookupCycles);
       auto lookup_data = ch_sel(state == ch_state::ready, io.enq.data, saved_enq_data);
       for (unsigned i = 1; i < N; ++i) {
         auto tag_valid  = (0 != (tags_valid_ & (ch_bit<N>(1) << i)));

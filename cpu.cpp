@@ -62,6 +62,20 @@ cpu_device::~cpu_device() {
 }
 
 void cpu_device::init(const char* mtx_file) {
+  // initialize io signals
+  accelerator_.io.start = false;
+
+  accelerator_.io.qpi.rd_req.almostfull = false;
+  accelerator_.io.qpi.rd_rsp.valid = false;
+  accelerator_.io.qpi.rd_rsp.data  = 0;
+  accelerator_.io.qpi.rd_rsp.mdata = 0;
+
+  accelerator_.io.qpi.wr_req.almostfull = false;
+  accelerator_.io.qpi.wr_rsp0.valid = false;
+  accelerator_.io.qpi.wr_rsp0.mdata = 0;
+  accelerator_.io.qpi.wr_rsp1.valid = false;
+  accelerator_.io.qpi.wr_rsp1.mdata = 0;
+
   // allocate shared memory
   shared_mem_ = new byte_t[SHARE_MEM_SIZE];
   assert(shared_mem_);
@@ -187,7 +201,7 @@ void cpu_device::check_output(const float* values,
   }  
 }
 
-bool cpu_device::tick(ch_tick t) {
+bool cpu_device::tick(ch_tick t) {  
   // check done signal
   if (accelerator_.io.done) {
     accelerator_.io.start = false; // stop execution
@@ -247,7 +261,7 @@ void cpu_device::process_rd_req(ch_tick t) {
   assert((addr + BLOCK_SIZE) <= SHARE_MEM_SIZE);
   auto latency = 2 * random_select(MIN_RD_RX_CYCLES, MAX_RD_RX_CYCLES, 1.0f);
   request_t* rq = new request_t(addr, t, t + latency);
-  accelerator_.io.qpi.rd_req.mdata.read(0, &rq->mdata, sizeof(rq_mdata_t));
+  accelerator_.io.qpi.rd_req.mdata.read(0, rq->mdata.m);
   qpi_read_requests_.push_back(rq);
   if (qpi_read_requests_.size()+RQS_BUF_FULL_DIST == RQS_BUF_SIZE) {
     accelerator_.io.qpi.rd_req.almostfull = true;
@@ -280,8 +294,8 @@ void cpu_device::process_rd_rsp(ch_tick t) {
      && rq->tx_time != 0
      && rq->tx_time <= t) {
       // commit the response
-      accelerator_.io.qpi.rd_rsp.data.write(0, &rq->data, sizeof(rq_data_t));
-      accelerator_.io.qpi.rd_rsp.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+      accelerator_.io.qpi.rd_rsp.data.write(0, rq->data.m);
+      accelerator_.io.qpi.rd_rsp.mdata.write(0, rq->mdata.m);
       accelerator_.io.qpi.rd_rsp.valid = true;
       accelerator_.io.qpi.rd_req.almostfull = false;
       // remove entry
@@ -301,8 +315,8 @@ void cpu_device::process_wr_req(ch_tick t) {
   assert((addr + BLOCK_SIZE) <= SHARE_MEM_SIZE);
   auto latency = 2 * random_select(MIN_RW_TX_CYCLES, MAX_RW_TX_CYCLES, 1.0);
   request_t* rq = new request_t(addr, t, t + latency);
-  accelerator_.io.qpi.wr_req.mdata.read(0, &rq->mdata, sizeof(rq_mdata_t));
-  accelerator_.io.qpi.wr_req.data.read(0, &rq->data, sizeof(rq_data_t));
+  accelerator_.io.qpi.wr_req.mdata.read(0, rq->mdata.m);
+  accelerator_.io.qpi.wr_req.data.read(0, rq->data.m);
   qpi_write_requests_.push_back(rq);
   if (qpi_write_requests_.size() + RQS_BUF_FULL_DIST == RQS_BUF_SIZE) {
     accelerator_.io.qpi.wr_req.almostfull = true;
@@ -326,10 +340,10 @@ void cpu_device::process_wr_rsp(ch_tick t) {
     if (free_tx_channels && rq->tx_time != 0 && rq->tx_time <= t) {
       // commit the response
       if (free_tx_channels == 2) {
-        accelerator_.io.qpi.wr_rsp0.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+        accelerator_.io.qpi.wr_rsp0.mdata.write(0, rq->mdata.m);
         accelerator_.io.qpi.wr_rsp0.valid = true;
       } else {
-        accelerator_.io.qpi.wr_rsp1.mdata.write(0, &rq->mdata, sizeof(rq_mdata_t));
+        accelerator_.io.qpi.wr_rsp1.mdata.write(0, rq->mdata.m);
         accelerator_.io.qpi.wr_rsp1.valid = true;
       }
       accelerator_.io.qpi.wr_req.almostfull = false;

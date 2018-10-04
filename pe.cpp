@@ -61,7 +61,7 @@ void spmv_pe::describe() {
   mult_pipe_.io.enq.data.is_end = io.req.data.is_end;
   mult_pipe_.io.enq.valid = io.req.valid && io.req.ready;
   mult_pipe_.io.deq.ready = mult_enable;
-  ch_float32 mul_value = ch_fmul<FP_MULT_LATENCY>(
+  ch_float32 mul_value = ch_fmult<FP_MULT_LATENCY>(
         io.req.data.a_value, io.req.data.x_value, mult_enable);
 
   // Adder pipeline
