@@ -14,13 +14,13 @@ inline constexpr unsigned AVBUF_SIZE = 32;
 inline constexpr unsigned XVBUF_SIZE = 2;
 inline constexpr unsigned XMBUF_SIZE = 2;
 
-using ch_acbuf_t = ch_queue<ch_block, ACBUF_SIZE>;
-using ch_asbuf_t = ch_queue<ch_block, ASBUF_SIZE>;
+using ch_acbuf_t = ch_llqueue<ch_block, ACBUF_SIZE>;
+using ch_asbuf_t = ch_llqueue<ch_block, ASBUF_SIZE>;
 using ch_arbuf_t = ch_queue<ch_block, ARBUF_SIZE>;
 using ch_avbuf_t = ch_queue<ch_block, AVBUF_SIZE>;
 
-using ch_xvbuf_t = ch_queue<ch_block, XVBUF_SIZE>;
-using ch_xmbuf_t = ch_queue<ch_block, XMBUF_SIZE>;
+using ch_xvbuf_t = ch_llqueue<ch_block, XVBUF_SIZE>;
+using ch_xmbuf_t = ch_llqueue<ch_block, XMBUF_SIZE>;
 
 __struct (ch_pe_start_req_t, (
   __in(ch_dcsc_part_t) part

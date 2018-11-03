@@ -54,7 +54,7 @@ void spmv_pe::describe() {
             && (0 == pending_reqs_);
 
   // select previous y_value if dirty
-  auto prev_y_value = ch_sel(0 != (y_mask_ & y_raddr_mask), y_values_.read(y_raddr_), 0);
+  auto prev_y_value = ch_sel(0 != (y_mask_ & y_raddr_mask), y_values_.aread(y_raddr_), 0);
 
   // Multiply pipeline
   mult_pipe_.io.enq.data.a_rowind = io.req.data.a_rowind;
@@ -137,7 +137,7 @@ void spmv_pe::describe() {
     // submit first y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.sliceref<32>(i*32) = y_values_.read(i);
+      value.sliceref<32>(i*32) = y_values_.aread(i);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_);
@@ -156,7 +156,7 @@ void spmv_pe::describe() {
     // submit second y_value block
     ch_block value;
     for (int i = 0; i < 16; ++i) {
-      value.sliceref<32>(i*32) = y_values_.read(i+16);
+      value.sliceref<32>(i*32) = y_values_.aread(i+16);
     }
     io.lsu.wr_req.data.type = ch_wr_request::y_values;
     io.lsu.wr_req.data.addr = INT32_TO_BLOCK_ADDR(y0_) + 1;

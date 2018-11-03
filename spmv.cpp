@@ -3,8 +3,6 @@
 using namespace spmv;
 using namespace spmv::accelerator;
 
-static_assert(std::is_constructible<ch_cu_stats_t, ch_reg<ch_cu_stats_t>>::value, "Oops!");
-
 __enum (ch_ctrl_state, (
   ready,
   get_partition,

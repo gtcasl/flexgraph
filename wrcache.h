@@ -79,8 +79,8 @@ public:
       auto lookup_data = ch_sel(state == ch_state::ready, io.enq.data, saved_enq_data);
       for (unsigned i = 1; i < N; ++i) {
         auto tag_valid  = (0 != (tags_valid_ & (ch_bit<N>(1) << i)));
-        match_block_idx = ch_sel(tag_valid && (tags_.read(i).tag == lookup_data.tag), i, match_block_idx.clone());
-        owned_block_idx = ch_sel(tag_valid && (tags_.read(i).owners & lookup_data.owner) != 0, i, owned_block_idx.clone());
+        match_block_idx = ch_sel(tag_valid && (tags_.aread(i).tag == lookup_data.tag), i, match_block_idx.clone());
+        owned_block_idx = ch_sel(tag_valid && (tags_.aread(i).owners & lookup_data.owner) != 0, i, owned_block_idx.clone());
         free_block_idx  = ch_sel(!tag_valid, N-1-i, free_block_idx.clone());
         if (0 == (i % step)) {
           match_block_idx = ch_delay(match_block_idx.clone());
@@ -133,11 +133,11 @@ public:
         port0_ = last_used_idx_;
         __if (tags_valid_ != 0
            && io.enq.data.tag == last_used_tag_
-           && 0 != (tags_.read(port0_).owners & io.enq.data.owner)) {
+           && 0 != (tags_.aread(port0_).owners & io.enq.data.owner)) {
           data_wenable_ = true;
           tag_wenable_  = true;
-          data_value_   = data_.read(port0_) | io.enq.data.data;
-          tag_value_    = tag_t(tags_.read(port0_).tag, tags_.read(port0_).owners | io.enq.data.owner);
+          data_value_   = data_.aread(port0_) | io.enq.data.data;
+          tag_value_    = tag_t(tags_.aread(port0_).tag, tags_.aread(port0_).owners | io.enq.data.owner);
         } __else {
           // perform lookup and write
           saved_enq_data->next = io.enq.data;
@@ -157,11 +157,11 @@ public:
         // found a valid matching block?
         port1_ = match_block_idx;
         __if (0 != (tags_valid_ & (ch_bit<N>(1) << port1_))
-           && tags_.read(port1_).tag == saved_enq_data.tag) {
+           && tags_.aread(port1_).tag == saved_enq_data.tag) {
           // append data to matching block
           port0_      = match_block_idx;
-          data_value_ = data_.read(port0_) | saved_enq_data.data;
-          tag_value_  = tag_t(tags_.read(port0_).tag, tags_.read(port0_).owners | saved_enq_data.owner);
+          data_value_ = data_.aread(port0_) | saved_enq_data.data;
+          tag_value_  = tag_t(tags_.aread(port0_).tag, tags_.aread(port0_).owners | saved_enq_data.owner);
         } __else {
           // add data to existing free block
           port0_      = free_block_idx;
@@ -190,7 +190,7 @@ public:
     __case (ch_state::check_evict) {
       port0_ = evict_block_idx;
       // if sole owner of evicted block?
-      __if (tags_.read(port0_).owners == saved_enq_data.owner) {
+      __if (tags_.aread(port0_).owners == saved_enq_data.owner) {
         // reset ownerhip
         tag_wenable_ = true;
         tag_value_ = tag_t(0, 0);
@@ -199,10 +199,10 @@ public:
         state->next = ch_state::evict;
       } __else {
         // has block ownership?
-        __if ((tags_.read(port0_).owners & saved_enq_data.owner) != 0) {
+        __if ((tags_.aread(port0_).owners & saved_enq_data.owner) != 0) {
           // clear ownership
           tag_wenable_ = true;
-          tag_value_ = tag_t(tags_.read(port0_).tag, tags_.read(port0_).owners & ~saved_enq_data.owner);
+          tag_value_ = tag_t(tags_.aread(port0_).tag, tags_.aread(port0_).owners & ~saved_enq_data.owner);
         };
         // done
         state->next = ch_state::ready;
@@ -212,8 +212,8 @@ public:
       // evict unused dirty block
       port0_ = evict_block_idx;
       io.evict.data.owner = saved_enq_data.owner;
-      io.evict.data.tag   = tags_.read(port0_).tag;
-      io.evict.data.data  = data_.read(port0_);
+      io.evict.data.tag   = tags_.aread(port0_).tag;
+      io.evict.data.data  = data_.aread(port0_);
       io.evict.valid = true;
       // wait for the LSU ack
       __if (io.evict.ready) {
@@ -224,10 +224,10 @@ public:
     __case (ch_state::flush) {
       // evict all dirty blocks
       port0_ = flush_cntr_;
-      __if (tags_.read(port0_).owners != 0) {
+      __if (tags_.aread(port0_).owners != 0) {
         io.evict.data.owner = saved_enq_data.owner;
-        io.evict.data.tag   = tags_.read(port0_).tag;
-        io.evict.data.data  = data_.read(port0_);
+        io.evict.data.tag   = tags_.aread(port0_).tag;
+        io.evict.data.data  = data_.aread(port0_);
         io.evict.valid = true;
         // wait for the LSU ack
         __if (io.evict.ready) {
