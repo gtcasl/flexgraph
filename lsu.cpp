@@ -91,7 +91,7 @@ void spmv_lsu::write_req_thread() {
     auto outstanding_writes = io.ctrl.outstanding_writes.as_reg(0);
 
     //--
-    auto qpi_wr_req_valid = io.qpi.wr_req.valid.as_reg();
+    auto qpi_wr_req_valid = io.qpi.wr_req.valid.as_reg(false);
     auto qpi_wr_req_addr  = io.qpi.wr_req.addr.as_reg();
     auto qpi_wr_req_data  = io.qpi.wr_req.data.as_reg();
     auto qpi_wr_req_mdata = io.qpi.wr_req.mdata.as_reg();

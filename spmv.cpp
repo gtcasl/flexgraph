@@ -16,8 +16,10 @@ spmv_device::spmv_device()
   : part_buf_size_(0)
   , pbuf_pending_size_(0)
   , part_blk_curr_(0)
+  , part_blk_end_(0)
   , stats_addr_(0)
   , part_curr_(0)
+  , part_end_(0)
   , stats_(0) {
   // bind modules
   for (unsigned i = 0; i < PE_COUNT; ++i) {

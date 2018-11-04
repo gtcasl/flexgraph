@@ -107,18 +107,18 @@ void spmv_dcsc_walk::describe() {
   }
 
   //--
-  auto acbuf_deq = acbuf_.io.deq.ready.as_reg();
-  auto asbuf_deq = asbuf_.io.deq.ready.as_reg();
-  auto arbuf_deq = arbuf_.io.deq.ready.as_reg();
-  auto avbuf_deq = avbuf_.io.deq.ready.as_reg();
-  auto xvbuf_deq = xvbuf_.io.deq.ready.as_reg();
-  auto xmbuf_deq = xmbuf_.io.deq.ready.as_reg();
+  auto acbuf_deq = acbuf_.io.deq.ready.as_reg(false);
+  auto asbuf_deq = asbuf_.io.deq.ready.as_reg(false);
+  auto arbuf_deq = arbuf_.io.deq.ready.as_reg(false);
+  auto avbuf_deq = avbuf_.io.deq.ready.as_reg(false);
+  auto xvbuf_deq = xvbuf_.io.deq.ready.as_reg(false);
+  auto xmbuf_deq = xmbuf_.io.deq.ready.as_reg(false);
 
   //--
   auto pe_data = io.pe.data.as_reg();
 
   //--
-  auto pe_valid = io.pe.valid.as_reg();
+  auto pe_valid = io.pe.valid.as_reg(false);
   pe_valid->next = false;
 
   //--
